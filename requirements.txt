@@ -1,0 +1,6 @@
+python-dotenv==1.0.1
+numpy==2.1.2
+matplotlib==3.9.2
+jmetalpy==1.7.0
+Jinja2==3.1.4
+scikit-posthocs==0.10.0
