@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+#requires = ["hatchling"]
+#build-backend = "hatchling.build"
+
+[project]
+name = "algorithm-benchmark-toolkit"
+version = "1.0.0"
+description = "Python library designed to analyze and compare the performance of different algorithms across multiple problems in an automated way"
+readme = "README.md"
+authors = [
+    {name = "Antonio J. Nebro", email = "ajnebro@uma.es"},
+    {name = "Emilio Rodrigo Carreira Villalta", email = "emiliorodrigo.ecr@gmail.com"}
+]
+
+maintainers = [
+    {name = "Antonio J. Nebro", email = "ajnebro@uma.es"},
+    {name = "Emilio Rodrigo Carreira Villalta", email = "emiliorodrigo.ecr@gmail.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GPL-3.0 License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3.10"
+]
+requires-python = ">=3.8"
