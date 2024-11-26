@@ -1,7 +1,8 @@
 from csv_processor import process_csv
 import pandas as pd
+import os
 
-def create_table(title, df1, df2, algorithms) -> str:
+def create_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame, algorithms: list) -> str:
     """
     Generates a LaTeX table that compares two dataframes `df1` and `df2` based on the performance scores
     of different algorithms, with specific formatting to highlight the highest and second-highest scores.
@@ -30,7 +31,6 @@ def create_table(title, df1, df2, algorithms) -> str:
     \\begin{table}[H]
     \\caption{EP. """ + title + """}
     \\vspace{1mm}
-    \\label{table: EP_IQR_Median}
     \\centering
     \\begin{scriptsize}
     \\begin{tabularx}{\\textwidth}{l""" + "X"*len(algorithms) + """}
@@ -78,13 +78,9 @@ def create_table_latex(csv_path: str) -> None:
     Generates a LaTeX document comparing various algorithms based on statistical metrics 
     (median, standard deviation, interquartile range, and mean) extracted from a CSV file.
 
-    This function processes the provided CSV file to compute the median, standard deviation, 
-    interquartile range (IQR), and mean for each algorithm. It then generates a LaTeX document 
-    that includes tables displaying these statistics for the algorithms, using the following structure:
-    - Median and Standard Deviation
-    - Median and Interquartile Range
-    - Mean and Standard Deviation
-    - Mean and Interquartile Range
+    This function processes the provided CSV file to compute the median/meana and standard deviation, 
+    for each algorithm. It then generates a LaTeX document that includes tables displaying these statistics 
+    for the algorithms.
 
     The LaTeX document is saved as "outputs/tables.tex".
 
@@ -102,7 +98,7 @@ def create_table_latex(csv_path: str) -> None:
     Notes:
     -----
     - The `process_csv` function is assumed to process the CSV data and return DataFrames containing 
-      the necessary statistics (median, standard deviation, IQR, and mean).
+      the necessary statistics (median, standard deviation and mean).
     - The `create_table` function is assumed to be responsible for formatting the DataFrame into LaTeX-compatible 
       tables for inclusion in the document.
 
@@ -111,16 +107,13 @@ def create_table_latex(csv_path: str) -> None:
     latex_document("data/comparison.csv")
     """
 
-    # Step 1: Process the CSV data to compute median, standard deviation (std), and interquartile range (IQR)
-    df_median, df_std = process_csv(csv_path, median=True, extra=True)
+    # Step 1: Process the CSV data to compute mean/median and standard deviation (std)
+    df1, df2, name = process_csv(csv_path, extra=True)
 
-    # Step 2: Process the CSV data again to compute the mean (without std or IQR)
-    df_mean = process_csv(csv_path, median=False, extra=False)[0]
+    # Step 2: Extract the list of algorithms from the columns of the mean/median dataframe
+    algorithms = df1.columns.tolist()
 
-    # Step 3: Extract the list of algorithms from the columns of the median dataframe
-    algorithms = df_median.columns.tolist()
-
-    # Step 4: Initialize the LaTeX document content
+    # Step 3: Initialize the LaTeX document content
     latex_doc = """
     \\documentclass{article}
     \\title{AlgorithmsComparison}
@@ -135,21 +128,16 @@ def create_table_latex(csv_path: str) -> None:
     \\maketitle
     \\section{Tables}"""
     
-    # Step 5: Add tables to the document using different dataframes (median, mean & std)
-    latex_doc += create_table("Median and Standard Deviation", df_median, df_std, algorithms) # Median table with std
-    latex_doc += create_table("Mean and Standard Deviation", df_mean, df_std, algorithms) # Mean table with std
+    # Step 4: Add tables to the document using the dataframe
+    latex_doc += create_table(name + " and Standard Deviation", df1, df2, algorithms) 
 
-    # Step 6: Close the LaTeX document structure
+    # Step 5: Close the LaTeX document structure
     latex_doc += """
     \\end{document}
     """
 
-    # Step 7: Save the LaTeX document to a file
-    with open("outputs/tables.tex", "w") as f:
+    # Step 6: Save the LaTeX document to a file
+    if not os.path.exists("outputs/tables"):
+        os.makedirs("outputs/tables")
+    with open(f"outputs/tables/{name}&std_table.tex", "w") as f:
         f.write(latex_doc)
-    
-# Load CSV data into a pandas DataFrame
-file_path = "CSVs/data.csv"
-
-# Check the shape
-create_table_latex(file_path)

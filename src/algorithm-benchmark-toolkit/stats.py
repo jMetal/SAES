@@ -34,7 +34,7 @@ def friedman_test(csv_path: str, descending=True) -> pd.DataFrame:
     :seealso: `scipy.stats.chi2` for chi-square distribution functions.
     """
 
-    data = process_csv(csv_path)
+    data, _, _ = process_csv(csv_path)
 
     # Initial Checking
     if isinstance(data, pd.DataFrame):
@@ -45,7 +45,7 @@ def friedman_test(csv_path: str, descending=True) -> pd.DataFrame:
     
     n_samples, k = data.shape
     if k < 2:
-        raise ValueError("Initialization Error: The data must have at least two columns.")
+        raise ValueError("Initialization ERROR: The data must have at least two columns.")
 
     # Compute ranks, in the order specified by the descending parameter
     ranks = rankdata(-data, axis=1) if descending else rankdata(data, axis=1)
