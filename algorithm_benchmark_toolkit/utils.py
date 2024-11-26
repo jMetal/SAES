@@ -24,7 +24,7 @@ def check_normality(data: pd.DataFrame) -> bool:
     # Perform the Shapiro-Wilk test for normality for each group
     for _, group in grouped_data:
         marks = group["Mark"]
-        if marks.max() == marks.min(): 
+        if marks.max() == marks.min() or len(marks) < 3: 
             # Identical values imply non-normal distribution
             p_value = 0
         else:
