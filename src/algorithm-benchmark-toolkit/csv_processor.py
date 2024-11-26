@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def process_csv(file_path: str, delimiter: str = ",", median: bool = True, extra: bool = False) -> pd.DataFrame:
     """
@@ -28,8 +29,15 @@ def process_csv(file_path: str, delimiter: str = ",", median: bool = True, extra
     :raises ValueError: If the CSV file does not contain the expected columns ('Problem', 'Algorithm', 'Mark').
     """
     
+    # Check if the input & output directories exist, if not create them
+    if not os.path.exists("outputs"):
+        os.mkdir("outputs")
+    if not os.path.exists("CSVs"):
+        os.mkdir("CSVs")
+
     # Read the CSV file into a pandas DataFrame using the specified delimiter
     df = pd.read_csv(file_path, delimiter=delimiter)
+    df.to_csv(f"CSVs/{file_path.split('/')[-1]}", index=False)
 
     # Group by 'Problem' and 'Algorithm', then calculate the median or mean of the 'Mark' column
     if median:
@@ -41,20 +49,15 @@ def process_csv(file_path: str, delimiter: str = ",", median: bool = True, extra
     df_pivot = df_metric.pivot(index='Problem', columns='Algorithm', values='Mark')
 
     # If extra is True, calculate the standard deviation and interquartile range (IQR)
-    df_std_pivot, df_iqr_pivot = None, None
+    df_std_pivot = None
     if extra:
         # Calculate the standard deviation of 'Mark' for each 'Problem' and 'Algorithm'
         df_std = df.groupby(['Problem', 'Algorithm'])['Mark'].std().reset_index()
 
-        # Calculate the IQR for each 'Problem' and 'Algorithm'
-        df_iqr = (df.groupby(['Problem', 'Algorithm'])['Mark'].quantile(0.75) - 
-                  df.groupby(['Problem', 'Algorithm'])['Mark'].quantile(0.25)).reset_index()
-
         # Pivot the standard deviation and IQR DataFrames to match the 'Problem' index and 'Algorithm' columns
         df_std_pivot = df_std.pivot(index='Problem', columns='Algorithm', values='Mark')
-        df_iqr_pivot = df_iqr.pivot(index='Problem', columns='Algorithm', values='Mark')    
 
     # Return the pivoted DataFrame with the requested metrics
-    return df_pivot, df_std_pivot, df_iqr_pivot
+    return df_pivot, df_std_pivot
 
 

@@ -66,10 +66,3 @@ def friedman_test(csv_path: str, descending=True) -> pd.DataFrame:
         index=["Friedman-statistic", "p-value"],
         columns=["Results"]
     )
-
-# Load CSV data into a pandas DataFrame
-file_path = "CSVs/data.csv"
-
-
-friedman = friedman_test(file_path)
-print(friedman)

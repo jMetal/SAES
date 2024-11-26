@@ -1,4 +1,5 @@
 from csv_processor import process_csv
+import pandas as pd
 
 def create_table(title, df1, df2, algorithms) -> str:
     """
@@ -38,18 +39,15 @@ def create_table(title, df1, df2, algorithms) -> str:
 
     # Iterate through each row of df1 and df2 to compare their values
     for (idx1, row1), (_, row2) in zip(df1.iterrows(), df2.iterrows()):
-        # Sort row1 to find the maximum and second maximum values
-        row1_sorted = row1.sort_values(ascending=False)
+        # Create a DataFrame to manage the median and standard deviation together
+        data = pd.DataFrame({'median': row1, 'std_dev': row2})
 
-        # Determine which columns should be highlighted (max and second max values)
-        if row1_sorted.iloc[0] == row1_sorted.iloc[1]:
-            if row2[row1_sorted.index[0]] > row2[row1_sorted.index[1]]:
-                max_idx, second_idx = row1_sorted.index[0], row1_sorted.index[1]
-            else:
-                max_idx, second_idx = row1_sorted.index[1], row1_sorted.index[0]
-        else:
-            max_idx, second_idx = row1_sorted.index[0], row1_sorted.index[1]
+        # Sort primarily by median (descending) and secondarily by std_dev (ascending)
+        sorted_data = data.sort_values(by=['median', 'std_dev'], ascending=[False, True])
 
+        # Extract the top two indices
+        max_idx, second_idx = sorted_data.index[0], sorted_data.index[1]
+    
         # Build the row data for the LaTeX table
         row_data = f"{idx1} & "
         for (index1, score1), (_, score2) in zip(row1.items(), row2.items()):
@@ -114,7 +112,7 @@ def create_table_latex(csv_path: str) -> None:
     """
 
     # Step 1: Process the CSV data to compute median, standard deviation (std), and interquartile range (IQR)
-    df_median, df_std, df_iqr = process_csv(csv_path, median=True, extra=True)
+    df_median, df_std = process_csv(csv_path, median=True, extra=True)
 
     # Step 2: Process the CSV data again to compute the mean (without std or IQR)
     df_mean = process_csv(csv_path, median=False, extra=False)[0]
@@ -137,11 +135,9 @@ def create_table_latex(csv_path: str) -> None:
     \\maketitle
     \\section{Tables}"""
     
-    # Step 5: Add tables to the document using different dataframes (median, std, mean, IQR)
+    # Step 5: Add tables to the document using different dataframes (median, mean & std)
     latex_doc += create_table("Median and Standard Deviation", df_median, df_std, algorithms) # Median table with std
-    latex_doc += create_table("Median and Interquartile Range", df_median, df_iqr, algorithms) # Median table with IQR
     latex_doc += create_table("Mean and Standard Deviation", df_mean, df_std, algorithms) # Mean table with std
-    latex_doc += create_table("Mean and Interquartile Range", df_mean, df_iqr, algorithms) # Mean table with IQR
 
     # Step 6: Close the LaTeX document structure
     latex_doc += """
