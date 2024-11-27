@@ -6,12 +6,12 @@ def check_normality(data: pd.DataFrame) -> bool:
     Check the normality of grouped data in a DataFrame using the Shapiro-Wilk test.
     
     This function groups the input data by the "Algorithm" and "Problem" columns, 
-    and tests the normality of the "Mark" column within each group. It returns `False` 
+    and tests the normality of the "MetricValue" column within each group. It returns `False` 
     if any group fails the normality test, and `True` otherwise.
     
     :param data: pd.DataFrame
         The input DataFrame containing the data to be tested for normality.
-        Must include columns "Algorithm", "Problem", and "Mark".
+        Must include columns "Algorithm", "Problem", and "MetricValue".
         
     :return: bool
         `True` if all groups pass the Shapiro-Wilk test for normality, 
@@ -23,12 +23,12 @@ def check_normality(data: pd.DataFrame) -> bool:
 
     # Perform the Shapiro-Wilk test for normality for each group
     for _, group in grouped_data:
-        marks = group["Mark"]
-        if marks.max() == marks.min() or len(marks) < 3: 
+        metric_values = group["MetricValue"]
+        if metric_values.max() == metric_values.min() or len(metric_values) < 3: 
             # Identical values imply non-normal distribution
             p_value = 0
         else:
-            _, p_value = shapiro(marks)
+            _, p_value = shapiro(metric_values)
             
         # If any group fails the normality test
         if p_value <= 0.05:
