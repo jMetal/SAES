@@ -21,7 +21,7 @@ def create_boxplot_for_problem(df_problem: pd.DataFrame, problem_name: str) -> N
 
     # Create the boxplot with Seaborn
     sns.boxplot(
-        x='Algorithm', y='Mark', data=df_problem, 
+        x='Algorithm', y='MetricValue', data=df_problem, 
         boxprops=dict(facecolor=(0, 0, 1, 0.3), edgecolor="darkblue", linewidth=1.5),  # Customization for the box
         whiskerprops=dict(color="darkblue", linewidth=1.5),  # Customization for the whiskers
         capprops=dict(color="darkblue", linewidth=1.5),  # Customization for the caps

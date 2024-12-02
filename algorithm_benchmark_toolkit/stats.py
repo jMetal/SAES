@@ -3,7 +3,6 @@ import numpy as np
 from scipy.stats import rankdata, chi2
 from csv_processor import process_csv_extended
 from scipy.stats import rankdata
-# from scipy.stats import wilcoxon
 from scipy.stats import mannwhitneyu
 
 def friedman_test(csv_path: str, descending=True) -> pd.DataFrame:

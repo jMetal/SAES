@@ -20,9 +20,9 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     - Format the values of `df1` and `df2` in a specific LaTeX math format.
 
     Args:
+    - title (str): The title for the LaTeX table.
     - df1 (pandas.DataFrame): The first dataframe containing performance scores for the algorithms.
     - df2 (pandas.DataFrame): The second dataframe containing performance scores for the algorithms.
-    - algorithms (list of str): A list of algorithm names to be used as column headers in the LaTeX table.
 
     Returns:
     - str: A string containing the LaTeX code for the table.
@@ -41,7 +41,7 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * len(algorithms) + """}
+    \\begin{tabularx}{\\textwidth}{l|""" + """>{ \\centering\\arraybackslash }X|""" * (len(algorithms)-1) + """>{ \\centering\\arraybackslash }X}
     \\hline
     & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
 
@@ -101,7 +101,6 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     Args:
         title (str): Title of the table.
         df_og (pd.DataFrame): DataFrame containing columns 'Algorithm', 'Problem', and 'MetricValue'.
-        wilcoxon_test (Callable): A function that performs Wilcoxon tests and returns a LaTeX-formatted string.
 
     Returns:
         str: LaTeX-formatted table string.
@@ -121,7 +120,7 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * len(algorithms) + """}
+    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * (len(algorithms)-1) + """>{ \\centering\\arraybackslash }X}
     \\hline
     & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
 
@@ -239,7 +238,7 @@ def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFr
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * len(algorithms) + """}
+    \\begin{tabularx}{\\textwidth}{l|""" + """>{ \\centering\\arraybackslash }X|""" * (len(algorithms)-1) + """>{ \\centering\\arraybackslash }X}
     \\hline
     & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
 
@@ -375,7 +374,7 @@ def create_tables_latex(csv_path: str) -> None:
     # Step 3: Add tables to the document using the different dataframes
     latex_doc += create_base_table(name + " and Standard Deviation", df1, df2) 
     latex_doc += create_wilconxon_pivot_table(name + " and Standard Deviation (Wilconxon Pivot)", df_og, df1, df2)
-    latex_doc += create_wilconxon_table("Wilconson Test 1vs1", df_og)
+    latex_doc += create_wilconxon_table("Wilconxon Test 1vs1", df_og)
 
     # Step 4: Close the LaTeX document structure
     latex_doc += """
