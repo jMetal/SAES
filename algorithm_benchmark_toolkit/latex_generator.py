@@ -4,7 +4,7 @@ from stats import wilcoxon_test
 import pandas as pd
 import os
 
-def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame, algorithms: list) -> str:
+def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
     Generates a LaTeX table that compares two dataframes `df1` and `df2` based on the performance scores
     of different algorithms, with specific formatting to highlight the highest and second-highest scores.
@@ -28,6 +28,12 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame, algorith
     - str: A string containing the LaTeX code for the table.
     """
 
+    # Extract the list of algorithms from the columns of the DataFrame
+    algorithms = df1.columns.tolist()
+
+    # Define display names for algorithms
+    names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
+
     # Initialize the LaTeX table with basic structure, including the table header
     latex_doc = """
     \\begin{table}[H]
@@ -35,9 +41,9 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame, algorith
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l""" + "X"*len(algorithms) + """}
+    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * len(algorithms) + """}
     \\hline
-    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(algorithms) + " \\\\ \\hline\n"
+    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
 
     # Iterate through each row of df1 and df2, representing different problems or comparisons
     for (idx1, row1), (_, row2) in zip(df1.iterrows(), df2.iterrows()):
@@ -71,32 +77,160 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame, algorith
     \\hline
     \\end{tabularx}
     \\end{scriptsize}
+    \\vspace{2mm}
+    \\small
+    \\begin{itemize}
+    """
+
+    # Add each algorithm with its respective change
+    for name, algorithm in zip(names, algorithms):
+        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
+        
+    latex_doc += """
+    \\end{itemize}
     \\end{table}
     """
 
     # Return the final LaTeX code for the table
     return latex_doc
 
-def create_wilconxon_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, algorithms: list) -> str:
+def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
+    """
+    Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
+
+    Args:
+        title (str): Title of the table.
+        df_og (pd.DataFrame): DataFrame containing columns 'Algorithm', 'Problem', and 'MetricValue'.
+        wilcoxon_test (Callable): A function that performs Wilcoxon tests and returns a LaTeX-formatted string.
+
+    Returns:
+        str: LaTeX-formatted table string.
+    """ 
+
+    # Extract the list of algorithms and problems from the columns of the DataFrame
+    algorithms = df_og["Algorithm"].unique().tolist()
+    problems = df_og["Problem"].unique().tolist()
+
+    # Define display names for algorithms
+    names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
+
+    # Initialize the LaTeX table with basic structure, including the table header
+    latex_doc = """
+    \\begin{table}[H]
+    \\caption{EP. """ + title + """}
+    \\vspace{1mm}
+    \\centering
+    \\begin{scriptsize}
+    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * len(algorithms) + """}
+    \\hline
+    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
+
+    # Generate comparisons and populate table
+    compared_pairs = set()
+
+    for algorithm1, name in zip(algorithms, names):
+        latex_doc += name + " & "
+        for algorithm2 in algorithms:
+            # Skip self-comparison
+            if algorithm1 == algorithm2:
+                latex_doc += " & "
+                continue
+            latex_doc += "\\texttt{"
+            pair = tuple(sorted([algorithm1, algorithm2]))
+            # Only perform comparison if the pair has not been processed and are different
+            if pair not in compared_pairs:
+                # Mark the pair as processed
+                compared_pairs.add(pair)  
+                for problem in problems:
+                    # Filter the original dataframe for the relevant pair of algorithms and the current problem
+                    algorithms_wilconxon = [algorithm1, algorithm2]
+                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Problem"] == problem)]
+                    df_wilconxon = dg_og_filtered.pivot(index="Id", columns="Algorithm", values="MetricValue").reset_index()
+                    df_wilconxon = df_wilconxon.drop(columns="Id")
+                    og_columns = df_wilconxon.columns.tolist()
+                    df_wilconxon.columns = ["Algorithm A", "Algorithm B"]
+
+                    # Perform the Wilcoxon signed-rank test and store the result
+                    wilconson_result = wilcoxon_test(df_wilconxon)
+                    if wilconson_result == "=":
+                        latex_doc += "="
+                    else:
+                        winner = og_columns[0] if wilconson_result == "+" else og_columns[1]
+                        latex_doc += "+" if algorithm1 == winner else "-"
+            latex_doc += "} & "
+        latex_doc = latex_doc.rstrip(" & ") + " \\\\\n" 
+
+    # Close the table structure in the LaTeX document
+    latex_doc += """
+    \\hline
+    \\end{tabularx}
+    \\end{scriptsize}
+    \\vspace{2mm}
+    \\small
+    \\begin{itemize}
+    """
+
+    # Add each algorithm with its respective change
+    for name, algorithm in zip(names, algorithms):
+        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
+
+    latex_doc += f"\\item \\texttt{{Problems (in order)}} : {problems}\n"
+    latex_doc += f"\\item \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n"
+
+    latex_doc += """
+    \\end{itemize}
+    \\end{table}
+    """
+
+    # Return the final LaTeX code for the table
+    return latex_doc
+
+def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
     Generates a LaTeX table comparing the performance scores of different algorithms based on two dataframes `df1` and `df2`.
-    The table highlights the highest and second-highest scores with different background colors, and includes statistical results
+    The table highlights the highest and second-highest scores with different background colors and includes statistical results
     from a Wilcoxon signed-rank test for pairwise comparisons.
 
     Args:
     - title (str): The title for the LaTeX table.
-    - df_og (pandas.DataFrame): The original dataframe containing the performance scores of algorithms.
-    - df1 (pandas.DataFrame): The first dataframe containing performance scores (e.g., for algorithm A).
-    - df2 (pandas.DataFrame): The second dataframe containing performance scores (e.g., for algorithm B).
-    - algorithms (list of str): A list of algorithm names to be used as column headers in the LaTeX table.
-
+    - df_og (pandas.DataFrame): The original dataframe containing the performance scores of algorithms and metadata needed 
+      for statistical comparisons.
+    - df1 (pandas.DataFrame): The first dataframe containing performance scores (e.g., medians) for each algorithm.
+    - df2 (pandas.DataFrame): The second dataframe containing associated metrics (e.g., standard deviations).
+    
     Returns:
     - str: The LaTeX code for the formatted table.
 
-    This function assumes that:
-    - `df1` and `df2` have the same structure, with rows representing the problems/algorithms and columns representing performance metrics.
-    - `df_og` contains information necessary for calculating Wilcoxon signed-rank test results between pairs of algorithms.
+    Notes:
+    - The Wilcoxon signed-rank test is performed between each algorithm and a pivot algorithm.
+    - The pivot algorithm is identified as the algorithm listed in the last row of `df_og`.
+    - Results from the Wilcoxon test are displayed alongside the performance scores in the table.
+    - Highlights:
+      - The highest score in a row is shaded with a light gray (`gray95`).
+      - The second-highest score in a row is shaded with a darker gray (`gray25`).
+    - The function assumes that:
+      - `df1` and `df2` have the same structure, with rows representing problems and columns representing algorithms.
+      - `df_og` contains metadata needed to filter relevant data for each pairwise comparison and perform the Wilcoxon test.
+
+    Raises:
+    - An exception is printed if the Wilcoxon test fails due to insufficient or low-variability data.
+
+    Example:
+    ```
+    title = "Performance Comparison"
+    df_og = pd.DataFrame(...)  # Original data with metadata and scores
+    df1 = pd.DataFrame(...)    # Median scores
+    df2 = pd.DataFrame(...)    # Standard deviations
+    latex_table = create_last_wilconxon_table(title, df_og, df1, df2)
+    print(latex_table)
+    ```
     """
+    
+    # Extract the list of algorithms from the columns of the DataFrame
+    algorithms = df1.columns.tolist()
+
+    # Define display names for algorithms
+    names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
 
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
@@ -105,9 +239,9 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, d
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l""" + "X"*len(algorithms) + """}
+    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * len(algorithms) + """}
     \\hline
-    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(algorithms) + " \\\\ \\hline\n"
+    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
 
     # Identify the pivot algorithm, which is the algorithm to compare others against
     pivot_algorithm = df_og.iloc[-1]["Algorithm"]
@@ -165,6 +299,19 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, d
     \\hline
     \\end{tabularx}
     \\end{scriptsize}
+    \\vspace{2mm}
+    \\small
+    \\begin{itemize}
+    """
+
+    # Add each algorithm with its respective change
+    for name, algorithm in zip(names, algorithms):
+        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
+
+    latex_doc += f"\\item \\texttt{{+ implies that the pivot algorithm (last column) was worse than the selected}}\n"
+
+    latex_doc += """
+    \\end{itemize}
     \\end{table}
     """
 
@@ -210,10 +357,7 @@ def create_tables_latex(csv_path: str) -> None:
     df1, df2, name = process_csv_extended(csv_path, extra=True)
     df_og = process_csv_basic(csv_path)
 
-    # Step 2: Extract the list of algorithms from the columns of the mean/median dataframe
-    algorithms = df1.columns.tolist()
-
-    # Step 3: Initialize the LaTeX document content
+    # Step 2: Initialize the LaTeX document content
     latex_doc = """
     \\documentclass{article}
     \\title{AlgorithmsComparison}
@@ -228,16 +372,17 @@ def create_tables_latex(csv_path: str) -> None:
     \\maketitle
     \\section{Tables}"""
     
-    # Step 4: Add tables to the document using the different dataframes
-    latex_doc += create_base_table(name + " and Standard Deviation", df1, df2, algorithms) 
-    latex_doc += create_wilconxon_table(name + " and Standard Deviation (Wilconxon)", df_og, df1, df2, algorithms)
+    # Step 3: Add tables to the document using the different dataframes
+    latex_doc += create_base_table(name + " and Standard Deviation", df1, df2) 
+    latex_doc += create_wilconxon_pivot_table(name + " and Standard Deviation (Wilconxon Pivot)", df_og, df1, df2)
+    latex_doc += create_wilconxon_table("Wilconson Test 1vs1", df_og)
 
-    # Step 5: Close the LaTeX document structure
+    # Step 4: Close the LaTeX document structure
     latex_doc += """
     \\end{document}
     """
 
-    # Step 6: Save the LaTeX document to a file
+    # Step 5: Save the LaTeX document to a file
     if not os.path.exists("outputs/tables"):
         os.makedirs("outputs/tables")
     with open(f"outputs/tables/{name}&std_table.tex", "w") as f:
