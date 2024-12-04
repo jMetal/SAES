@@ -32,9 +32,7 @@ def check_normality(data: pd.DataFrame) -> bool:
             
         # If any group fails the normality test
         if p_value <= 0.05:
-            print("Found groups with non-normal data.")
             return False
         
     # If all groups pass the normality test
-    print("All groups have normal data.")
     return True

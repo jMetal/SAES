@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-def create_boxplot_for_problem(df_problem: pd.DataFrame, problem_name: str) -> None:
+def create_boxplot_for_problem(df_data: pd.DataFrame, problem_name: str) -> None:
     """
     Creates a boxplot comparing different algorithms performance on a given problem.
 
@@ -16,6 +16,9 @@ def create_boxplot_for_problem(df_problem: pd.DataFrame, problem_name: str) -> N
     None: The function saves the boxplot as a PNG file.
     """
 
+    # Filter the data for the current problem
+    df_problem = df_data[df_data["Problem"] == problem_name]
+     
     # Set the figure size for the plot
     plt.figure(figsize=(10, 6))  
 
@@ -77,9 +80,6 @@ def generate_boxplots_from_csv(csv_path: str) -> None:
         os.makedirs("outputs/boxplots")
 
     # Create a boxplot for each problem
-    for problem in problems:
-        # Filter the data for the current problem
-        df_problem = df_data[df_data["Problem"] == problem]
-        
+    for problem in problems:        
         # Create and save the boxplot for the current problem
-        create_boxplot_for_problem(df_problem, problem)
+        create_boxplot_for_problem(df_data, problem)

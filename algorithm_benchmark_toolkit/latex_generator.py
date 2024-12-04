@@ -1,6 +1,7 @@
-from csv_processor import process_csv_extended
-from csv_processor import process_csv_basic
-from stats import wilcoxon_test
+from algorithm_benchmark_toolkit.csv_processor import process_csv_extended
+from algorithm_benchmark_toolkit.csv_processor import process_csv_basic
+from algorithm_benchmark_toolkit.stats import wilcoxon_test
+from algorithm_benchmark_toolkit. stats import friedman_test
 import pandas as pd
 import os
 
@@ -41,9 +42,9 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l|""" + """>{ \\centering\\arraybackslash }X|""" * (len(algorithms)-1) + """>{ \\centering\\arraybackslash }X}
+    \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-1) + """c}
     \\hline
-    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
+    & """ + " & ".join(names) + " \\\\ \\hline\n"
 
     # Iterate through each row of df1 and df2, representing different problems or comparisons
     for (idx1, row1), (_, row2) in zip(df1.iterrows(), df2.iterrows()):
@@ -75,7 +76,7 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     # Close the table structure in the LaTeX document
     latex_doc += """
     \\hline
-    \\end{tabularx}
+    \\end{tabular}
     \\end{scriptsize}
     \\vspace{2mm}
     \\small
@@ -85,6 +86,163 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     # Add each algorithm with its respective change
     for name, algorithm in zip(names, algorithms):
         latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
+        
+    latex_doc += """
+    \\end{itemize}
+    \\end{table}
+    """
+
+    # Return the final LaTeX code for the table
+    return latex_doc
+
+def create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+    """
+    Generates a LaTeX formatted table for presenting the results of a Friedman test along with 
+    the performance scores of different algorithms for various problems. The table includes 
+    median values, standard deviations, and Wilcoxon test results.
+
+    Parameters:
+    ----------
+    title : str
+        The title of the table, typically a description of the experiments or dataset.
+    
+    df_og : pd.DataFrame
+        A DataFrame containing the original data with columns 'Algorithm', 'Problem', 
+        and 'MetricValue'. This is used for performing the Friedman test on the data.
+        
+    df1 : pd.DataFrame
+        A DataFrame containing the median values of performance scores for the algorithms, 
+        where each row represents a different problem, and the columns correspond to different algorithms.
+    
+    df2 : pd.DataFrame
+        A DataFrame containing the standard deviations for each algorithm's performance 
+        scores, where each row corresponds to a different problem, and the columns 
+        correspond to the same algorithms.
+
+    Returns:
+    -------
+    str
+        A LaTeX string representing the formatted table that can be used in a LaTeX document.
+        The table displays the performance scores for each algorithm, the Wilcoxon test results, 
+        and highlights the best and second-best algorithms in each row.
+
+    Notes:
+    -----
+    - The LaTeX table generated will display the median scores from `df1` along with the corresponding 
+      standard deviations from `df2` for each algorithm.
+    - The table also includes a result of a Friedman test to check if there are significant differences 
+      between the algorithms for each problem.
+    - Algorithms are displayed with labels "Algorithm A", "Algorithm B", etc.
+    - For each problem, the best and second-best scores are highlighted with different shades of gray.
+    - If the Friedman test shows significant differences (p-value < 0.05), a "+" symbol is added in the 
+      table. Otherwise, an "=" symbol is used.
+    - This function assumes that the `friedman_test()` function is defined elsewhere in the code and 
+      performs the statistical test on the given data.
+
+    Example:
+    --------
+    title = "Comparison of Algorithms"
+    df_og = pd.DataFrame({
+        'Algorithm': ['A', 'B', 'C'],
+        'Problem': ['Problem 1', 'Problem 1', 'Problem 1'],
+        'MetricValue': [0.85, 0.87, 0.90]
+    })
+    df1 = pd.DataFrame({
+        'A': [0.85, 0.88],
+        'B': [0.87, 0.89],
+        'C': [0.90, 0.91]
+    }, index=['Problem 1', 'Problem 2'])
+    df2 = pd.DataFrame({
+        'A': [0.03, 0.04],
+        'B': [0.02, 0.03],
+        'C': [0.01, 0.02]
+    }, index=['Problem 1', 'Problem 2'])
+
+    latex_table = create_friedman_table(title, df_og, df1, df2)
+    print(latex_table)
+    """
+    
+    # Extract the list of algorithms from the columns of the DataFrame
+    algorithms = df1.columns.tolist()
+
+    # Define display names for algorithms
+    names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
+
+    # Initialize the LaTeX document with the table structure and formatting
+    latex_doc = """
+    \\begin{table}[H]
+    \\caption{EP. """ + title + """}
+    \\vspace{1mm}
+    \\centering
+    \\begin{scriptsize}
+    \\begin{tabular}{l|""" + """c|""" * (len(algorithms)) + """c}
+    \\hline
+    & """ + " & ".join(names) + " & FT \\\\ \\hline\n"
+    
+    # Iterate through each row of df1 and df2, representing different problems or comparisons
+    for (idx1, row1), (_, row2) in zip(df1.iterrows(), df2.iterrows()):
+        # Combine the median and standard deviation values from df1 and df2 into a single DataFrame for sorting
+        data = pd.DataFrame({title: row1, 'std_dev': row2})
+        # Problem name or identifier
+        problem_wilconxon = idx1
+    
+        # Sort data by median score (descending) and by standard deviation (ascending) to identify best scores
+        sorted_data = data.sort_values(by=[title, 'std_dev'], ascending=[False, True])
+
+        # Extract the indices of the highest and second-highest scores based on the sorting
+        max_idx, second_idx = sorted_data.index[0], sorted_data.index[1]
+    
+        # Initialize the row of LaTeX table content with the problem name
+        row_data = f"{idx1} & "
+
+        # Loop through each algorithm's score pair (from df1 and df2) to populate the table
+        for (index1, score1), (_, score2) in zip(row1.items(), row2.items()):            
+            # Format and highlight the maximum and second highest values with gray background
+            if index1 == max_idx:
+                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }} $ & "
+            elif index1 == second_idx:
+                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }} $ & "
+            else:
+                row_data += f"${score1:.2f}_{{ {score2:.2f} }} $ & "
+
+            # Perform the Friedman test for the last algorithm in the list
+            if index1 == algorithms[-1]:
+                # Filter the original dataframe for the relevant algorithms and the current problem
+                algorithms_friedman = algorithms
+                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_friedman)) & (df_og["Problem"] == problem_wilconxon)]
+                df_friedman = dg_og_filtered.pivot(index="Id", columns="Algorithm", values="MetricValue").reset_index()
+                df_friedman = df_friedman.drop(columns="Id")
+                df_friedman.columns = names
+
+                # Perform the Friedman test and store the result
+                try:
+                    df_friedman_result = friedman_test(df_friedman)
+                    if df_friedman_result["Results"]["p-value"] < 0.05:
+                        row_data += "+ & "
+                    else:
+                        row_data += "= & "
+                except:
+                    print("Friedman test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
+                    return ""
+
+        # Remove the last unnecessary "&" and append the row to the LaTeX document
+        latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
+
+    # Close the table structure in the LaTeX document
+    latex_doc += """
+    \\hline
+    \\end{tabular}
+    \\end{scriptsize}
+    \\vspace{2mm}
+    \\small
+    \\begin{itemize}
+    """
+
+    # Add each algorithm with its respective change
+    for name, algorithm in zip(names, algorithms):
+        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
+
+    latex_doc += f"\\item \\texttt{{+ implies that the difference between the algorithms for the problem in the select row is significant}}\n"
         
     latex_doc += """
     \\end{itemize}
@@ -120,16 +278,20 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l""" + """>{ \\centering\\arraybackslash }X""" * (len(algorithms)-1) + """>{ \\centering\\arraybackslash }X}
+    \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-2) + """c}
     \\hline
-    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
+    & """ + " & ".join(names[1:]) + " \\\\ \\hline\n"
 
     # Generate comparisons and populate table
     compared_pairs = set()
 
     for algorithm1, name in zip(algorithms, names):
+        if algorithm1 == algorithms[-1]:
+            continue
         latex_doc += name + " & "
         for algorithm2 in algorithms:
+            if algorithm2 == algorithms[0]:
+                continue
             # Skip self-comparison
             if algorithm1 == algorithm2:
                 latex_doc += " & "
@@ -152,17 +314,17 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
                     # Perform the Wilcoxon signed-rank test and store the result
                     wilconson_result = wilcoxon_test(df_wilconxon)
                     if wilconson_result == "=":
-                        latex_doc += "="
+                        latex_doc += " ="
                     else:
                         winner = og_columns[0] if wilconson_result == "+" else og_columns[1]
-                        latex_doc += "+" if algorithm1 == winner else "-"
+                        latex_doc += " +" if algorithm1 == winner else " -"
             latex_doc += "} & "
         latex_doc = latex_doc.rstrip(" & ") + " \\\\\n" 
 
     # Close the table structure in the LaTeX document
     latex_doc += """
     \\hline
-    \\end{tabularx}
+    \\end{tabular}
     \\end{scriptsize}
     \\vspace{2mm}
     \\small
@@ -186,33 +348,31 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
 
 def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
-    Generates a LaTeX table comparing the performance scores of different algorithms based on two dataframes `df1` and `df2`.
-    The table highlights the highest and second-highest scores with different background colors and includes statistical results
-    from a Wilcoxon signed-rank test for pairwise comparisons.
+    Generates a LaTeX table comparing the performance scores of different algorithms using two dataframes (`df1` and `df2`)
+    and performs statistical comparisons via the Wilcoxon signed-rank test.
 
     Args:
     - title (str): The title for the LaTeX table.
-    - df_og (pandas.DataFrame): The original dataframe containing the performance scores of algorithms and metadata needed 
-      for statistical comparisons.
-    - df1 (pandas.DataFrame): The first dataframe containing performance scores (e.g., medians) for each algorithm.
-    - df2 (pandas.DataFrame): The second dataframe containing associated metrics (e.g., standard deviations).
-    
+    - df_og (pandas.DataFrame): The original dataframe with metadata and performance scores, needed for statistical comparisons.
+    - df1 (pandas.DataFrame): Dataframe containing median performance scores for each algorithm across problems.
+    - df2 (pandas.DataFrame): Dataframe containing standard deviations associated with the scores in `df1`.
+
     Returns:
-    - str: The LaTeX code for the formatted table.
+    - str: The LaTeX code for a formatted table.
+
+    Functionality:
+    - The table compares algorithms based on their scores, highlighting the best and second-best performance for each problem.
+    - Performs pairwise Wilcoxon signed-rank tests between algorithms and a pivot algorithm (identified as the last row in `df_og`).
+    - Statistical results are displayed alongside the performance scores.
+    - Highlights:
+        - The highest score in a row is shaded light gray (`gray95`).
+        - The second-highest score in a row is shaded darker gray (`gray25`).
+    - Displays a summary of Wilcoxon test outcomes (`+`, `-`, `=`) in the table footer.
 
     Notes:
-    - The Wilcoxon signed-rank test is performed between each algorithm and a pivot algorithm.
-    - The pivot algorithm is identified as the algorithm listed in the last row of `df_og`.
-    - Results from the Wilcoxon test are displayed alongside the performance scores in the table.
-    - Highlights:
-      - The highest score in a row is shaded with a light gray (`gray95`).
-      - The second-highest score in a row is shaded with a darker gray (`gray25`).
-    - The function assumes that:
-      - `df1` and `df2` have the same structure, with rows representing problems and columns representing algorithms.
-      - `df_og` contains metadata needed to filter relevant data for each pairwise comparison and perform the Wilcoxon test.
-
-    Raises:
-    - An exception is printed if the Wilcoxon test fails due to insufficient or low-variability data.
+    - Assumes `df1` and `df2` have the same structure (rows for problems, columns for algorithms).
+    - Assumes `df_og` contains sufficient metadata for filtering relevant data for Wilcoxon tests.
+    - Handles potential issues with the Wilcoxon test gracefully, including low-variability or insufficient data.
 
     Example:
     ```
@@ -220,9 +380,12 @@ def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFr
     df_og = pd.DataFrame(...)  # Original data with metadata and scores
     df1 = pd.DataFrame(...)    # Median scores
     df2 = pd.DataFrame(...)    # Standard deviations
-    latex_table = create_last_wilconxon_table(title, df_og, df1, df2)
+    latex_table = create_wilconxon_pivot_table(title, df_og, df1, df2)
     print(latex_table)
     ```
+
+    Raises:
+    - Prints an error message if the Wilcoxon test fails due to insufficient or low-variability data.
     """
     
     # Extract the list of algorithms from the columns of the DataFrame
@@ -238,9 +401,12 @@ def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFr
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabularx}{\\textwidth}{l|""" + """>{ \\centering\\arraybackslash }X|""" * (len(algorithms)-1) + """>{ \\centering\\arraybackslash }X}
+    \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-1) + """c}
     \\hline
-    & \\centering\\arraybackslash """ + " & \\centering\\arraybackslash ".join(names) + " \\\\ \\hline\n"
+    & """ + " & ".join(names) + " \\\\ \\hline\n"
+
+    # Initialize a dictionary to keep track of Wilcoxon test results for each algorithm
+    ranks = {name: [0, 0, 0] for name in names[:-1]}
 
     # Identify the pivot algorithm, which is the algorithm to compare others against
     pivot_algorithm = df_og.iloc[-1]["Algorithm"]
@@ -278,25 +444,38 @@ def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFr
                 # Perform the Wilcoxon signed-rank test and store the result
                 try:
                     wilconson_result = wilcoxon_test(df_wilconxon)
+                    algorithm_name = names[algorithms.index(index1)]
+                    if wilconson_result == "+":
+                        ranks[algorithm_name][0] += 1
+                    elif wilconson_result == "-":
+                        ranks[algorithm_name][1] += 1
+                    else:
+                        ranks[algorithm_name][2] += 1
                 except:
                     print("Wilconson test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
                     return ""
             
             # Format and highlight the maximum and second highest values with gray background
             if index1 == max_idx:
-                row_data += f"\\cellcolor{{gray95}}${wilconson_result} {score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }} {wilconson_result} $ & "
             elif index1 == second_idx:
-                row_data += f"\\cellcolor{{gray25}}${wilconson_result} {score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }} {wilconson_result} $ & "
             else:
-                row_data += f"${wilconson_result} {score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"${score1:.2f}_{{ {score2:.2f} }} {wilconson_result} $ & "
 
         # Remove the last unnecessary "&" and append the row to the LaTeX document
         latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
 
+    # Add summary statistics to the footer of the table
+    latex_doc += """\\hline + / - / ="""
+    for name, rank in ranks.items():
+        latex_doc += f" & \\textbf{rank[0]} / \\textbf{rank[1]} / \\textbf{rank[2]}"
+    
     # Close the table structure in the LaTeX document
     latex_doc += """
+    \\\\
     \\hline
-    \\end{tabularx}
+    \\end{tabular}
     \\end{scriptsize}
     \\vspace{2mm}
     \\small
@@ -373,6 +552,7 @@ def create_tables_latex(csv_path: str) -> None:
     
     # Step 3: Add tables to the document using the different dataframes
     latex_doc += create_base_table(name + " and Standard Deviation", df1, df2) 
+    latex_doc += create_friedman_table(name + " and Standard Deviation (Friedman Test)", df_og, df1, df2)
     latex_doc += create_wilconxon_pivot_table(name + " and Standard Deviation (Wilconxon Pivot)", df_og, df1, df2)
     latex_doc += create_wilconxon_table("Wilconxon Test 1vs1", df_og)
 
@@ -386,3 +566,6 @@ def create_tables_latex(csv_path: str) -> None:
         os.makedirs("outputs/tables")
     with open(f"outputs/tables/{name}&std_table.tex", "w") as f:
         f.write(latex_doc)
+
+data = "data.csv"
+create_tables_latex(data)

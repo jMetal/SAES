@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
 from scipy.stats import rankdata, chi2
-from csv_processor import process_csv_extended
 from scipy.stats import rankdata
 from scipy.stats import mannwhitneyu
 
-def friedman_test(csv_path: str, descending=True) -> pd.DataFrame:
+def friedman_test(data: pd.DataFrame, descending=True) -> pd.DataFrame:
     """Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple problems.
 
     The Friedman test is a non-parametric statistical test used to detect differences in treatments (or algorithms) across multiple groups. The null hypothesis is that all algorithms perform equivalently, which implies their average ranks should be equal. The test is particularly useful when the data does not meet the assumptions of parametric tests like ANOVA.
@@ -34,8 +33,6 @@ def friedman_test(csv_path: str, descending=True) -> pd.DataFrame:
     
     :seealso: `scipy.stats.chi2` for chi-square distribution functions.
     """
-
-    data, _, _ = process_csv_extended(csv_path)
 
     # Initial Checking
     if isinstance(data, pd.DataFrame):

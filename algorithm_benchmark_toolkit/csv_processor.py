@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from utils import check_normality
+from algorithm_benchmark_toolkit.utils import check_normality
 
 def process_csv_basic(file_path: str, delimiter: str = ",") -> pd.DataFrame:
     """
