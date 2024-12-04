@@ -58,7 +58,7 @@ def create_boxplot_for_problem(df_data: pd.DataFrame, problem_name: str) -> None
     # Save the plot as a PNG image
     plt.savefig(f"outputs/boxplots/boxplot_{problem_name}.png")
 
-def generate_boxplots_from_csv(csv_path: str) -> None:
+def generate_boxplots_from_csv(csv_path: str | pd.DataFrame) -> None:
     """
     Generates boxplots for all problems in the given CSV file.
 
@@ -70,7 +70,7 @@ def generate_boxplots_from_csv(csv_path: str) -> None:
     """
     
     # Load the CSV data into a DataFrame
-    df_data = pd.read_csv(csv_path, delimiter=",")
+    df_data = pd.read_csv(csv_path, delimiter=",") if isinstance(csv_path, str) else csv_path
 
     # Get a list of unique problems in the dataset
     problems = df_data["Problem"].unique()

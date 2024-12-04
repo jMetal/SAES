@@ -30,4 +30,4 @@ jobs:
         hatch build && pip install $(find dist -name "*.tar.gz")
     - name: Test with unittest
       run: |
-        python -m unittest discover tests
+        coverage run -m unittest discover tests
