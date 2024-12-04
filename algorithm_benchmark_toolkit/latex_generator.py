@@ -1,11 +1,11 @@
 from algorithm_benchmark_toolkit.csv_processor import process_csv_extended
 from algorithm_benchmark_toolkit.csv_processor import process_csv_basic
 from algorithm_benchmark_toolkit.stats import wilcoxon_test
-from algorithm_benchmark_toolkit. stats import friedman_test
+from algorithm_benchmark_toolkit.stats import friedman_test
 import pandas as pd
 import os
 
-def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def __create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
     Generates a LaTeX table that compares two dataframes `df1` and `df2` based on the performance scores
     of different algorithms, with specific formatting to highlight the highest and second-highest scores.
@@ -95,7 +95,7 @@ def create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     # Return the final LaTeX code for the table
     return latex_doc
 
-def create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def __create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool) -> str:
     """
     Generates a LaTeX formatted table for presenting the results of a Friedman test along with 
     the performance scores of different algorithms for various problems. The table includes 
@@ -118,6 +118,8 @@ def create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
         A DataFrame containing the standard deviations for each algorithm's performance 
         scores, where each row corresponds to a different problem, and the columns 
         correspond to the same algorithms.
+    maximize : bool
+        A boolean indicating whether the metric should be maximized (True) or minimized (False).
 
     Returns:
     -------
@@ -216,7 +218,7 @@ def create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
 
                 # Perform the Friedman test and store the result
                 try:
-                    df_friedman_result = friedman_test(df_friedman)
+                    df_friedman_result = friedman_test(df_friedman, maximize)
                     if df_friedman_result["Results"]["p-value"] < 0.05:
                         row_data += "+ & "
                     else:
@@ -252,7 +254,7 @@ def create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
     # Return the final LaTeX code for the table
     return latex_doc
 
-def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
+def __create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     """
     Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
 
@@ -346,7 +348,7 @@ def create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     # Return the final LaTeX code for the table
     return latex_doc
 
-def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def __create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
     Generates a LaTeX table comparing the performance scores of different algorithms using two dataframes (`df1` and `df2`)
     and performs statistical comparisons via the Wilcoxon signed-rank test.
@@ -496,7 +498,7 @@ def create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFr
     # Return the final LaTeX code for the table
     return latex_doc
 
-def create_tables_latex(csv_path: str) -> None:
+def __create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool) -> None:
     """
     Generates a LaTeX document that compares various algorithms based on statistical metrics 
     (median, standard deviation, interquartile range, and mean) derived from a CSV file.
@@ -512,6 +514,10 @@ def create_tables_latex(csv_path: str) -> None:
     csv_path : str
         The path to the CSV file containing the algorithm data. The file should have algorithms as 
         columns and their corresponding data values as rows.
+    metric : str
+        The metric to be used for comparison (e.g., accuracy, error rate, F1 score).
+    maximize : bool
+        A boolean indicating whether the metric should be maximized (True) or minimized (False).
 
     Returns:
     -------
@@ -532,8 +538,8 @@ def create_tables_latex(csv_path: str) -> None:
     """
 
     # Step 1: Process the CSV data to compute mean/median and standard deviation (std)
-    df1, df2, name = process_csv_extended(csv_path, extra=True)
-    df_og = process_csv_basic(csv_path)
+    df1, df2, name = process_csv_extended(csv, metric, extra=True)
+    df_og = process_csv_basic(csv, metric)
 
     # Step 2: Initialize the LaTeX document content
     latex_doc = """
@@ -551,10 +557,10 @@ def create_tables_latex(csv_path: str) -> None:
     \\section{Tables}"""
     
     # Step 3: Add tables to the document using the different dataframes
-    latex_doc += create_base_table(name + " and Standard Deviation", df1, df2) 
-    latex_doc += create_friedman_table(name + " and Standard Deviation (Friedman Test)", df_og, df1, df2)
-    latex_doc += create_wilconxon_pivot_table(name + " and Standard Deviation (Wilconxon Pivot)", df_og, df1, df2)
-    latex_doc += create_wilconxon_table("Wilconxon Test 1vs1", df_og)
+    latex_doc += __create_base_table(f"{name} and Standard Deviation ({metric})", df1, df2) 
+    latex_doc += __create_friedman_table(f"{name} and Standard Deviation - Friedman Test ({metric})", df_og, df1, df2, maximize)
+    latex_doc += __create_wilconxon_pivot_table(f"{name} and Standard Deviation - Wilconxon Pivot ({metric})", df_og, df1, df2)
+    latex_doc += __create_wilconxon_table(f"Wilconxon Test 1vs1 ({metric})", df_og)
 
     # Step 4: Close the LaTeX document structure
     latex_doc += """
@@ -564,8 +570,54 @@ def create_tables_latex(csv_path: str) -> None:
     # Step 5: Save the LaTeX document to a file
     if not os.path.exists("outputs/tables"):
         os.makedirs("outputs/tables")
-    with open(f"outputs/tables/{name}&std_table.tex", "w") as f:
+    with open(f"outputs/tables/{name}&std_table_{metric}.tex", "w") as f:
         f.write(latex_doc)
 
-data = "data.csv"
-create_tables_latex(data)
+def create_tables_latex_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
+    """
+    Generates LaTeX tables based on the provided metrics and data.
+
+    This function processes the given metrics and data (either as file paths or Pandas DataFrames),
+    and for each metric, filters the data to match the corresponding metric. Then, it generates a LaTeX 
+    table for each metric, using the helper function __create_tables_latex().
+
+    Args:
+        data (str | pd.DataFrame): The data to be processed. This can either be a string representing
+                                    the file path to a CSV file, or a Pandas DataFrame containing the data.
+        metrics (str | pd.DataFrame): The metrics to use for generating the LaTeX tables. This can either
+                                      be a string representing the file path to a CSV file, or a Pandas DataFrame 
+                                      containing the metrics.
+
+    Returns:
+        None: This function does not return any value. It generates LaTeX tables as side effects.
+
+    Example:
+        # If `data.csv` contains the data and `metrics.csv` contains the metrics:
+        create_tables_latex_metrics("data.csv", "metrics.csv")
+
+        # If both `data` and `metrics` are Pandas DataFrames:
+        create_tables_latex_metrics(data_df, metrics_df)
+    
+    Notes:
+        The function assumes that the metrics DataFrame has at least two columns: "Metric" and "Maximize".
+        The data is filtered based on the "Metric" column, and LaTeX tables are generated accordingly.
+        The descending flag in the metrics is used to indicate whether the metric should be maximized.
+    """
+
+    # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
+    df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
+
+    # Load the data DataFrame, either from a CSV file or as an existing DataFrame
+    df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+
+    # Iterate through each row in the metrics DataFrame
+    for _, row in df_m.iterrows():
+        # Extract the metric name and the 'Maximize' flag (whether to maximize the metric)
+        metric = row["Metric"]
+        descending = row["Maximize"]
+
+        # Filter the data for the rows where the 'Metric' matches the current metric
+        df_n = df[df["Metric"] == metric].reset_index()
+
+        # Call the helper function to create a LaTeX table for the current metric
+        __create_tables_latex(df_n, metric, descending)

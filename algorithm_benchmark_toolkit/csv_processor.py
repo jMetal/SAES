@@ -2,16 +2,16 @@ import pandas as pd
 import os
 from algorithm_benchmark_toolkit.utils import check_normality
 
-def process_csv_basic(file_path: str, delimiter: str = ",") -> pd.DataFrame:
+def process_csv_basic(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     """
     Reads a CSV file and processes the data to generate statistical metrics like median and mean for each problem and algorithm.
     It returns pivoted DataFrames with these metrics.
 
-    :param file_path: str
-        The path to the CSV file to be processed.
+    :param df: pandas.DataFrame
+        The DataFrame to be processed.
         
-    :param delimiter: str, default ","
-        The delimiter used in the CSV file. By default, it is a comma.
+    :param metric: str
+        The metric to be used for the calculations. It should match the column name in the CSV file.
         
     :return: pandas.DataFrame
         DataFrame with the median or mean 'Metric Value' values, indexed by 'Problem' and columns for each 'Algorithm'.
@@ -26,26 +26,21 @@ def process_csv_basic(file_path: str, delimiter: str = ",") -> pd.DataFrame:
     if not os.path.exists("CSVs"):
         os.mkdir("CSVs")
 
-    # Read the CSV file into a pandas DataFrame using the specified delimiter
-    df = pd.read_csv(file_path, delimiter=delimiter)
-    df.to_csv(f"CSVs/{file_path.split('/')[-1]}", index=False)
+    # Save the data to a CSV file
+    df.to_csv(f"CSVs/data_{metric}.csv", index=False)
 
     return df
 
-def process_csv_extended(file_path: str, delimiter: str = ",", extra: bool = False) -> pd.DataFrame:
+def process_csv_extended(df: pd.DataFrame, metric: str, extra: bool = False) -> pd.DataFrame:
     """
     Reads a CSV file and processes the data to generate statistical metrics like median, mean and standard deviation 
     for each problem and algorithm. It returns pivoted DataFrames with these metrics.
 
-    :param file_path: str
-        The path to the CSV file to be processed.
+    :param df: pandas.DataFrame
+        The DataFrame to be processed.
         
-    :param delimiter: str, default ","
-        The delimiter used in the CSV file. By default, it is a comma.
-        
-    :param median: bool, default True
-        If True, the median of the 'Metric Value' column is calculated for each combination of 'Problem' and 'Algorithm'.
-        If False, the mean of the 'Metric Value' column is calculated instead.
+    :param metric: str
+        The metric to be used for the calculations. It should match the column name in the CSV file.
         
     :param extra: bool, default False
         If True, additional metric: standard deviation is also calculated 
@@ -66,10 +61,6 @@ def process_csv_extended(file_path: str, delimiter: str = ",", extra: bool = Fal
     if not os.path.exists("CSVs"):
         os.mkdir("CSVs")
 
-    # Read the CSV file into a pandas DataFrame using the specified delimiter
-    df = pd.read_csv(file_path, delimiter=delimiter)
-    df.to_csv(f"CSVs/{file_path.split('/')[-1]}", index=False)
-
     # Group by 'Problem' and 'Algorithm', then calculate the median or mean of the 'Metric Value' column
     normal = check_normality(df)
 
@@ -83,12 +74,16 @@ def process_csv_extended(file_path: str, delimiter: str = ",", extra: bool = Fal
 
     # If extra is True, calculate the standard deviation
     df_std_pivot = None
+    name = "Mean" if normal else "Median"
     if extra:
         # Calculate the standard deviation of 'Metric Value' for each 'Problem' and 'Algorithm'
         df_std = df.groupby(['Problem', 'Algorithm'])['MetricValue'].std().reset_index()
 
         # Pivot the standard deviation DataFrames to match the 'Problem' index and 'Algorithm' columns
         df_std_pivot = df_std.pivot(index='Problem', columns='Algorithm', values='MetricValue')
+        df_std_pivot.to_csv(f"CSVs/data_std_{name}_{metric}.csv", index=False)
+
+    df_pivot.to_csv(f"CSVs/data_{name}_{metric}.csv", index=False)
 
     # Return the pivoted DataFrame with the requested metrics
-    return df_pivot, df_std_pivot, "Mean" if normal else "Median"
+    return df_pivot, df_std_pivot, name

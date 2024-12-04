@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-def create_boxplot_for_problem(df_data: pd.DataFrame, problem_name: str) -> None:
+def __create_boxplot_for_problem(csv: pd.DataFrame, problem_name: str, metric: str) -> None:
     """
     Creates a boxplot comparing different algorithms performance on a given problem.
 
@@ -11,13 +11,16 @@ def create_boxplot_for_problem(df_data: pd.DataFrame, problem_name: str) -> None
     df_problem (pd.DataFrame): A DataFrame containing the data for a specific problem,
                                with columns for algorithms and performance marks.
     problem_name (str): The name of the problem for which the boxplot is being created.
+    metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
 
     Returns:
     None: The function saves the boxplot as a PNG file.
     """
 
+    df = pd.read_csv(csv, delimiter=",") if isinstance(csv, str) else csv
+
     # Filter the data for the current problem
-    df_problem = df_data[df_data["Problem"] == problem_name]
+    df_problem = df[df["Problem"] == problem_name]
      
     # Set the figure size for the plot
     plt.figure(figsize=(10, 6))  
@@ -33,7 +36,7 @@ def create_boxplot_for_problem(df_data: pd.DataFrame, problem_name: str) -> None
     )
 
     # Set title and labels
-    plt.title(f'Comparison of Algorithms for {problem_name}', fontsize=16, weight='bold', pad=20)
+    plt.title(f'Comparison of Algorithms for {problem_name} for {metric}', fontsize=16, weight='bold', pad=20)
     plt.ylabel('Performance (Mark)', fontsize=12)
 
     # Rotate the x-axis labels for better visibility
@@ -56,30 +59,50 @@ def create_boxplot_for_problem(df_data: pd.DataFrame, problem_name: str) -> None
     plt.tight_layout()
 
     # Save the plot as a PNG image
-    plt.savefig(f"outputs/boxplots/boxplot_{problem_name}.png")
+    plt.savefig(f"outputs/boxplots/{metric}/{problem_name}.png")
 
-def generate_boxplots_from_csv(csv_path: str | pd.DataFrame) -> None:
+def __generate_boxplots(csv: pd.DataFrame, metric: str) -> None:
     """
     Generates boxplots for all problems in the given CSV file.
 
     Parameters:
     csv_path (str): The path to the CSV file containing problem, algorithm, and performance data.
+    metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
 
     Returns:
     None: The function creates a series of boxplots, one for each unique problem in the CSV file.
     """
     
     # Load the CSV data into a DataFrame
-    df_data = pd.read_csv(csv_path, delimiter=",") if isinstance(csv_path, str) else csv_path
+    df = pd.read_csv(csv, delimiter=",") if isinstance(csv, str) else csv
 
     # Get a list of unique problems in the dataset
-    problems = df_data["Problem"].unique()
+    problems = df["Problem"].unique()
     
     # Ensure the output directory for boxplots exists
-    if not os.path.exists("outputs/boxplots"):
-        os.makedirs("outputs/boxplots")
+    if not os.path.exists(f"outputs/boxplots/{metric}"):
+        os.makedirs(f"outputs/boxplots/{metric}")
 
     # Create a boxplot for each problem
     for problem in problems:        
         # Create and save the boxplot for the current problem
-        create_boxplot_for_problem(df_data, problem)
+        __create_boxplot_for_problem(df, problem, metric)
+
+def generate_boxplots_from_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
+    
+    # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
+    df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
+
+    # Load the data DataFrame, either from a CSV file or as an existing DataFrame
+    df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+
+    # Iterate through each row in the metrics DataFrame
+    for _, row in df_m.iterrows():
+        # Get the metric and whether it should be sorted in descending order
+        metric = row["Metric"]
+
+        # Filter the data for the rows where the 'Metric' matches the current metric
+        df_n = df[df["Metric"] == metric].reset_index()
+
+        # Call the helper function to create a LaTeX table for the current metric
+        __generate_boxplots(df_n, metric)
