@@ -53,7 +53,7 @@ def __create_base_table(title: str, df1: pd.DataFrame, df2: pd.DataFrame) -> str
 
         # Sort data by median score (descending) and by standard deviation (ascending) to identify best scores
         sorted_data = data.sort_values(by=[title, 'std_dev'], ascending=[False, True])
-
+        
         # Extract the indices of the highest and second-highest scores based on the sorting
         max_idx, second_idx = sorted_data.index[0], sorted_data.index[1]
     
@@ -621,3 +621,4 @@ def create_tables_latex_metrics(data: str | pd.DataFrame, metrics: str | pd.Data
 
         # Call the helper function to create a LaTeX table for the current metric
         __create_tables_latex(df_n, metric, descending)
+

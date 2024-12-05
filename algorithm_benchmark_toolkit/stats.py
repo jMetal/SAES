@@ -38,9 +38,6 @@ def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
     if isinstance(data, pd.DataFrame):
         data = data.values
 
-    if data.ndim != 2:
-        raise ValueError("Initialization ERROR: Data must have two dimensions.")
-    
     n_samples, k = data.shape
     if k < 2:
         raise ValueError("Initialization ERROR: The data must have at least two columns.")
