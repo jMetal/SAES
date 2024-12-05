@@ -3,13 +3,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-def __create_boxplot_for_problem(csv: pd.DataFrame, problem_name: str, metric: str) -> None:
+def create_boxplot_for_problem(csv: str | pd.DataFrame, problem_name: str, metric: str) -> None:
     """
     Creates a boxplot comparing different algorithms performance on a given problem.
 
     Parameters:
-    df_problem (pd.DataFrame): A DataFrame containing the data for a specific problem,
-                               with columns for algorithms and performance marks.
+    df_problem (pd.DataFrame): A DataFrame containing the data for a specific problem, with columns for algorithms and performance marks.
     problem_name (str): The name of the problem for which the boxplot is being created.
     metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
 
@@ -61,20 +60,17 @@ def __create_boxplot_for_problem(csv: pd.DataFrame, problem_name: str, metric: s
     # Save the plot as a PNG image
     plt.savefig(f"outputs/boxplots/{metric}/{problem_name}.png")
 
-def __generate_boxplots(csv: pd.DataFrame, metric: str) -> None:
+def __generate_boxplots(df: pd.DataFrame, metric: str) -> None:
     """
     Generates boxplots for all problems in the given CSV file.
 
     Parameters:
-    csv_path (str): The path to the CSV file containing problem, algorithm, and performance data.
+    df (pd.Dataframe): The DataFrame containing the data to be plotted.
     metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
 
     Returns:
     None: The function creates a series of boxplots, one for each unique problem in the CSV file.
     """
-    
-    # Load the CSV data into a DataFrame
-    df = pd.read_csv(csv, delimiter=",") if isinstance(csv, str) else csv
 
     # Get a list of unique problems in the dataset
     problems = df["Problem"].unique()
@@ -86,9 +82,16 @@ def __generate_boxplots(csv: pd.DataFrame, metric: str) -> None:
     # Create a boxplot for each problem
     for problem in problems:        
         # Create and save the boxplot for the current problem
-        __create_boxplot_for_problem(df, problem, metric)
+        create_boxplot_for_problem(df, problem, metric)
 
 def generate_boxplots_from_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
+    """
+    Generates boxplots for all problems in the given CSV file dividing them by the metric.
+
+    Parameters:
+    data (pd.DataFrame | str): The DataFrame or CSV file containing the data to be plotted.
+    metrics (pd.DataFrame | str): The DataFrame or CSV file containing the metrics to be used for plotting.
+    """
     
     # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
     df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
