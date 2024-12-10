@@ -1,7 +1,7 @@
 API Documentation
 =================
 
-The following sections document the public API of the `algorithm-benchmark-toolkit` library.
+The following sections document the public API of the `SAES` library.
 
 .. toctree::
    :maxdepth: 1

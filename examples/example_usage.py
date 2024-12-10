@@ -1,5 +1,5 @@
-from algorithm_benchmark_toolkit.plots import generate_boxplots_from_csv
-from algorithm_benchmark_toolkit.latex_generator import create_tables_latex_metrics
+from SAES.plots import generate_boxplots_from_csv
+from SAES.latex_generator import create_tables_latex_metrics
 import subprocess
 from pathlib import Path
 

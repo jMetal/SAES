@@ -1,5 +1,5 @@
 import unittest
-from algorithm_benchmark_toolkit.plots import generate_boxplots_from_csv
+from SAES.plots import generate_boxplots_from_csv
 from pathlib import Path
 import pandas as pd
 import os
@@ -18,12 +18,12 @@ class TestPlots(unittest.TestCase):
             'Algorithm': ['A', 'A', 'B', 'B', 'A', 'A', 'B', 'B'],
             'Problem': ['P1', 'P1', 'P1', 'P1', 'P2', 'P2', 'P2', 'P2'],
             'MetricValue': [1, 0, 1, 1, 1, 1, 1, 1],
-            'Metric': ['Python', 'Python', 'Python', 'Python', 'Python', 'Python', 'Python', 'Python']
+            'MetricName': ['Python', 'Python', 'Python', 'Python', 'Python', 'Python', 'Python', 'Python']
         })
 
         # Create a mock metrics DataFrame with metric properties (e.g., whether to maximize the metric)
         metrics = pd.DataFrame({
-            'Metric': ['Python'],
+            'MetricName': ['Python'],
             'Maximize': [True]
         })
         

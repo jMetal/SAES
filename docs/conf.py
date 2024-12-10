@@ -9,11 +9,11 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path('..', 'algorithm_benchmark_toolkit').resolve()))
+sys.path.insert(0, str(Path('..', 'SAES').resolve()))
 
-project = 'Algorithm Benchmark Toolkit'
-copyright = '2024, Emilio Rodrigo Carreira Villalta'
-author = 'Emilio Rodrigo Carreira Villalta'
+project = 'SAES'
+copyright = '2024, Emilio Rodrigo Carreira Villalta and Antonio J. Nebro'
+author = 'Emilio Rodrigo Carreira Villalta and Antonio J. Nebro'
 release = 'dev'
 
 # -- General configuration ---------------------------------------------------

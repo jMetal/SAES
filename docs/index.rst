@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Algorithm Benchmark Toolkit
+SAES
 ===========================
 
-This is the documentation for the `algorithm-benchmark-toolkit` python library, which is a Python library designed to analyze and compare the performance of different algorithms across multiple problems automatically. The tool allows you to: 
+This is the documentation for the `SAES` python library, which is a Python library designed to analyze and compare the performance of different algorithms across multiple problems automatically. The tool allows you to: 
 
 1. **Process data from CSV files** containing experiment results.  
 2. **Perform advanced statistical studies**, such as Friedman tests or post hoc analysis.  
@@ -29,8 +29,7 @@ Once you have activated the virtual environment, you can install the project dep
 
 .. code-block:: bash
 
-   pip install algorithm-benchmark-toolkit
-   cd algorithm-benchmark-toolkit
+   pip install SAES
 
 .. toctree::
    :maxdepth: 2

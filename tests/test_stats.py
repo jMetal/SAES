@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from algorithm_benchmark_toolkit.stats import friedman_test, wilcoxon_test
+from SAES.stats import friedman_test, wilcoxon_test
 
 class TestStatisticalTests(unittest.TestCase):
     

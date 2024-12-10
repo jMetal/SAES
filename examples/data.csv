@@ -1,4 +1,4 @@
-Algorithm,Problem,Metric,Id,MetricValue
+Algorithm,Problem,MetricName,ExecutionId,MetricValue
 mistralai/mistral-large,Subasi2016,Java,0,1.0
 mistralai/mistral-large,Subasi2016,Java,1,0.0
 mistralai/mistral-large,Subasi2016,Java,2,0.0

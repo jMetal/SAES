@@ -13,7 +13,7 @@ The first feauture of the library is the ability to generate boxplots of the res
 .. code-block:: python
 
     import pandas as pd
-    from algorithm_benchmark_toolkit.plots import create_boxplot_for_problem
+    from SAES.plots import create_boxplot_for_problem
 
     # Load the data from the CSV file
     data = pd.read_csv('data.csv')
@@ -24,7 +24,7 @@ or
 
 .. code-block:: python
 
-    from algorithm_benchmark_toolkit.plots import create_boxplot_for_problem
+    from SAES.plots import create_boxplot_for_problem
 
     # Path to the CSV file containing the benchmarking data.
     data = "data.csv"
@@ -33,7 +33,7 @@ or
 
 The above code snippet generates a boxplot of the results of the experiments for the problem "ProblemA" and the metric "MetricX". The boxplot is saved as a PNG file in the current working directory and it will looks something like this:
 
-.. image:: Gao2020.png
+.. image:: WFG9.png
    :alt: Diagrama del sistema
    :width: 400px
    :align: center
@@ -46,7 +46,7 @@ If you prefer the library to generate all the boxplots for all the problems and 
 .. code-block:: python
 
     import pandas as pd
-    from algorithm_benchmark_toolkit.plots import generate_boxplots_from_csv
+    from SAES.plots import generate_boxplots_from_csv
 
     # Load the data from the CSV file
     data = pd.read_csv('data.csv')
@@ -60,7 +60,7 @@ or
 
 .. code-block:: python
 
-    from algorithm_benchmark_toolkit.plots import generate_boxplots_from_csv
+    from SAES.plots import generate_boxplots_from_csv
 
     # Path to the CSV file containing the benchmarking data.
     data = "data.csv"

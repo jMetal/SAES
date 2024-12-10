@@ -1,14 +1,12 @@
 Example LaTeX document
 ======================
 
-
-
 The last feauture of the library is the ability to generate LaTeX reports of the results of the experiments using different statistical tests. The following code snippet demonstrates how to generate a LaTeX report of the results of the experiments:
 
 .. code-block:: python
 
     import pandas as pd
-    from algorithm_benchmark_toolkit.latex_generator import create_tables_latex_metrics
+    from SAES.latex_generator import create_tables_latex_metrics
 
     # Load the data from the CSV file
     data = pd.read_csv('data.csv')
@@ -22,7 +20,7 @@ or
 
 .. code-block:: python
 
-    from algorithm_benchmark_toolkit.latex_generator import create_tables_latex_metrics
+    from SAES.latex_generator import create_tables_latex_metrics
 
     # Path to the CSV file containing the benchmarking data.
     data = "data.csv"

@@ -1,5 +1,5 @@
 import unittest
-from algorithm_benchmark_toolkit.utils import check_normality
+from SAES.utils import check_normality
 import pandas as pd
 
 class TestUtils(unittest.TestCase):

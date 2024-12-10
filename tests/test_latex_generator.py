@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 import os
 import shutil
-from algorithm_benchmark_toolkit.latex_generator import create_tables_latex_metrics
+from SAES.latex_generator import create_tables_latex_metrics
 
 def remove_files():
     """Clean up directories and files created during testing."""
@@ -15,7 +15,7 @@ class TestCreateTablesLatexMetrics(unittest.TestCase):
     def setUp(self):
         # Sample data for testing
         self.data_csv = StringIO("""
-Algorithm,Problem,Metric,Id,MetricValue
+Algorithm,Problem,MetricName,ExecutionId,MetricValue
 mistralai/mistral-large,Subasi2016,Java,0,1.0
 mistralai/mistral-large,Subasi2016,Python,1,2.5
 mistralai/mistral-large,Subasi2016,Java,2,1.5
@@ -28,7 +28,7 @@ mistralai/mistral-small,Subasi2016,Python,3,2.8
         )
         
         self.metrics_csv = StringIO("""
-Metric,Maximize
+MetricName,Maximize
 Python,True
 Java,True
 """     )
