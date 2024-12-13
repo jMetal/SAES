@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from SAES.stats import friedman_test, wilcoxon_test
+from SAES.statistical_tests.non_parametrical import friedman_test, wilcoxon_test
 
 class TestStatisticalTests(unittest.TestCase):
     

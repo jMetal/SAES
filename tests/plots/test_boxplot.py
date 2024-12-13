@@ -1,5 +1,5 @@
 import unittest
-from SAES.plots import generate_boxplots_from_csv
+from SAES.plots.boxplot import generate_boxplots_from_csv
 from pathlib import Path
 import pandas as pd
 import os

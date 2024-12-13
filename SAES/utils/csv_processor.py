@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from SAES.utils import check_normality
+from SAES.utils.statistical_checks import check_normality
 
 def process_csv_basic(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     """

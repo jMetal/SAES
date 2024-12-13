@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 import os
 import shutil
-from SAES.latex_generator import create_tables_latex_metrics
+from SAES.latex_generation.latex_tables import create_tables_latex_metrics
 
 def remove_files():
     """Clean up directories and files created during testing."""

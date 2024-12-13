@@ -1,7 +1,7 @@
-from SAES.csv_processor import process_csv_extended
-from SAES.csv_processor import process_csv_basic
-from SAES.stats import wilcoxon_test
-from SAES.stats import friedman_test
+from SAES.utils.csv_processor import process_csv_extended
+from SAES.utils.csv_processor import process_csv_basic
+from SAES.statistical_tests.non_parametrical import wilcoxon_test
+from SAES.statistical_tests.non_parametrical import friedman_test
 import pandas as pd
 import os
 
