@@ -1,7 +1,7 @@
 plots.py
 ========
 
-.. automodule:: plots
+.. automodule:: plots.boxplot
    :members:
    :undoc-members:
    :show-inheritance:

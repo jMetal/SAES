@@ -1,0 +1,58 @@
+name: Deploy Phinx Documentation to GitHub Pages
+
+on:
+  # Ejecuta el workflow al realizar un push en la rama principal
+  push:
+    branches: ["main"]
+
+  # Permite ejecutar manualmente desde la pestaña de Actions
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job de construcción
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Clona el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Instala dependencias (si aplica)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install hatch
+          hatch build && pip install $(find dist -name "*.tar.gz")
+
+      # Cambia al directorio `docs` y genera la documentación HTML
+      - name: Build HTML documentation
+        run: |
+          cd docs
+          make html
+
+      # Sube los archivos generados como artefacto
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_build/html # Ruta de salida de la documentación generada
+
+  # Job de despliegue
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
