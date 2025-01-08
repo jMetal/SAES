@@ -2,6 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+from SAES.utils.csv_processor import process_csv
+
+from SAES.logger import get_logger
+logger = get_logger(__name__)
 
 def create_boxplot_for_problem(csv: str | pd.DataFrame, problem_name: str, metric: str) -> None:
     """
@@ -15,7 +19,7 @@ def create_boxplot_for_problem(csv: str | pd.DataFrame, problem_name: str, metri
     Returns:
     None: The function saves the boxplot as a PNG file.
     """
-
+    # Load the data from the CSV file
     df = pd.read_csv(csv, delimiter=",") if isinstance(csv, str) else csv
 
     # Filter the data for the current problem
@@ -58,34 +62,10 @@ def create_boxplot_for_problem(csv: str | pd.DataFrame, problem_name: str, metri
     plt.tight_layout()
 
     # Save the plot as a PNG image
-    plt.savefig(f"outputs/boxplots/{metric}/{problem_name}.png")
+    plt.savefig(os.path.join(os.getcwd(), "outputs", "boxplots", metric, f"{problem_name}.png"))
     
     # Close the plot to free up memory
     plt.close()
-
-def __generate_boxplots(df: pd.DataFrame, metric: str) -> None:
-    """
-    Generates boxplots for all problems in the given CSV file.
-
-    Parameters:
-    df (pd.Dataframe): The DataFrame containing the data to be plotted.
-    metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
-
-    Returns:
-    None: The function creates a series of boxplots, one for each unique problem in the CSV file.
-    """
-
-    # Get a list of unique problems in the dataset
-    problems = df["Problem"].unique()
-    
-    # Ensure the output directory for boxplots exists
-    if not os.path.exists(f"outputs/boxplots/{metric}"):
-        os.makedirs(f"outputs/boxplots/{metric}")
-
-    # Create a boxplot for each problem
-    for problem in problems:        
-        # Create and save the boxplot for the current problem
-        create_boxplot_for_problem(df, problem, metric)
 
 def generate_boxplots_from_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
     """
@@ -95,21 +75,26 @@ def generate_boxplots_from_csv(data: str | pd.DataFrame, metrics: str | pd.DataF
     data (pd.DataFrame | str): The DataFrame or CSV file containing the data to be plotted.
     metrics (pd.DataFrame | str): The DataFrame or CSV file containing the metrics to be used for plotting.
     """
-    
-    # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
-    df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
 
-    # Load the data DataFrame, either from a CSV file or as an existing DataFrame
-    df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+    # Process the input data and metrics
+    data = process_csv(data, metrics)
 
-    # Iterate through each row in the metrics DataFrame
-    for _, row in df_m.iterrows():
-        # Get the metric and whether it should be sorted in descending order
-        metric = row["MetricName"]
+    # Process the input data and metrics
+    for metric, (df_m, _) in data.items():
+        # Generate boxplots for the current metric
+        os.makedirs(os.path.join(os.getcwd(), "outputs", "boxplots", metric), exist_ok=True)
 
-        # Filter the data for the rows where the 'Metric' matches the current metric
-        df_n = df[df["MetricName"] == metric].reset_index()
+        # Generate boxplots for the current metric
+        for problem in df_m["Problem"].unique():
+            # Create and save the boxplot for the current problem
+            create_boxplot_for_problem(df_m, problem, metric)
 
-        # Call the helper function to create a LaTeX table for the current metric
-        __generate_boxplots(df_n, metric)
-        
+        logger.warning(f"Boxplots for metric {metric} saved to {os.path.join(os.getcwd(), 'outputs', 'boxplots', metric)}")
+
+if __name__ == "__main__":
+    data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
+    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
+
+    data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
+    metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
+    generate_boxplots_from_csv(data, metrics)

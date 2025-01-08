@@ -1,47 +1,19 @@
-from SAES.utils.csv_processor import process_csv_extended
-from SAES.utils.csv_processor import process_csv_basic
 from SAES.statistical_tests.non_parametrical import wilcoxon_test
 from SAES.statistical_tests.non_parametrical import friedman_test
 import pandas as pd
-import os
 
-def __create_base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
-    Generates a LaTeX table that compares two dataframes `df1` and `df2` based on the performance scores
-    of different algorithms, with specific formatting to highlight the highest and second-highest scores.
+    Generates a LaTeX table with performance statistics for algorithms across different problems.
 
-    The function assumes that `df1` and `df2` are pandas DataFrames with the same structure, where:
-    - The rows represent the entities being compared (e.g., algorithms or methods).
-    - The columns represent different algorithms, and the values are performance scores (e.g., accuracy, error, etc.).
-
-    The LaTeX table will:
-    - Display the comparison of scores for each algorithm.
-    - Highlight the maximum score with a light gray background and the second-highest score with a darker gray background.
-    - Include the algorithm names as column headers.
-    - Format the values of `df1` and `df2` in a specific LaTeX math format.
-
-    Args:
-    - title (str): The title for the LaTeX table.
-    - df1 (pandas.DataFrame): The first dataframe containing performance scores for the algorithms.
-    - df2 (pandas.DataFrame): The second dataframe containing performance scores for the algorithms.
+    Parameters:
+    - title (str): The title for the table.
+    - df_og (pd.DataFrame): Original DataFrame containing the algorithms and problems.
+    - df1 (pd.DataFrame): DataFrame with median values for each algorithm and problem.
+    - df2 (pd.DataFrame): DataFrame with standard deviation values for each algorithm and problem.
 
     Returns:
-    - str: A string containing the LaTeX code for the table.
-    """
-
-    """
-    Generates a LaTeX table comparing the performance of algorithms using the Wilcoxon signed-rank test.
-    The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm 
-    across different problems.
-
-    Args:
-        title (str): The title to be displayed in the LaTeX table caption.
-        df_og (pd.DataFrame): A DataFrame containing the raw data with columns 'Algorithm', 'Problem', 'ExecutionId', and 'MetricValue'.
-        df1 (pd.DataFrame): A DataFrame with the median values of each algorithm for each problem.
-        df2 (pd.DataFrame): A DataFrame with the standard deviation values of each algorithm for each problem.
-
-    Returns:
-        str: The LaTeX code for the table comparing algorithms' performance.
+    - str: LaTeX formatted table as a string.
     """
 
     # Extract the list of algorithms and problems from the DataFrame
@@ -117,75 +89,22 @@ def __create_base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2:
     # Return the final LaTeX code for the table
     return latex_doc
 
-def __create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool) -> str:
+def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool) -> str:
     """
-    Generates a LaTeX formatted table for presenting the results of a Friedman test along with 
-    the performance scores of different algorithms for various problems. The table includes 
-    median values, standard deviations, and Wilcoxon test results.
+    Generates a LaTeX table with performance statistics for algorithms across problems, including a Friedman test 
+    for statistical significance between algorithms.
 
     Parameters:
-    ----------
-    title : str
-        The title of the table, typically a description of the experiments or dataset.
-    
-    df_og : pd.DataFrame
-        A DataFrame containing the original data with columns 'Algorithm', 'Problem', 
-        and 'MetricValue'. This is used for performing the Friedman test on the data.
-        
-    df1 : pd.DataFrame
-        A DataFrame containing the median values of performance scores for the algorithms, 
-        where each row represents a different problem, and the columns correspond to different algorithms.
-    
-    df2 : pd.DataFrame
-        A DataFrame containing the standard deviations for each algorithm's performance 
-        scores, where each row corresponds to a different problem, and the columns 
-        correspond to the same algorithms.
-    maximize : bool
-        A boolean indicating whether the metric should be maximized (True) or minimized (False).
+    - title (str): The title for the table.
+    - df_og (pd.DataFrame): Original DataFrame containing the algorithms and problems.
+    - df1 (pd.DataFrame): DataFrame with median values for each algorithm and problem.
+    - df2 (pd.DataFrame): DataFrame with standard deviation values for each algorithm and problem.
+    - maximize (bool): Whether to maximize the metric for the Friedman test.
 
     Returns:
-    -------
-    str
-        A LaTeX string representing the formatted table that can be used in a LaTeX document.
-        The table displays the performance scores for each algorithm, the Wilcoxon test results, 
-        and highlights the best and second-best algorithms in each row.
-
-    Notes:
-    -----
-    - The LaTeX table generated will display the median scores from `df1` along with the corresponding 
-      standard deviations from `df2` for each algorithm.
-    - The table also includes a result of a Friedman test to check if there are significant differences 
-      between the algorithms for each problem.
-    - Algorithms are displayed with labels "Algorithm A", "Algorithm B", etc.
-    - For each problem, the best and second-best scores are highlighted with different shades of gray.
-    - If the Friedman test shows significant differences (p-value < 0.05), a "+" symbol is added in the 
-      table. Otherwise, an "=" symbol is used.
-    - This function assumes that the `friedman_test()` function is defined elsewhere in the code and 
-      performs the statistical test on the given data.
-
-    Example:
-    --------
-    title = "Comparison of Algorithms"
-    df_og = pd.DataFrame({
-        'Algorithm': ['A', 'B', 'C'],
-        'Problem': ['Problem 1', 'Problem 1', 'Problem 1'],
-        'MetricValue': [0.85, 0.87, 0.90]
-    })
-    df1 = pd.DataFrame({
-        'A': [0.85, 0.88],
-        'B': [0.87, 0.89],
-        'C': [0.90, 0.91]
-    }, index=['Problem 1', 'Problem 2'])
-    df2 = pd.DataFrame({
-        'A': [0.03, 0.04],
-        'B': [0.02, 0.03],
-        'C': [0.01, 0.02]
-    }, index=['Problem 1', 'Problem 2'])
-
-    latex_table = create_friedman_table(title, df_og, df1, df2)
-    print(latex_table)
+    - str: LaTeX formatted table as a string.
     """
-
+    
     # Extract the list of algorithms and problems from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
     problems = df_og["Problem"].unique().tolist()
@@ -283,7 +202,7 @@ def __create_friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, 
     # Return the final LaTeX code for the table
     return latex_doc
 
-def __create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
+def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     """
     Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
 
@@ -377,7 +296,7 @@ def __create_wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     # Return the final LaTeX code for the table
     return latex_doc
 
-def __create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
     Generates a LaTeX table comparing the performance of algorithms using the Wilcoxon signed-rank test.
     The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm 
@@ -507,128 +426,3 @@ def __create_wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.Data
 
     # Return the final LaTeX code for the table
     return latex_doc
-
-def __create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool) -> None:
-    """
-    Generates a LaTeX document that compares various algorithms based on statistical metrics 
-    (median, standard deviation, interquartile range, and mean) derived from a CSV file.
-
-    This function processes the provided CSV file to compute statistical measures (mean, median, 
-    standard deviation, and interquartile range) for each algorithm. It then constructs a LaTeX document 
-    that includes tables displaying these statistics for the algorithms in a structured format.
-
-    The LaTeX document is saved to the file "outputs/tables.tex".
-
-    Parameters:
-    ----------
-    csv_path : str
-        The path to the CSV file containing the algorithm data. The file should have algorithms as 
-        columns and their corresponding data values as rows.
-    metric : str
-        The metric to be used for comparison (e.g., accuracy, error rate, F1 score).
-    maximize : bool
-        A boolean indicating whether the metric should be maximized (True) or minimized (False).
-
-    Returns:
-    -------
-    None
-        This function does not return anything. It generates a LaTeX document and saves it to the 
-        specified location.
-
-    Notes:
-    -----
-    - The `process_csv_extended` function processes the CSV data and returns DataFrames with necessary 
-      statistics (median, mean, and standard deviation).
-    - The `create_base_table` and `create_wilconxon_table` functions are assumed to format the DataFrames 
-      into LaTeX-compatible tables for inclusion in the document.
-    
-    Example:
-    --------
-    create_tables_latex("data/comparison.csv")
-    """
-
-    # Step 1: Process the CSV data to compute mean/median and standard deviation (std)
-    df1, df2, name = process_csv_extended(csv, metric, extra=True)
-    df_og = process_csv_basic(csv, metric)
-
-    # Step 2: Initialize the LaTeX document content
-    latex_doc = """
-    \\documentclass{article}
-    \\title{AlgorithmsComparison}
-    \\usepackage{colortbl}
-    \\usepackage{float}
-    \\usepackage[table*]{xcolor}
-    \\usepackage{tabularx}
-    \\xdefinecolor{gray95}{gray}{0.65}
-    \\xdefinecolor{gray25}{gray}{0.8}
-    \\author{YourName}
-    \\begin{document}
-    \\maketitle
-    \\section{Tables}"""
-    
-    # Step 3: Add tables to the document using the different dataframes
-    latex_doc += __create_base_table(f"{name} and Standard Deviation ({metric})", df_og, df1, df2) 
-    latex_doc += __create_friedman_table(f"{name} and Standard Deviation - Friedman Test ({metric})", df_og, df1, df2, maximize)
-    latex_doc += __create_wilconxon_pivot_table(f"{name} and Standard Deviation - Wilconxon Pivot ({metric})", df_og, df1, df2)
-    latex_doc += __create_wilconxon_table(f"Wilconxon Test 1vs1 ({metric})", df_og)
-
-    # Step 4: Close the LaTeX document structure
-    latex_doc += """
-    \\end{document}
-    """
-
-    # Step 5: Save the LaTeX document to a file
-    if not os.path.exists("outputs/tables"):
-        os.makedirs("outputs/tables")
-    with open(f"outputs/tables/{name}&std_table_{metric}.tex", "w") as f:
-        f.write(latex_doc)
-
-def create_tables_latex_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
-    """
-    Generates LaTeX tables based on the provided metrics and data.
-
-    This function processes the given metrics and data (either as file paths or Pandas DataFrames),
-    and for each metric, filters the data to match the corresponding metric. Then, it generates a LaTeX 
-    table for each metric, using the helper function __create_tables_latex().
-
-    Args:
-        data (str | pd.DataFrame): The data to be processed. This can either be a string representing
-                                    the file path to a CSV file, or a Pandas DataFrame containing the data.
-        metrics (str | pd.DataFrame): The metrics to use for generating the LaTeX tables. This can either
-                                      be a string representing the file path to a CSV file, or a Pandas DataFrame 
-                                      containing the metrics.
-
-    Returns:
-        None: This function does not return any value. It generates LaTeX tables as side effects.
-
-    Example:
-        # If `data.csv` contains the data and `metrics.csv` contains the metrics:
-        create_tables_latex_metrics("data.csv", "metrics.csv")
-
-        # If both `data` and `metrics` are Pandas DataFrames:
-        create_tables_latex_metrics(data_df, metrics_df)
-    
-    Notes:
-        The function assumes that the metrics DataFrame has at least two columns: "Metric" and "Maximize".
-        The data is filtered based on the "Metric" column, and LaTeX tables are generated accordingly.
-        The descending flag in the metrics is used to indicate whether the metric should be maximized.
-    """
-
-    # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
-    df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
-
-    # Load the data DataFrame, either from a CSV file or as an existing DataFrame
-    df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
-
-    # Iterate through each row in the metrics DataFrame
-    for _, row in df_m.iterrows():
-        # Extract the metric name and the 'Maximize' flag (whether to maximize the metric)
-        metric = row["MetricName"]
-        descending = row["Maximize"]
-
-        # Filter the data for the rows where the 'Metric' matches the current metric
-        df_n = df[df["MetricName"] == metric].reset_index()
-
-        # Call the helper function to create a LaTeX table for the current metric
-        __create_tables_latex(df_n, metric, descending)
-        

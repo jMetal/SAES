@@ -2,6 +2,9 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build]
+exclude = ["*.pyc", "*.log", ".git", "dist", "venv", "*__pycache__*", "*outputs*", "*CSVs*"]
+
 [project]
 name = "SAES"
 version = "1.0.0"

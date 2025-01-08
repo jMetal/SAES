@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 from scipy.stats import rankdata, chi2
-from scipy.stats import rankdata
 from scipy.stats import mannwhitneyu
+from statsmodels.stats.libqsturng import qsturng
 
 def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
     """Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple problems.
@@ -113,4 +113,21 @@ def wilcoxon_test(data: pd.DataFrame):
         return "+" if median_a > median_b else "-"
     else:
         return "="
-    
+
+def NemenyiCD(alpha: float, num_alg, num_dataset):
+    """Computes Nemenyi's critical difference:
+    * CD = q_alpha * sqrt(num_alg*(num_alg + 1)/(6*num_prob))
+    where q_alpha is the critical value, of the Studentized range statistic divided by sqrt(2).
+    :param alpha: {0.1, 0.999}. Significance level.
+    :param num_alg: number of tested algorithms.
+    :param num_dataset: Number of problems/datasets where the algorithms have been tested.
+    """
+
+    # get critical value
+    q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_alg * (num_dataset - 1)) / np.sqrt(2)
+
+    # compute the critical difference
+    cd = q_alpha * np.sqrt(num_alg * (num_alg + 1) / (6.0 * num_dataset))
+
+    return cd
+
