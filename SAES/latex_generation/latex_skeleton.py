@@ -1,5 +1,4 @@
 from SAES.utils.csv_processor import process_csv
-from SAES.utils.csv_processor import process_csv_metrics
 from SAES.utils.csv_processor import process_dataframe_basic
 from SAES.utils.csv_processor import process_dataframe_extended
 

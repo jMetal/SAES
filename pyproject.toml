@@ -19,7 +19,7 @@ dependencies = [
     "sphinx_rtd_theme==3.0.2",
     "ipython==8.30.0"
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [
     {name = "Antonio J. Nebro", email = "ajnebro@uma.es"},
     {name = "Emilio Rodrigo Carreira Villalta", email = "emiliorodrigo.ecr@gmail.com"}

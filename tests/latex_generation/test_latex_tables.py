@@ -15,7 +15,7 @@ class TestCreateTablesLatexMetrics(unittest.TestCase):
     def setUp(self):
         # Sample data for testing
         self.data_csv = StringIO("""
-Algorithm,Problem,MetricName,ExecutionId,MetricValue
+Algorithm,Instance,MetricName,ExecutionId,MetricValue
 mistralai/mistral-large,Subasi2016,Java,0,1.0
 mistralai/mistral-large,Subasi2016,Python,1,2.5
 mistralai/mistral-large,Subasi2016,Java,2,1.5

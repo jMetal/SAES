@@ -19,7 +19,7 @@ def check_normality(data: pd.DataFrame) -> bool:
     """
 
     # Group the data by Algorithm and Problem
-    grouped_data = data.groupby(["Algorithm", "Problem"])
+    grouped_data = data.groupby(["Algorithm", "Instance"])
 
     # Perform the Shapiro-Wilk test for normality for each group
     for _, group in grouped_data:

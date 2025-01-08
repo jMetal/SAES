@@ -16,7 +16,7 @@ class TestPlots(unittest.TestCase):
         # Create a mock DataFrame with test data for algorithms, problems, and their metrics
         df = pd.DataFrame({
             'Algorithm': ['A', 'A', 'B', 'B', 'A', 'A', 'B', 'B'],
-            'Problem': ['P1', 'P1', 'P1', 'P1', 'P2', 'P2', 'P2', 'P2'],
+            'Instance': ['P1', 'P1', 'P1', 'P1', 'P2', 'P2', 'P2', 'P2'],
             'MetricValue': [1, 0, 1, 1, 1, 1, 1, 1],
             'MetricName': ['Python', 'Python', 'Python', 'Python', 'Python', 'Python', 'Python', 'Python']
         })

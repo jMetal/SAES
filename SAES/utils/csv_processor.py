@@ -121,18 +121,18 @@ def process_dataframe_extended(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     normal = check_normality(df)
 
     if normal:
-        df_agg = df.groupby(['Problem', 'Algorithm'])['MetricValue'].mean().reset_index()
+        df_agg = df.groupby(['Instance', 'Algorithm'])['MetricValue'].mean().reset_index()
         aggregation_type = "Mean"
     else:
-        df_agg = df.groupby(['Problem', 'Algorithm'])['MetricValue'].median().reset_index()
+        df_agg = df.groupby(['Instance', 'Algorithm'])['MetricValue'].median().reset_index()
         aggregation_type = "Median"
     
     # Pivot the DataFrame to get 'Problem' as the index and 'Algorithm' as the columns with 'Metric Value' values
-    df_agg_pivot = df_agg.pivot(index='Problem', columns='Algorithm', values='MetricValue')
+    df_agg_pivot = df_agg.pivot(index='Instance', columns='Algorithm', values='MetricValue')
 
     # Calculate the standard deviation DataFrame 
-    df_std = df.groupby(['Problem', 'Algorithm'])['MetricValue'].std().reset_index()
-    df_std_pivot = df_std.pivot(index='Problem', columns='Algorithm', values='MetricValue')
+    df_std = df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
+    df_std_pivot = df_std.pivot(index='Instance', columns='Algorithm', values='MetricValue')
     
     # Save the DataFrames to CSV files
     df_agg_pivot.to_csv(os.path.join(os.getcwd(), "CSVs", f"data_{aggregation_type}_{metric}.csv"), index=False)

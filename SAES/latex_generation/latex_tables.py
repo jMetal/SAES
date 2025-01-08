@@ -18,7 +18,7 @@ def base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataF
 
     # Extract the list of algorithms and problems from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Problem"].unique().tolist()
+    problems = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -107,7 +107,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     
     # Extract the list of algorithms and problems from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Problem"].unique().tolist()
+    problems = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -159,7 +159,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
                 # Perform friedman test between the pivot algorithm and the current algorithm
                 algorithms_friedman = algorithms
-                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_friedman)) & (df_og["Problem"] == problem_friedman)]
+                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_friedman)) & (df_og["Instance"] == problem_friedman)]
                 df_friedman = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
                 df_friedman = df_friedman.drop(columns="ExecutionId")
                 df_friedman.columns = names
@@ -216,7 +216,7 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
 
     # Extract the list of algorithms and problems from the columns of the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Problem"].unique().tolist()
+    problems = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -255,7 +255,7 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
                 for problem in problems:
                     # Filter the original dataframe for the relevant pair of algorithms and the current problem
                     algorithms_wilconxon = [algorithm1, algorithm2]
-                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Problem"] == problem)]
+                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == problem)]
                     df_wilconxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
                     df_wilconxon = df_wilconxon.drop(columns="ExecutionId")
                     og_columns = df_wilconxon.columns.tolist()
@@ -314,7 +314,7 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
 
     # Extract the list of algorithms and problems from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Problem"].unique().tolist()
+    problems = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -360,7 +360,7 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
 
                 # Perform Wilcoxon test between the pivot algorithm and the current algorithm
                 algorithms_wilconxon = [pivot_algorithm, algorithm]
-                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Problem"] == problem_wilconxon)]
+                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == problem_wilconxon)]
                 df_wilconxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
                 df_wilconxon = df_wilconxon.drop(columns="ExecutionId")
                 df_wilconxon.columns = ["Algorithm A", "Algorithm B"]

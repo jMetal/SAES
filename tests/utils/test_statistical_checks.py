@@ -7,7 +7,7 @@ class TestUtils(unittest.TestCase):
         # Create a sample DataFrame with normal data
         data = {
             "Algorithm": ["A", "A", "A", "A", "A", "A", "A", "A", "A", "A"],
-            "Problem": ["P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1"],
+            "Instance": ["P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1"],
             "MetricValue": [0.09010988,  0.79997335,  0.45336877,  0.77117614,  1.33044881, -0.08708802, -0.70524954,  0.91971554, -0.96683618, -0.12781421]
         }
         df = pd.DataFrame(data)

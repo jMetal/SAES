@@ -23,7 +23,7 @@ def create_boxplot_for_problem(csv: str | pd.DataFrame, problem_name: str, metri
     df = pd.read_csv(csv, delimiter=",") if isinstance(csv, str) else csv
 
     # Filter the data for the current problem
-    df_problem = df[df["Problem"] == problem_name]
+    df_problem = df[df["Instance"] == problem_name]
      
     # Set the figure size for the plot
     plt.figure(figsize=(10, 6))  
@@ -85,7 +85,7 @@ def generate_boxplots_from_csv(data: str | pd.DataFrame, metrics: str | pd.DataF
         os.makedirs(os.path.join(os.getcwd(), "outputs", "boxplots", metric), exist_ok=True)
 
         # Generate boxplots for the current metric
-        for problem in df_m["Problem"].unique():
+        for problem in df_m["Instance"].unique():
             # Create and save the boxplot for the current problem
             create_boxplot_for_problem(df_m, problem, metric)
 

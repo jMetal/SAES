@@ -1,4 +1,4 @@
-Algorithm,Problem,MetricName,ExecutionId,MetricValue
+Algorithm,Instance,MetricName,ExecutionId,MetricValue
 NSGAII,ZDT1,EP,0,0.020829126426465366
 NSGAII,ZDT1,EP,1,0.02141113073233196
 NSGAII,ZDT1,EP,2,0.02063580911122953

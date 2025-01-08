@@ -16,7 +16,7 @@ class TestProcessCSV(unittest.TestCase):
     def setUp(self):
         """Setup common variables and temporary DataFrame for testing."""
         self.df = pd.DataFrame({
-            'Problem': ['P1', 'P1', 'P2', 'P2', 'P3', 'P3'],
+            'Instance': ['P1', 'P1', 'P2', 'P2', 'P3', 'P3'],
             'Algorithm': ['A1', 'A2', 'A1', 'A2', 'A1', 'A2'],
             'MetricValue': [0.8, 0.6, 0.75, 0.65, 0.85, 0.7],
             'MetricName': ['accuracy', 'accuracy', 'accuracy', 'accuracy', 'accuracy', 'accuracy']
@@ -52,13 +52,13 @@ class TestProcessCSV(unittest.TestCase):
         self.assertTrue(os.path.exists(f"CSVs/data_std_{name}_{self.metric}.csv"))
 
         # Validate the pivoted DataFrame for median or mean
-        expected_pivot = self.df.groupby(['Problem', 'Algorithm'])['MetricValue'].median().reset_index()
-        expected_pivot = expected_pivot.pivot(index='Problem', columns='Algorithm', values='MetricValue')
+        expected_pivot = self.df.groupby(['Instance', 'Algorithm'])['MetricValue'].median().reset_index()
+        expected_pivot = expected_pivot.pivot(index='Instance', columns='Algorithm', values='MetricValue')
         pd.testing.assert_frame_equal(df_pivot, expected_pivot)
 
         # Validate the pivoted DataFrame for standard deviation
-        expected_std = self.df.groupby(['Problem', 'Algorithm'])['MetricValue'].std().reset_index()
-        expected_std = expected_std.pivot(index='Problem', columns='Algorithm', values='MetricValue')
+        expected_std = self.df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
+        expected_std = expected_std.pivot(index='Instance', columns='Algorithm', values='MetricValue')
         pd.testing.assert_frame_equal(df_std_pivot, expected_std)
         remove_files()
 
@@ -87,4 +87,3 @@ class TestProcessCSV(unittest.TestCase):
         self.assertTrue(result[1] == True)
 
         remove_files()
-        
