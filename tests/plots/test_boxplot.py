@@ -1,5 +1,5 @@
 import unittest
-from SAES.plots.boxplot import generate_boxplots_from_csv
+from SAES.plots.boxplot import boxplots_csv
 from pathlib import Path
 import pandas as pd
 import os
@@ -28,7 +28,7 @@ class TestPlots(unittest.TestCase):
         })
         
         # Call the function to generate boxplots
-        generate_boxplots_from_csv(df, metrics)
+        boxplots_csv(df, metrics)
 
         # Check if the boxplots are generated
         number_of_plots = len(os.listdir(Path('outputs/boxplots/Python')))

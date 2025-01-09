@@ -33,7 +33,7 @@ class TestProcessCSV(unittest.TestCase):
         """Test the basic processing of Dataframe data."""
 
         remove_files()
-        result = process_dataframe_basic(self.df, self.metric)
+        result, _ = process_dataframe_basic(self.df, self.metric)
 
         # Check if the output CSV file exists
         self.assertTrue(os.path.exists(f"CSVs/data_{self.metric}.csv"))
@@ -45,7 +45,7 @@ class TestProcessCSV(unittest.TestCase):
     def test_process_dataframe_extended(self):
         """Test extended Dataframe processing with extra metrics enabled."""
         remove_files()
-        df_pivot, df_std_pivot, name = process_dataframe_extended(self.df, self.metric)
+        df_pivot, df_std_pivot, name, _ = process_dataframe_extended(self.df, self.metric)
 
         # Check if output CSV files exist
         self.assertTrue(os.path.exists(f"CSVs/data_{name}_{self.metric}.csv"))
@@ -53,12 +53,16 @@ class TestProcessCSV(unittest.TestCase):
 
         # Validate the pivoted DataFrame for median or mean
         expected_pivot = self.df.groupby(['Instance', 'Algorithm'])['MetricValue'].median().reset_index()
+        
         expected_pivot = expected_pivot.pivot(index='Instance', columns='Algorithm', values='MetricValue')
+        expected_pivot.index.name = None  
+        expected_pivot.columns.name = None
         pd.testing.assert_frame_equal(df_pivot, expected_pivot)
 
         # Validate the pivoted DataFrame for standard deviation
         expected_std = self.df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
         expected_std = expected_std.pivot(index='Instance', columns='Algorithm', values='MetricValue')
+
         pd.testing.assert_frame_equal(df_std_pivot, expected_std)
         remove_files()
 
