@@ -1,22 +1,36 @@
 import numpy as np
 import pandas as pd
 from SAES.statistical_tests.non_parametrical import NemenyiCD
-from SAES.utils.csv_processor import process_csv_basic
+from SAES.utils.csv_processor import process_dataframe_extended
+from SAES.utils.csv_processor import obtain_list_metrics
 from scipy.stats import rankdata
 import matplotlib.pyplot as plt
+import os
 
-def CDplot(
-    results,
-    alpha: float = 0.05,
-    higher_is_better: bool = False,
-    alg_names: list = None,
-    output_filename: str = "cdplot.eps",
-):
-    """CDgraph plots the critical difference graph show in Janez Demsar's 2006 work:
-    * Statistical Comparisons of Classifiers over Multiple Data Sets.
-    :param results: A 2-D array containing results from each algorithm. Each row of 'results' represents an algorithm, and each column a dataset.
-    :param alpha: {0.1, 0.999}. Significance level for the critical difference.
-    :param alg_names: Names of the tested algorithms.
+from SAES.logger import get_logger
+logger = get_logger(__name__)
+
+def CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher_is_better: bool = False) -> None:
+    """
+    Creates a critical distance plot to compare the performance of different algorithms on a specific problem.
+
+    Parameters:
+    data (pd.DataFrame): A DataFrame containing the data for a specific problem, with columns for algorithms and performance marks:
+    AutoMOPSOD  AutoMOPSORE  AutoMOPSOW  AutoMOPSOZ    NSGAII    OMOPSO     SMPSO
+    DTLZ1    0.008063     1.501062    1.204757    2.071152  0.413378  1.000000  0.011571
+    DTLZ2    0.004992     0.006439    0.009557    0.007497  0.012612  0.006407  0.006556
+    DTLZ3    0.025848     3.991959    1.875400    6.131452  1.155789  3.291164  0.203524
+    DTLZ4    0.004965     0.011184    0.031624    0.016845  0.014132  0.007744  0.006859
+    DTLZ5    0.004589     0.006358    0.010652    0.006825  0.011919  0.005922  0.005828
+    DTLZ6    0.004915     0.004569    1.000000    0.004490  0.944101  0.038736  0.018126
+    DTLZ7    0.005071     0.013038    0.031957    0.003955  0.016132  0.013000  0.006951
+    RE21     0.006046     0.005378    0.005553    0.005496  0.011490  0.006004  0.006269
+    metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
+    alpha (float): The significance level for the critical distance calculation. Default is 0.05.
+    higher_is_better (bool): Whether higher metric values are better. Default is False.
+    
+    Returns:
+    None: The function saves the boxplot as a PNG file.
     """
 
     def _join_alg(avranks, num_alg, cd):
@@ -39,16 +53,12 @@ def CDplot(
                 group = np.vstack((group, sets[i, :]))
 
         return group
+    
+    alg_names = data.columns
+    data = data.values
 
-    # Initial Checking
-    if type(results) == pd.DataFrame:
-        alg_names = results.index
-        results = results.values
-    elif type(results) == np.ndarray and alg_names is None:
-        alg_names = np.array(["Alg%d" % alg for alg in range(results.shape[1])])
-
-    if results.ndim == 2:
-        num_alg, num_dataset = results.shape
+    if data.ndim == 2:
+        num_dataset, num_alg = data.shape
     else:
         raise ValueError("Initialization ERROR: In CDplot(...) results must be 2-D array")
 
@@ -56,8 +66,7 @@ def CDplot(
     cd = NemenyiCD(alpha, num_alg, num_dataset)
 
     # Compute ranks. (ranks[i][j] rank of the i-th algorithm on the j-th problem.)
-    print(results)
-    rranks = rankdata(-results, axis=1) if higher_is_better else rankdata(results, axis=1)
+    rranks = rankdata(-data, axis=1) if higher_is_better else rankdata(data, axis=1)
 
     # Compute for each algorithm the ranking averages.
     avranks = np.transpose(np.mean(rranks, axis=0))
@@ -67,6 +76,7 @@ def CDplot(
     # Split algorithms.
     spoint = np.round(num_alg / 2.0).astype(np.uint8)
     leftalg = avranks[:spoint]
+
     rightalg = avranks[spoint:]
     rows = np.ceil(num_alg / 2.0).astype(np.uint8)
 
@@ -209,11 +219,35 @@ def CDplot(
                 linewidth=2,
             )
 
-    plt.savefig(output_filename, bbox_inches="tight")
+    output_path = os.path.join(os.getcwd(), "outputs", "critical_distance", f"{metric}_cd_plot.png")
+    plt.savefig(output_path, bbox_inches="tight")
     plt.show()
+    logger.warning(f"Critical distance for metric {metric} saved in {output_path}")
+
+def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
+    """
+    Generates CD plots for a list of metrics from the given data.
+
+    Parameters:
+    data (str | pd.DataFrame): Data source, either a file path or a pandas DataFrame.
+    metrics (str | pd.DataFrame): Metric names or a DataFrame containing metrics.
+
+    The function processes the data and metrics, aggregates the information, 
+    and calls CDplot_metric for each metric to generate the corresponding plots.
+    """
+
+    # Obtain the list of metrics from the provided input
+    list_metrics = obtain_list_metrics(metrics)
+    
+    # Iterate through each metric in the list
+    for metric in list_metrics:
+        # Process the dataframe to aggregate data for the given metric
+        df_agg_pivot, _, _, maximize = process_dataframe_extended(data, metric, metrics)
+        
+        # Call the function to generate the CD plot for the current metric
+        CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
 
 if __name__ == "__main__":
     data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
-    df = pd.read_csv(data, delimiter=",")
-    df_n = df[df["MetricName"] == "EP"].reset_index()
-    CDplot(df_n)
+    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
+    CDplot_csv(data, metrics)

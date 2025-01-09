@@ -7,7 +7,7 @@ from SAES.utils.csv_processor import process_csv
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def create_boxplot_for_problem(csv: str | pd.DataFrame, problem_name: str, metric: str) -> None:
+def boxplot_problem_metric(csv: str | pd.DataFrame, problem_name: str, metric: str) -> None:
     """
     Creates a boxplot comparing different algorithms performance on a given problem.
 
@@ -67,7 +67,7 @@ def create_boxplot_for_problem(csv: str | pd.DataFrame, problem_name: str, metri
     # Close the plot to free up memory
     plt.close()
 
-def generate_boxplots_from_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
+def boxplots_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
     """
     Generates boxplots for all problems in the given CSV file dividing them by the metric.
 
@@ -87,7 +87,7 @@ def generate_boxplots_from_csv(data: str | pd.DataFrame, metrics: str | pd.DataF
         # Generate boxplots for the current metric
         for problem in df_m["Instance"].unique():
             # Create and save the boxplot for the current problem
-            create_boxplot_for_problem(df_m, problem, metric)
+            boxplot_problem_metric(df_m, problem, metric)
 
         logger.warning(f"Boxplots for metric {metric} saved to {os.path.join(os.getcwd(), 'outputs', 'boxplots', metric)}")
 
@@ -97,4 +97,4 @@ if __name__ == "__main__":
 
     data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
     metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
-    generate_boxplots_from_csv(data, metrics)
+    boxplots_csv(data, metrics)

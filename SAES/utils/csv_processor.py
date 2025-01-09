@@ -5,13 +5,15 @@ from SAES.utils.statistical_checks import check_normality
 def process_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> dict:
     """
     Processes two CSV or DataFrame inputs: one containing metrics information and the other containing data.
+    This function loads the metrics and data, and then filters the data based on the metric names,
+    storing the filtered data along with a flag indicating whether to maximize the metric.
     
     Args:
         data (str | pd.DataFrame): Path to a CSV file or an existing DataFrame containing data.
         metrics (str | pd.DataFrame): Path to a CSV file or an existing DataFrame containing metrics information.
     
-    This function loads the metrics and data, and then filters the data based on the metric names,
-    storing the filtered data along with a flag indicating whether to maximize the metric.
+    Returns:
+        dict: A dictionary containing the filtered data and the 'Maximize' flag for each metric.
     """
 
     # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
@@ -72,7 +74,23 @@ def process_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, m
     except Exception as e:
         raise ValueError(f"Metric '{metric}' not found in the metrics DataFrame.") from e
 
-def process_dataframe_basic(df: pd.DataFrame, metric: str) -> pd.DataFrame:
+def obtain_list_metrics(metrics: str | pd.DataFrame) -> pd.DataFrame:
+    """
+    Extracts a list of metric names from a given dataset.
+
+    Parameters:
+        metrics (str | pd.DataFrame): A path to a CSV file containing metrics or an existing DataFrame.
+
+    Returns:
+        pd.DataFrame: A NumPy array of metric names extracted from the "MetricName" column.
+    """
+
+    # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
+    df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
+
+    return df_m["MetricName"].values    
+
+def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> pd.DataFrame:
     """
     Saves a DataFrame as a CSV file in a 'CSVs' directory.
 
@@ -82,12 +100,28 @@ def process_dataframe_basic(df: pd.DataFrame, metric: str) -> pd.DataFrame:
         The DataFrame to save.
     metric : str
         Used to name the output CSV file.
+    metrics : pd.DataFrame, optional
+        A DataFrame containing metrics information.
 
     Returns:
     -------
     pd.DataFrame
         The input DataFrame.
+    bool
+        The maximize flag for the specified metric.
     """
+    
+    # Load the data DataFrame, either from a CSV file or as an existing DataFrame
+    df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+
+    if metrics is not None:
+        # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
+        df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
+
+        # Retrieve the maximize flag (True/False) for the specified metric
+        maximize = df_m[df_m["MetricName"] == metric]["Maximize"].values[0]
+    else:
+        maximize = None
     
     # Check if the input & output directories exist, if not create them
     os.makedirs(os.path.join(os.getcwd(), "outputs"), exist_ok=True)
@@ -96,9 +130,9 @@ def process_dataframe_basic(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     # Save the data to a CSV file
     df.to_csv(os.path.join(os.getcwd(), "CSVs", f"data_{metric}.csv"), index=False)
 
-    return df
+    return df, maximize
 
-def process_dataframe_extended(df: pd.DataFrame, metric: str) -> pd.DataFrame:
+def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> pd.DataFrame:
     """
     Processes a CSV DataFrame by grouping data by 'Problem' and 'Algorithm', calculating either the mean or median 
     of the 'MetricValue' column based on normality, and saving the aggregated data and standard deviations as CSV files.
@@ -106,12 +140,36 @@ def process_dataframe_extended(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     Parameters:
     - df (pd.DataFrame): The input DataFrame containing 'Problem', 'Algorithm', and 'MetricValue' columns.
     - metric (str): The metric name to be included in the saved filenames.
+    - metrics (pd.DataFrame): A DataFrame containing metrics information.
     
     Returns:
-    - pd.DataFrame: A pivoted DataFrame with 'Problem' as index and 'Algorithm' as columns, showing aggregated metric values.
+    - pd.DataFrame: A pivoted DataFrame with 'Problem' as index and 'Algorithm' as columns, showing aggregated metric values:
+            AutoMOPSOD  AutoMOPSORE  AutoMOPSOW  AutoMOPSOZ    NSGAII    OMOPSO     SMPSO
+        DTLZ1    0.008063     1.501062    1.204757    2.071152  0.413378  1.000000  0.011571
+        DTLZ2    0.004992     0.006439    0.009557    0.007497  0.012612  0.006407  0.006556
+        DTLZ3    0.025848     3.991959    1.875400    6.131452  1.155789  3.291164  0.203524
+        DTLZ4    0.004965     0.011184    0.031624    0.016845  0.014132  0.007744  0.006859
+        DTLZ5    0.004589     0.006358    0.010652    0.006825  0.011919  0.005922  0.005828
+        DTLZ6    0.004915     0.004569    1.000000    0.004490  0.944101  0.038736  0.018126
+        DTLZ7    0.005071     0.013038    0.031957    0.003955  0.016132  0.013000  0.006951
+        RE21     0.006046     0.005378    0.005553    0.005496  0.011490  0.006004  0.006269
+        RE22     0.008012     0.006160    0.006598    0.006278  0.015587  0.006997  0.007891
     - pd.DataFrame: A pivoted DataFrame showing standard deviations of metric values.
     - str: The aggregation type used ('Mean' or 'Median').
+    - bool: The maximize flag for the specified metric.
     """
+
+    # Load the data DataFrame, either from a CSV file or as an existing DataFrame
+    df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+
+    if metrics is not None:
+        # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
+        df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
+
+        # Retrieve the maximize flag (True/False) for the specified metric
+        maximize = df_m[df_m["MetricName"] == metric]["Maximize"].values[0]
+    else:
+        maximize = None
 
     # Check if the input & output directories exist, if not create them
     os.makedirs(os.path.join(os.getcwd(), "outputs"), exist_ok=True)
@@ -138,8 +196,12 @@ def process_dataframe_extended(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     df_agg_pivot.to_csv(os.path.join(os.getcwd(), "CSVs", f"data_{aggregation_type}_{metric}.csv"), index=False)
     df_std_pivot.to_csv(os.path.join(os.getcwd(), "CSVs", f"data_std_{aggregation_type}_{metric}.csv"), index=False)
 
+    # Remove the index and column names for better presentation
+    df_agg_pivot.index.name = None  
+    df_agg_pivot.columns.name = None 
+
     # Return the DataFrames and the aggregation type
-    return df_agg_pivot, df_std_pivot, aggregation_type
+    return df_agg_pivot, df_std_pivot, aggregation_type, maximize
 
 if __name__ == "__main__":
     data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"

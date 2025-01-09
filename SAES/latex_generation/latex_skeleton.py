@@ -77,8 +77,8 @@ def create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool) -> None:
     """
 
     # Process the input DataFrame to calculate aggregate values and standard deviations
-    df_agg, df_std, aggregation_type = process_dataframe_extended(csv, metric)
-    df_og = process_dataframe_basic(csv, metric)
+    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(csv, metric)
+    df_og, _ = process_dataframe_basic(csv, metric)
 
     # Generate LaTeX tables for the given metric
     base = base_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
@@ -118,4 +118,4 @@ if __name__ == "__main__":
 
     data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
     metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
-    create_tables_latex_metrics(data2, metrics2)
+    create_tables_latex_metrics(data, metrics)

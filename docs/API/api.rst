@@ -7,6 +7,10 @@ The following sections document the public API of the `SAES` library.
    :maxdepth: 1
    :caption: Contents:
 
-   plots
+   boxplot
    latex
+   latex_tables
+   critical
    stats
+   checks
+   csv

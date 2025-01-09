@@ -1,5 +1,5 @@
-plots.py
-========
+boxplot.py
+==========
 
 .. automodule:: plots.boxplot
    :members:
