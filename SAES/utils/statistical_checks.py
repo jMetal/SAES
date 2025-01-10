@@ -4,18 +4,16 @@ from scipy.stats import shapiro
 def check_normality(data: pd.DataFrame) -> bool:
     """
     Check the normality of grouped data in a DataFrame using the Shapiro-Wilk test.
-    
     This function groups the input data by the "Algorithm" and "Problem" columns, 
     and tests the normality of the "MetricValue" column within each group. It returns `False` 
     if any group fails the normality test, and `True` otherwise.
     
-    :param data: pd.DataFrame
-        The input DataFrame containing the data to be tested for normality.
-        Must include columns "Algorithm", "Problem", and "MetricValue".
-        
-    :return: bool
-        `True` if all groups pass the Shapiro-Wilk test for normality, 
-        `False` if any group fails.
+    Args:
+        data (pd.DataFrame):
+            The input DataFrame containing the data to be tested for normality. Must include columns "Algorithm", "Problem", and "MetricValue".
+    
+    Returns:
+        bool: `True` if all groups pass the Shapiro-Wilk test for normality, `False` if any group fails.
     """
 
     # Group the data by Algorithm and Problem

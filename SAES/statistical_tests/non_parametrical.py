@@ -5,33 +5,37 @@ from scipy.stats import mannwhitneyu
 from statsmodels.stats.libqsturng import qsturng
 
 def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
-    """Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple problems.
-
+    """
+    Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple problems.
     The Friedman test is a non-parametric statistical test used to detect differences in treatments (or algorithms) across multiple groups. The null hypothesis is that all algorithms perform equivalently, which implies their average ranks should be equal. The test is particularly useful when the data does not meet the assumptions of parametric tests like ANOVA.
 
-    Example:
-    Suppose we have the following performance results of three algorithms (A, B, and C) across five problems:
-    
-    Algorithm A | Algorithm B | Algorithm C
-    ----------------------------------------
-    0.9         | 0.8         | 0.8
-    0.85        | 0.75        | 0.8
-    0.95        | 0.85        | 0.9
-    0.8         | 0.85        | 0.88
-    0.92        | 0.87        | 0.91
-
-    In this case, the null hypothesis is that the performance of the algorithms is the same across all problems.
-
-    :param data: A 2D array or DataFrame containing the performance results. Each row represents the performance of different algorithms on a problem, and each column represents a different algorithm. For example, data.shape should be (n, k), where n is the number of problems, and k is the number of algorithms.
-    :param descending: A boolean indicating whether to rank the data in descending order. If True, the algorithm with the highest performance will receive the lowest rank (i.e., rank 1). If False, the algorithm with the lowest performance will receive the lowest rank. Default is True.
-
-    :return: A pandas DataFrame containing the Friedman statistic and the corresponding p-value. The result can be used to determine whether there are significant differences between the algorithms.
-
-    :raises ValueError: If the input data is not a 2D array or DataFrame, or if the number of algorithms (columns) is less than 2.
-
-    :note: The null hypothesis is that all algorithms are equivalent, i.e., their average ranks are equal. A low p-value indicates a significant difference between the algorithms' performances.
-    
-    :seealso: `scipy.stats.chi2` for chi-square distribution functions.
+    Args:
+        data (pd.DataFrame): 
+            A 2D array or DataFrame containing the performance results. Each row represents the performance of different algorithms on a problem, and each column represents a different algorithm. For example, data.shape should be (n, k), where n is the number of problems, and k is the number of algorithms.
+                - Example:
+                    +----------+-------------+-------------+-------------+-------------+
+                    |          | Algorithm A | Algorithm B | Algorithm C | Algorithm D |
+                    +==========+=============+=============+=============+=============+
+                    |    0     | 0.008063    | 1.501062    | 1.204757    | 2.071152    | 
+                    +----------+-------------+-------------+-------------+-------------+
+                    |    1     | 0.004992    | 0.006439    | 0.009557    | 0.007497    | 
+                    +----------+-------------+-------------+-------------+-------------+
+                    | ...      | ...         | ...         | ...         | ...         | 
+                    +----------+-------------+-------------+-------------+-------------+
+                    |    30    | 0.871175    | 0.3505      | 0.546       | 0.5345      | 
+                    +----------+-------------+-------------+-------------+-------------+
+        
+        descending (bool):
+            A boolean indicating whether to rank the data in descending order. If True, the algorithm with the highest performance will receive the lowest rank (i.e., rank 1). If False, the algorithm with the lowest performance will receive the lowest rank. Default is True.
+        
+    Returns:
+        pd.DataFrame: A pandas DataFrame containing the Friedman statistic and the corresponding p-value. The result can be used to determine whether there are significant differences between the algorithms.
+            - Example:
+                +--------------------+------------+
+                | Friedman-statistic | p-value    |
+                +===================-+============+
+                | 12.34              | 0.0001     |
+                +--------------------+------------+
     """
 
     # Initial Checking
@@ -63,42 +67,31 @@ def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
     )
 
 def wilcoxon_test(data: pd.DataFrame):
-    """Performs the Wilcoxon signed-rank test to compare the performance of two algorithms across multiple problems.
-
+    """
+    Performs the Wilcoxon signed-rank test to compare the performance of two algorithms across multiple problems.
     The Wilcoxon signed-rank test is a non-parametric statistical test used to compare the performance of two algorithms on multiple problems. The null hypothesis is that the algorithms perform equivalently, which implies their average ranks are equal.
 
-    Example:
-    Suppose we have the following performance results of two algorithms (A and B) across five problems:
-    
-    Algorithm A | Algorithm B
-    --------------------------
-    0.9         | 0.8
-    0.85        | 0.75
-    0.95        | 0.85
-    0.8         | 0.85
-    0.92        | 0.87
+    Args:
+        data (pd.DataFrame):
+            A DataFrame containing the performance results. Each row represents the performance of both algorithms on a problem. The DataFrame should have two columns, one for each algorithm.
+                - Example:
+            +-------+-------------+-------------+
+            |   0   | Algorithm A | Algorithm B |
+            +-------+=============+=============+
+            |   1   | 0.008063    | 1.501062    |
+            +-------+-------------+-------------+
+            |   2   | 0.004992    | 0.006439    |
+            +-------+-------------+-------------+
+            | ...   | ...         | ...         |
+            +-------+-------------+-------------+
+            |  30   | 0.871175    | 0.3505      |
+            +-------+-------------+-------------+
 
-    In this case, the null hypothesis is that the performance of the two algorithms is the same across all problems.
-
-    :param data: A DataFrame containing the performance results. Each row represents the performance of both algorithms on a problem. The DataFrame should have two columns, one for each algorithm.
-
-    :return: A pandas DataFrame containing the Wilcoxon statistic and the corresponding p-value. The result can be used to determine whether there are significant differences between the algorithms.
-
-    :raises ValueError: If the input data is not a DataFrame, or if the number of columns is not equal to 2.
-
-    :note: The null hypothesis is that the two algorithms are equivalent, i.e., their average ranks are equal. A low p-value indicates a significant difference between the algorithms' performances.
-    
-    :seealso: `scipy.stats.rankdata` for ranking data.
-    """
-
-    """
-    # we create a new test dataframe
-    data = {
-        "Algorithm A": [456, 564, 54, 554, 54, 51, 1, 12, 45, 5, 456, 564, 54, 554, 54, 51, 1, 12, 45, 5, 456, 564, 54, 554, 54, 51, 1, 12, 45, 5],
-        "Algorithm B": [65, 87, 456, 564, 456, 564, 564, 6, 4, 564, 65, 87, 456, 564, 456, 564, 564, 6, 4, 564, 65, 87, 456, 564, 456, 564, 564, 6, 4, 564]
-    }
-
-    data = pd.DataFrame(data)
+    Returns:
+        str: A string indicating the result of the Wilcoxon test. The result can be one of the following:
+            - "+" if Algorithm A outperforms Algorithm B.
+            - "-" if Algorithm B outperforms Algorithm A.
+            - "=" if both algorithms perform
     """
 
     median_a = data["Algorithm A"].median()
@@ -114,20 +107,27 @@ def wilcoxon_test(data: pd.DataFrame):
     else:
         return "="
 
-def NemenyiCD(alpha: float, num_alg, num_dataset):
-    """Computes Nemenyi's critical difference:
-    * CD = q_alpha * sqrt(num_alg*(num_alg + 1)/(6*num_prob))
-    where q_alpha is the critical value, of the Studentized range statistic divided by sqrt(2).
-    :param alpha: {0.1, 0.999}. Significance level.
-    :param num_alg: number of tested algorithms.
-    :param num_dataset: Number of problems/datasets where the algorithms have been tested.
+def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
+    """
+    Computes Nemenyi's Critical Difference (CD) for post-hoc analysis. The formula for CD is:
+        CD = q_alpha * sqrt(num_alg * (num_alg + 1) / (6 * num_prob))
+
+    Args:
+        alpha (float):
+            The significance level for the critical difference calculation.
+        
+        num_alg (int):
+            The number of algorithms being compared.
+        
+        num_dataset (int):
+            The number of datasets/problems used for comparison.
+    
+    Returns:
+        float: The critical difference value for Nemenyi's
     """
 
     # get critical value
     q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_alg * (num_dataset - 1)) / np.sqrt(2)
 
     # compute the critical difference
-    cd = q_alpha * np.sqrt(num_alg * (num_alg + 1) / (6.0 * num_dataset))
-
-    return cd
-
+    return q_alpha * np.sqrt(num_alg * (num_alg + 1) / (6.0 * num_dataset))

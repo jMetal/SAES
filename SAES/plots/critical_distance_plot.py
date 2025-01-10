@@ -10,27 +10,37 @@ import os
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher_is_better: bool = False) -> None:
+def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher_is_better: bool = False) -> None:
     """
-    Creates a critical distance plot to compare the performance of different algorithms on a specific problem.
+    Creates a critical distance plot to compare the performance of different algorithms on the different problems.
 
-    Parameters:
-    data (pd.DataFrame): A DataFrame containing the data for a specific problem, with columns for algorithms and performance marks:
-    AutoMOPSOD  AutoMOPSORE  AutoMOPSOW  AutoMOPSOZ    NSGAII    OMOPSO     SMPSO
-    DTLZ1    0.008063     1.501062    1.204757    2.071152  0.413378  1.000000  0.011571
-    DTLZ2    0.004992     0.006439    0.009557    0.007497  0.012612  0.006407  0.006556
-    DTLZ3    0.025848     3.991959    1.875400    6.131452  1.155789  3.291164  0.203524
-    DTLZ4    0.004965     0.011184    0.031624    0.016845  0.014132  0.007744  0.006859
-    DTLZ5    0.004589     0.006358    0.010652    0.006825  0.011919  0.005922  0.005828
-    DTLZ6    0.004915     0.004569    1.000000    0.004490  0.944101  0.038736  0.018126
-    DTLZ7    0.005071     0.013038    0.031957    0.003955  0.016132  0.013000  0.006951
-    RE21     0.006046     0.005378    0.005553    0.005496  0.011490  0.006004  0.006269
-    metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
-    alpha (float): The significance level for the critical distance calculation. Default is 0.05.
-    higher_is_better (bool): Whether higher metric values are better. Default is False.
-    
+    Args:
+        data (pd.DataFrame): a DataFrame containing the data for a specific problem with the following structure:
+            - Columns:
+                * The first column contains the problem names (e.g., 'DTLZ1', 'DTLZ2', etc.).
+                * Subsequent columns contain algorithm names (e.g., 'AutoMOPSOD', 'AutoMOPSORE', etc.) with numerical performance metrics as their values.
+            - Example:
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+                | Problem  | AutoMOPSOD  | AutoMOPSORE | AutoMOPSOW  | AutoMOPSOZ  | NSGAII  | OMOPSO  | SMPSO   |
+                +==========+=============+=============+=============+=============+=========+=========+=========+
+                | DTLZ1    | 0.008063    | 1.501062    | 1.204757    | 2.071152    | 0.41337 | 1.00012 | 0.01157 |
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+                | DTLZ2    | 0.004992    | 0.006439    | 0.009557    | 0.007497    | 0.01261 | 0.00634 | 0.00565 |
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+                | ...      | ...         | ...         | ...         | ...         | ...     | ...     | ...     |
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+
+        metric (str): 
+            The metric to be used for the calculations. It should match the column name in the DataFrame.
+
+        alpha (float): 
+            The significance level for the critical distance calculation. Default is 0.05.
+
+        higher_is_better (bool): 
+            Whether higher metric values indicate better performance. Default is False.
+
     Returns:
-    None: The function saves the boxplot as a PNG file.
+        None: The function saves the critical distance plot as a PNG file.
     """
 
     def _join_alg(avranks, num_alg, cd):
@@ -224,16 +234,44 @@ def CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher_i
     plt.show()
     logger.warning(f"Critical distance for metric {metric} saved in {output_path}")
 
-def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
+
+def CDplot_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> None:
+    """
+    Generates CD plots for a metric given as a parameter.
+
+    Args:
+        data (str | pd.DataFrame): 
+            Data source, either a file path or a pandas DataFrame.
+
+        metrics (str | pd.DataFrame): 
+            Metric names or a DataFrame containing metrics.
+        
+        metric (str):
+            The metric to be used for the calculations. It should match the column name in the DataFrame.
+
+    Returns:
+        None: The function saves the critical distance plot as a PNG file.
+    """
+
+    # Process the dataframe to aggregate data for the given metric
+    df_agg_pivot, _, _, maximize = process_dataframe_extended(data, metric, metrics)
+    
+    # Call the function to generate the CD plot for the current metric
+    __CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
+
+def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
     """
     Generates CD plots for a list of metrics from the given data.
 
-    Parameters:
-    data (str | pd.DataFrame): Data source, either a file path or a pandas DataFrame.
-    metrics (str | pd.DataFrame): Metric names or a DataFrame containing metrics.
+    Args:
+        data (str | pd.DataFrame): 
+            Data source, either a file path or a pandas DataFrame.
 
-    The function processes the data and metrics, aggregates the information, 
-    and calls CDplot_metric for each metric to generate the corresponding plots.
+        metrics (str | pd.DataFrame): 
+            Metric names or a DataFrame containing metrics.
+
+    Returns:
+        None: The function saves the critical distance plot as a PNG file.
     """
 
     # Obtain the list of metrics from the provided input
@@ -245,9 +283,12 @@ def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
         df_agg_pivot, _, _, maximize = process_dataframe_extended(data, metric, metrics)
         
         # Call the function to generate the CD plot for the current metric
-        CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
+        __CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
 
 if __name__ == "__main__":
     data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
     metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
-    CDplot_csv(data, metrics)
+
+    data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
+    metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
+    CDplot_csv(data2, metrics2)

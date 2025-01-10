@@ -6,14 +6,21 @@ def base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataF
     """
     Generates a LaTeX table with performance statistics for algorithms across different problems.
 
-    Parameters:
-    - title (str): The title for the table.
-    - df_og (pd.DataFrame): Original DataFrame containing the algorithms and problems.
-    - df1 (pd.DataFrame): DataFrame with median values for each algorithm and problem.
-    - df2 (pd.DataFrame): DataFrame with standard deviation values for each algorithm and problem.
+    Args:
+        title (str): 
+            The title for the table.
+        
+        df_og (pd.DataFrame): 
+            Original DataFrame containing the algorithms and problems.
+        
+        df1 (pd.DataFrame): 
+            DataFrame with median values for each algorithm and problem.
+        
+        df2 (pd.DataFrame): 
+            DataFrame with standard deviation values for each algorithm and problem.
 
     Returns:
-    - str: LaTeX formatted table as a string.
+        str: LaTeX formatted table as a string.
     """
 
     # Extract the list of algorithms and problems from the DataFrame
@@ -94,15 +101,24 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     Generates a LaTeX table with performance statistics for algorithms across problems, including a Friedman test 
     for statistical significance between algorithms.
 
-    Parameters:
-    - title (str): The title for the table.
-    - df_og (pd.DataFrame): Original DataFrame containing the algorithms and problems.
-    - df1 (pd.DataFrame): DataFrame with median values for each algorithm and problem.
-    - df2 (pd.DataFrame): DataFrame with standard deviation values for each algorithm and problem.
-    - maximize (bool): Whether to maximize the metric for the Friedman test.
+    Args:
+        title (str): 
+            The title for the table.
+        
+        df_og (pd.DataFrame): 
+            Original DataFrame containing the algorithms and problems.
+        
+        df1 (pd.DataFrame): 
+            DataFrame with median values for each algorithm and problem.
+        
+        df2 (pd.DataFrame): 
+            DataFrame with standard deviation values for each algorithm and problem.
+        
+        maximize (bool): 
+            Whether to maximize the metric for the Friedman test.
 
     Returns:
-    - str: LaTeX formatted table as a string.
+        str: LaTeX formatted table as a string.
     """
     
     # Extract the list of algorithms and problems from the DataFrame
@@ -207,8 +223,11 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
 
     Args:
-        title (str): Title of the table.
-        df_og (pd.DataFrame): DataFrame containing columns 'Algorithm', 'Problem', and 'MetricValue'.
+        title (str): 
+            Title of the table.
+
+        df_og (pd.DataFrame):
+            DataFrame containing columns 'Algorithm', 'Problem', and 'MetricValue'.
 
     Returns:
         str: LaTeX-formatted table string.
@@ -303,10 +322,17 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
     across different problems.
 
     Args:
-        title (str): The title to be displayed in the LaTeX table caption.
-        df_og (pd.DataFrame): A DataFrame containing the raw data with columns 'Algorithm', 'Problem', 'ExecutionId', and 'MetricValue'.
-        df1 (pd.DataFrame): A DataFrame with the median values of each algorithm for each problem.
-        df2 (pd.DataFrame): A DataFrame with the standard deviation values of each algorithm for each problem.
+        title (str): 
+            The title to be displayed in the LaTeX table caption.
+
+        df_og (pd.DataFrame): 
+            A DataFrame containing the raw data with columns 'Algorithm', 'Problem', 'ExecutionId', and 'MetricValue'.
+
+        df1 (pd.DataFrame): 
+            A DataFrame with the median values of each algorithm for each problem.
+
+        df2 (pd.DataFrame): 
+            A DataFrame with the standard deviation values of each algorithm for each problem.
 
     Returns:
         str: The LaTeX code for the table comparing algorithms' performance.

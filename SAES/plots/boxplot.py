@@ -3,24 +3,28 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 from SAES.utils.csv_processor import process_csv
+from SAES.utils.csv_processor import process_csv_metrics
 
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def boxplot_problem_metric(csv: str | pd.DataFrame, problem_name: str, metric: str) -> None:
+def __boxplot_problem_metric(df: pd.DataFrame, problem_name: str, metric: str) -> None:
     """
     Creates a boxplot comparing different algorithms performance on a given problem.
 
-    Parameters:
-    df_problem (pd.DataFrame): A DataFrame containing the data for a specific problem, with columns for algorithms and performance marks.
-    problem_name (str): The name of the problem for which the boxplot is being created.
-    metric (str): The metric to be used for the calculations. It should match the column name in the CSV file.
+    Args:
+        df (pd.DataFrame):
+            A DataFrame containing the data for a specific problem, with columns for algorithms and performance marks.
+        
+        problem_name (str):
+            The name of the problem for which the boxplot is being created.
+        
+        metric (str): 
+            The metric to be used for the calculations. It should match the column name in the CSV file.
 
     Returns:
-    None: The function saves the boxplot as a PNG file.
+        None: The function saves the boxplot as a PNG file.
     """
-    # Load the data from the CSV file
-    df = pd.read_csv(csv, delimiter=",") if isinstance(csv, str) else csv
 
     # Filter the data for the current problem
     df_problem = df[df["Instance"] == problem_name]
@@ -67,13 +71,59 @@ def boxplot_problem_metric(csv: str | pd.DataFrame, problem_name: str, metric: s
     # Close the plot to free up memory
     plt.close()
 
-def boxplots_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
+def boxplot_csv_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, problem: str = None) -> None:
+    """
+    Generates boxplots for all algorithms in the given CSV file for a specific metric.
+
+    Args:
+        data (pd.DataFrame | str):
+            The DataFrame or CSV file containing the data to be plotted.
+        
+        metrics (pd.DataFrame | str):
+            The DataFrame or CSV file containing the metrics to be used for plotting.
+        
+        metric (str):
+            The metric to be used for the calculations. It should match the column name in the CSV file.
+        
+        problem (str):
+            The name of the problem for which the boxplot is being created. If None, boxplots for all problems are generated.
+    
+    Returns:
+        None: The function saves the boxplot as a PNG file.
+    """
+
+    # Process the input data and metrics
+    df_m, _ = process_csv_metrics(data, metrics, metric)
+
+    # Generate boxplots for the current metric
+    os.makedirs(os.path.join(os.getcwd(), "outputs", "boxplots", metric), exist_ok=True)
+
+    # Check if a specific problem was provided
+    if problem is None:
+        # Generate boxplots for the current metric
+        for instance in df_m["Instance"].unique():
+
+            # Create and save the boxplot for the current problem
+            __boxplot_problem_metric(df_m, instance, metric)
+    else:
+        # If a specific problem was provided, create and save the boxplot for that problem
+        __boxplot_problem_metric(df_m, problem, metric)
+
+    logger.warning(f"Boxplots for metric {metric} saved to {os.path.join(os.getcwd(), 'outputs', 'boxplots', metric)}")
+
+def boxplots_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
     """
     Generates boxplots for all problems in the given CSV file dividing them by the metric.
 
-    Parameters:
-    data (pd.DataFrame | str): The DataFrame or CSV file containing the data to be plotted.
-    metrics (pd.DataFrame | str): The DataFrame or CSV file containing the metrics to be used for plotting.
+    Args:
+        data (pd.DataFrame | str): 
+            The DataFrame or CSV file containing the data to be plotted.
+
+        metrics (pd.DataFrame | str): 
+            The DataFrame or CSV file containing the metrics to be used for plotting.
+        
+    Returns:
+        None: The function saves the critical distance plot as a PNG file.
     """
 
     # Process the input data and metrics
@@ -87,7 +137,7 @@ def boxplots_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame):
         # Generate boxplots for the current metric
         for problem in df_m["Instance"].unique():
             # Create and save the boxplot for the current problem
-            boxplot_problem_metric(df_m, problem, metric)
+            __boxplot_problem_metric(df_m, problem, metric)
 
         logger.warning(f"Boxplots for metric {metric} saved to {os.path.join(os.getcwd(), 'outputs', 'boxplots', metric)}")
 
@@ -98,3 +148,4 @@ if __name__ == "__main__":
     data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
     metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
     boxplots_csv(data, metrics)
+    # boxplot_csv_metric(data, metrics, "HV")

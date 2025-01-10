@@ -9,3 +9,4 @@ This section provides a brief overview of the two different features that this v
 
    plot
    latex
+   cd

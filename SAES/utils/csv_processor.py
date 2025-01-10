@@ -9,8 +9,11 @@ def process_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> dict:
     storing the filtered data along with a flag indicating whether to maximize the metric.
     
     Args:
-        data (str | pd.DataFrame): Path to a CSV file or an existing DataFrame containing data.
-        metrics (str | pd.DataFrame): Path to a CSV file or an existing DataFrame containing metrics information.
+        data (str | pd.DataFrame): 
+            Path to a CSV file or an existing DataFrame containing data.
+            
+        metrics (str | pd.DataFrame): 
+            Path to a CSV file or an existing DataFrame containing metrics information.
     
     Returns:
         dict: A dictionary containing the filtered data and the 'Maximize' flag for each metric.
@@ -43,14 +46,22 @@ def process_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, m
     """
     Processes the given CSV data and metrics to extract and return the data for a specific metric.
     
-    Parameters:
-        data (str | pd.DataFrame): Path to CSV file or a DataFrame containing data.
-        metrics (str | pd.DataFrame): Path to CSV file or a DataFrame containing metric information.
-        metric (str): The specific metric to extract from the data.
+    Args:
+        data (str | pd.DataFrame): 
+            Path to CSV file or a DataFrame containing data.
+
+        metrics (str | pd.DataFrame): 
+            Path to CSV file or a DataFrame containing metric information.
+
+        metric (str):
+            The specific metric to extract from the data.
     
     Returns:
-        pd.DataFrame: A filtered DataFrame containing data for the specified metric.
-        bool: Whether the metric should be maximized (True) or minimized (False).
+        pd.DataFrame: 
+            A filtered DataFrame containing data for the specified metric.
+        
+        bool: 
+            Whether the metric should be maximized (True) or minimized (False).
     
     Raises:
         ValueError: If the specified metric is not found in the metrics DataFrame.
@@ -90,25 +101,26 @@ def obtain_list_metrics(metrics: str | pd.DataFrame) -> pd.DataFrame:
 
     return df_m["MetricName"].values    
 
-def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> pd.DataFrame:
+def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> tuple:
     """
     Saves a DataFrame as a CSV file in a 'CSVs' directory.
 
-    Parameters:
-    ----------
-    df : pd.DataFrame
-        The DataFrame to save.
-    metric : str
-        Used to name the output CSV file.
-    metrics : pd.DataFrame, optional
-        A DataFrame containing metrics information.
+    Args:
+        data (pd.DataFrame): 
+            The input DataFrame containing 'Problem', 'Algorithm', and 'MetricValue' columns.
+    
+        metric (str): 
+            The metric name to be included in the saved filenames.
+    
+        metrics (pd.DataFrame):
+            A DataFrame containing metrics information.
 
     Returns:
-    -------
-    pd.DataFrame
-        The input DataFrame.
-    bool
-        The maximize flag for the specified metric.
+        pd.DataFrame:
+            The input DataFrame.
+
+        bool
+            The maximize flag for the specified metric.
     """
     
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame
@@ -132,31 +144,43 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
 
     return df, maximize
 
-def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> pd.DataFrame:
+def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> tuple:
     """
     Processes a CSV DataFrame by grouping data by 'Problem' and 'Algorithm', calculating either the mean or median 
     of the 'MetricValue' column based on normality, and saving the aggregated data and standard deviations as CSV files.
     
-    Parameters:
-    - df (pd.DataFrame): The input DataFrame containing 'Problem', 'Algorithm', and 'MetricValue' columns.
-    - metric (str): The metric name to be included in the saved filenames.
-    - metrics (pd.DataFrame): A DataFrame containing metrics information.
+    Args:
+        data (pd.DataFrame): 
+            The input DataFrame containing 'Problem', 'Algorithm', and 'MetricValue' columns.
+    
+        metric (str): 
+            The metric name to be included in the saved filenames.
+    
+        metrics (pd.DataFrame):
+            A DataFrame containing metrics information.
     
     Returns:
-    - pd.DataFrame: A pivoted DataFrame with 'Problem' as index and 'Algorithm' as columns, showing aggregated metric values:
-            AutoMOPSOD  AutoMOPSORE  AutoMOPSOW  AutoMOPSOZ    NSGAII    OMOPSO     SMPSO
-        DTLZ1    0.008063     1.501062    1.204757    2.071152  0.413378  1.000000  0.011571
-        DTLZ2    0.004992     0.006439    0.009557    0.007497  0.012612  0.006407  0.006556
-        DTLZ3    0.025848     3.991959    1.875400    6.131452  1.155789  3.291164  0.203524
-        DTLZ4    0.004965     0.011184    0.031624    0.016845  0.014132  0.007744  0.006859
-        DTLZ5    0.004589     0.006358    0.010652    0.006825  0.011919  0.005922  0.005828
-        DTLZ6    0.004915     0.004569    1.000000    0.004490  0.944101  0.038736  0.018126
-        DTLZ7    0.005071     0.013038    0.031957    0.003955  0.016132  0.013000  0.006951
-        RE21     0.006046     0.005378    0.005553    0.005496  0.011490  0.006004  0.006269
-        RE22     0.008012     0.006160    0.006598    0.006278  0.015587  0.006997  0.007891
-    - pd.DataFrame: A pivoted DataFrame showing standard deviations of metric values.
-    - str: The aggregation type used ('Mean' or 'Median').
-    - bool: The maximize flag for the specified metric.
+        pd.DataFrame: A pivoted DataFrame with 'Problem' as index and 'Algorithm' as columns, showing aggregated metric values.
+            - Example:
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+                | Problem  | AutoMOPSOD  | AutoMOPSORE | AutoMOPSOW  | AutoMOPSOZ  | NSGAII  | OMOPSO  | SMPSO   |
+                +==========+=============+=============+=============+=============+=========+=========+=========+
+                | DTLZ1    | 0.008063    | 1.501062    | 1.204757    | 2.071152    | 0.41337 | 1.00012 | 0.01157 |
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+                | DTLZ2    | 0.004992    | 0.006439    | 0.009557    | 0.007497    | 0.01261 | 0.00634 | 0.00565 |
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+                | ...      | ...         | ...         | ...         | ...         | ...     | ...     | ...     |
+                +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
+    
+        pd.DataFrame: 
+            A pivoted DataFrame showing standard deviations of metric values.
+                - Example: (Same structure as the aggregated DataFrame)
+        
+        str: 
+            The aggregation type used ('Mean' or 'Median').
+        
+        bool: 
+            The maximize flag for the specified metric.
     """
 
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame

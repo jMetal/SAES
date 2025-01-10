@@ -1,4 +1,4 @@
-latex_generator.py 
+latex_skeleton.py 
 ==================
 
 .. automodule:: latex_generation.latex_skeleton

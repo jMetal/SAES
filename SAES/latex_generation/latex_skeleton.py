@@ -6,6 +6,7 @@ from SAES.latex_generation.latex_tables import base_table
 from SAES.latex_generation.latex_tables import friedman_table
 from SAES.latex_generation.latex_tables import wilconxon_pivot_table
 from SAES.latex_generation.latex_tables import wilconxon_table
+from SAES.utils.csv_processor import process_csv_metrics
 
 import pandas as pd
 import os
@@ -13,13 +14,19 @@ import os
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def latex_document_builder(body: str, output_path: str):
+def __latex_document_builder(body: str, output_path: str):
     """
     Generates a LaTeX document for comparison tables and saves it to the specified path.
 
-    Parameters:
-        body (str): The LaTeX content to be included within the `\\section{Tables}` environment.
-        output_path (str): The file path where the LaTeX document will be saved, including the file name.
+    Args:
+        body (str): 
+            The LaTeX content to be included within the `\\section{Tables}` environment.
+        
+        output_path (str): 
+            The file path where the LaTeX document will be saved, including the file name.
+
+    Returns:
+        None: The function saves the LaTeX document to disk.
     """
 
     # Step 1: Define the LaTeX document preamble and initial structure
@@ -56,21 +63,22 @@ def latex_document_builder(body: str, output_path: str):
     # Step 6: Print confirmation message
     logger.warning(f"LaTeX document saved to {output_path}")
 
-def create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool) -> None:
+def __create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool) -> None:
     """
     Generates and saves LaTeX tables based on the provided metric and CSV data.
 
     This function processes the input dataframe to compute aggregate values, standard deviations, and 
-    statistical test results, then creates and saves LaTeX tables for various analyses, including:
-    - Base table with aggregation and standard deviation
-    - Friedman test table
-    - Wilcoxon pivot table
-    - Wilcoxon test (1vs1)
+    statistical test results, then creates and saves LaTeX tables for various analyses, including: base table with aggregation and standard deviation; Friedman test table; Wilcoxon pivot table and Wilcoxon test (1vs1).
 
     Args:
-        csv (pd.DataFrame): DataFrame containing the data to be processed.
-        metric (str): The metric to analyze (e.g., "accuracy", "precision").
-        maximize (bool): If True, indicates that higher metric values are better, influencing the Friedman test.
+        csv (pd.DataFrame): 
+            DataFrame containing the data to be processed.
+
+        metric (str):
+            The metric to analyze (e.g., "accuracy", "precision").
+
+        maximize (bool): 
+            If True, indicates that higher metric values are better, influencing the Friedman test.
 
     Returns:
         None: The function saves the LaTeX tables to disk.
@@ -87,21 +95,48 @@ def create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool) -> None:
     wilconxon = wilconxon_table(f"Wilconxon Test 1vs1 ({metric})", df_og)
 
     # Save the LaTeX tables to disk
-    latex_document_builder(base, os.path.join(os.getcwd(), "outputs", "tables", metric, "base_table_tex"))
-    latex_document_builder(friedman, os.path.join(os.getcwd(), "outputs", "tables", metric, "friedman_table_tex"))
-    latex_document_builder(wilconxon_pivot, os.path.join(os.getcwd(), "outputs", "tables", metric, "wilconxon_pivot_table_tex"))
-    latex_document_builder(wilconxon, os.path.join(os.getcwd(), "outputs", "tables", metric, "wilconxon_table_tex"))
+    __latex_document_builder(base, os.path.join(os.getcwd(), "outputs", "tables", metric, "base_table_tex"))
+    __latex_document_builder(friedman, os.path.join(os.getcwd(), "outputs", "tables", metric, "friedman_table_tex"))
+    __latex_document_builder(wilconxon_pivot, os.path.join(os.getcwd(), "outputs", "tables", metric, "wilconxon_pivot_table_tex"))
+    __latex_document_builder(wilconxon, os.path.join(os.getcwd(), "outputs", "tables", metric, "wilconxon_table_tex"))
 
-def create_tables_latex_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
+def create_tables_latex_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> None:
+    """
+    Processes the input data and metrics, and generates LaTeX tables for a specific metric.
+
+    Args:
+        data (str | pd.DataFrame): 
+            The input data in CSV file path or DataFrame format.
+        
+        metrics (str | pd.DataFrame): 
+            The metrics in CSV file path or DataFrame format.
+        
+        metric (str):
+            The metric to analyze (e.g., "accuracy", "precision").
+
+    Returns:
+        None: The function saves the LaTeX tables to disk.
+    """
+
+    # Process the input data and metrics
+    df_m, maximize = process_csv_metrics(data, metrics, metric)
+
+    # Generate LaTeX tables for the current metric
+    __create_tables_latex(df_m, metric, maximize)
+
+def create_tables_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
     """
     Processes the input data and metrics, and generates LaTeX tables for each metric.
 
-    Parameters:
-    - data (str | pd.DataFrame): The input data in CSV file path or DataFrame format.
-    - metrics (str | pd.DataFrame): The metrics in CSV file path or DataFrame format.
+    Args:
+        data (str | pd.DataFrame): 
+            The input data in CSV file path or DataFrame format.
+        
+        metrics (str | pd.DataFrame): 
+            The metrics in CSV file path or DataFrame format.
 
-    This function processes the provided data and metrics, and for each metric, it 
-    generates a LaTeX table using `create_tables_latex` based on the processed data.
+    Returns:
+        None: The function saves the LaTeX tables to disk.
     """
 
     # Process the input data and metrics
@@ -110,7 +145,7 @@ def create_tables_latex_metrics(data: str | pd.DataFrame, metrics: str | pd.Data
     # Process the input data and metrics
     for metric, (df_m, maximize) in data.items():
         # Generate LaTeX tables for the current metric
-        create_tables_latex(df_m, metric, maximize)
+        __create_tables_latex(df_m, metric, maximize)
         
 if __name__ == "__main__":
     data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
@@ -118,4 +153,5 @@ if __name__ == "__main__":
 
     data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
     metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
-    create_tables_latex_metrics(data, metrics)
+    create_tables_latex_metric(data, metrics, "HV")
+    # create_tables_latex(data, metrics)

@@ -9,8 +9,4 @@ The following sections document the public API of the `SAES` library.
 
    boxplot
    latex
-   latex_tables
    critical
-   stats
-   checks
-   csv
