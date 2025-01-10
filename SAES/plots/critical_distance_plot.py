@@ -284,11 +284,3 @@ def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
         
         # Call the function to generate the CD plot for the current metric
         __CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
-    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
-
-    data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
-    metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
-    CDplot_csv(data2, metrics2)

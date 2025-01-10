@@ -226,8 +226,3 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
 
     # Return the DataFrames and the aggregation type
     return df_agg_pivot, df_std_pivot, aggregation_type, maximize
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
-    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
-    process_csv_metrics(data, metrics, "NHV")

@@ -146,12 +146,3 @@ def create_tables_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -
     for metric, (df_m, maximize) in data.items():
         # Generate LaTeX tables for the current metric
         __create_tables_latex(df_m, metric, maximize)
-        
-if __name__ == "__main__":
-    data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
-    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
-
-    data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
-    metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
-    create_tables_latex_metric(data, metrics, "HV")
-    # create_tables_latex(data, metrics)

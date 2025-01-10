@@ -102,7 +102,6 @@ def boxplot_csv_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, me
     if problem is None:
         # Generate boxplots for the current metric
         for instance in df_m["Instance"].unique():
-
             # Create and save the boxplot for the current problem
             __boxplot_problem_metric(df_m, instance, metric)
     else:
@@ -140,12 +139,3 @@ def boxplots_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
             __boxplot_problem_metric(df_m, problem, metric)
 
         logger.warning(f"Boxplots for metric {metric} saved to {os.path.join(os.getcwd(), 'outputs', 'boxplots', metric)}")
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
-    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
-
-    data2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/data.csv"
-    metrics2 = "/home/khaosdev/algorithm-benchmark-toolkit/examples/metrics.csv"
-    boxplots_csv(data, metrics)
-    # boxplot_csv_metric(data, metrics, "HV")

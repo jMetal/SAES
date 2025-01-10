@@ -8,12 +8,42 @@ SAES
 
 This is the documentation for the `SAES` python library, which is a Python library designed to analyze and compare the performance of different algorithms across multiple problems automatically. The tool allows you to: 
 
-1. **Process data from CSV files** containing experiment results.  
-2. **Perform advanced statistical studies**, such as Friedman tests or post hoc analysis.  
-3. **Automatically generate LaTeX reports** with clear, professional tables.  
-4. **Create boxplot graphs** to effectively visualize comparisons between algorithms.  
+1. **Seamless CSV data processing**  
+
+   - Import and preprocess experiment results effortlessly.  
+   - Handle datasets of varying sizes with ease.  
+
+2. **Statistical analysis**  
+
+   - **Parametric tests**:
+
+     - Normality test
+   - **Non-parametric tests**:  
+
+     - Friedman test  
+     - Wilcoxon signed-rank test  
+   - **Post hoc analysis**:  
+   
+     - Nemenyi test (critical distance)
+
+3. **Report generation** 
+
+   - Automated LaTeX **Median table** report
+   - Automated LaTeX **Median table with Friedman test** report
+   - Automated LaTeX **Median table with Wilcoxon pairwise test (pivot-based)** report
+   - Automated LaTeX **Pairwise Wilcoxon test table (1-to-1 comparison)** report 
+
+4. **Visualization**  
+
+   - **Boxplot graphs** for algorithm comparison.  
+   - **Critical distance plots** for statistical significance.  
 
 This tool is aimed at researchers and developers interested in algorithm benchmarking studies for artificial intelligence, optimization, machine learning, and more.
+
+Context
+=======
+
+A stochastic algorithm is an algorithm that incorporates randomness as part of its logic. This randomness leads to variability in outcomes even when applied to the same problem with the same initial conditions. Stochastic algorithms are widely used in various fields, including optimization, machine learning, and simulation, due to their ability to explore larger solution spaces and avoid local optima. Analyzing and comparing stochastic algorithms pose challenges due to their inherent randomness due to the fact that single run does not provide a complete picture of its performance; instead, multiple runs are necessary to capture the distribution of possible outcomes. This variability necessitates a statistical-based methodology based on descriptive (mean, median, standard deviation, ...) and inferential (hypothesis testing) statistics and visualization.
 
 Installation
 ============
