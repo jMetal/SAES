@@ -3,11 +3,30 @@
 
 `SAES` is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. 
 
-The current version of the tool allows you to:  
-1. **Process data from CSV files** containing experiment results.  
-2. **Perform advanced statistical studies**, such as Friedman tests or post hoc analysis.  
-3. **Automatically generate LaTeX reports** with clear, professional tables.  
-4. **Create boxplot graphs** to effectively visualize comparisons between algorithms.  
+The current version of the tool offers the following capabilities:  
+1. **Seamless CSV data processing**  
+   - Import and preprocess experiment results effortlessly.  
+   - Handle datasets of varying sizes with ease.  
+
+2. **Statistical analysis**  
+   - **Parametric tests**:
+     - Normality test
+   - **Non-parametric tests**:  
+     - Friedman test  
+     - Wilcoxon signed-rank test  
+   - **Post hoc analysis**:  
+     - Nemenyi test (critical distance)
+
+3. **Report generation**  
+   - Automated LaTeX reports with the following types of tables:  
+     - Median table  
+     - Median table with Friedman test  
+     - Median table with Wilcoxon pairwise test (pivot-based)  
+     - Pairwise Wilcoxon test table (1-to-1 comparison)  
+
+4. **Visualization**  
+   - **Boxplot graphs** for algorithm comparison.  
+   - **Critical distance plots** for statistical significance.  
 
 This tool is aimed at researchers and developers interested in algorithm benchmarking studies for artificial intelligence, optimization, machine learning, and more.
 
@@ -24,25 +43,36 @@ SAES assumes that the results of comparative study between a number of algorithm
 - **ExecutionId** (integer): Unique identifier for each algorithm run .
 - **MetricValue** (double): Value of the metric corresponding to the run. 
 
-### Example of file content
+### Example of Data file content
 
-| Algorithm | Problem     | MetricName    | ExecutionId | MetricValue         |
+| Algorithm | Instance    | MetricName    | ExecutionId | MetricValue         |
 |-----------|-------------|---------------|-------------|---------------------|
 | SVM       | Iris        | Accuracy      | 0           | 0.985               |
 | SVM       | Iris        | Accuracy      | 1           | 0.973               |
 | ...       | ...         | ...           | ...         | ...                 |
 
+You will also need a second file to store the information of the different metrics that you to make study. The file must have the following scheme:
+
+- **MetricName** (string): Name of the quality metric used to evaluate the algorithm performace on the instance.
+- **Maximize** (boolean): Boolean value to show whether the metric value in that row must be maximized or minimized.
+
+### Example of Metric file content
+
+| MetricName | Maximize    |
+|------------|-------------|
+| Accuracy   | True        |
+| Loss       | False       |
+| ...        | ...         |
 
 ## 🛠 Requirements
 
-- **Python**: 3.X.X
+- **Python**: >= 3.10
 
 ## 📦 Installation
 
 Run the following commands to clone and configure the repository in your local machine:
 ```sh
-git clone https://github.com/rorro6787/algorithm-benchmark-toolkit.git
-cd algorithm-benchmark-toolkit
+pip install SAES
 ```
 
 ## 🤝 Contributors
