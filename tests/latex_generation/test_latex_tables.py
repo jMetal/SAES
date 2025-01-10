@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 import os
 import shutil
-from SAES.latex_generation.latex_skeleton import create_tables_latex_metrics
+from SAES.latex_generation.latex_skeleton import create_tables_latex
 
 def remove_files():
     """Clean up directories and files created during testing."""
@@ -41,7 +41,7 @@ Java,True
         """Test the create_tables_latex_metrics function."""
         remove_files()
         # Test the function with the sample data
-        create_tables_latex_metrics(self.data_df, self.metrics_df)
+        create_tables_latex(self.data_df, self.metrics_df)
 
         # Check if the output files exist
         self.assertTrue(os.path.exists(f"outputs/tables/Python/base_table_tex"))
