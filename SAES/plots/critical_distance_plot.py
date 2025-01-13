@@ -122,18 +122,18 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
     lline = sright - sleft
 
     # Initialize figure
-    fig = plt.figure(figsize=(width, height), facecolor="white")
+    fig = plt.figure(figsize=(width, height), facecolor="#FAF9F2")
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.set_axis_off()
 
     # Main horizontal axis
-    ax.hlines(stop, sleft, sright, color="black", linewidth=0.7)
+    ax.hlines(stop, sleft, sright, color="black", linewidth=3)
     for xi in range(highest - lowest + 1):
         # Plot mayor ticks
         ax.vlines(
-            x=sleft + (lline * xi) / (highest - lowest), ymin=stop, ymax=stop + 0.05, color="black", linewidth=0.7
+            x=sleft + (lline * xi) / (highest - lowest), ymin=stop, ymax=stop + 0.05, color="black", linewidth=2
         )
         # Mayor ticks labels
         ax.text(
@@ -156,17 +156,17 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
             x=sleft + (lline * (leftalg[i] - lowest)) / (highest - lowest),
             ymin=sbottom + (spoint - 1 - i) * vspace,
             ymax=stop,
-            color="black",
-            linewidth=0.7,
+            color="red",
+            linewidth=1,
         )
         ax.hlines(
             y=sbottom + (spoint - 1 - i) * vspace,
             xmin=sleft,
             xmax=sleft + (lline * (leftalg[i] - lowest)) / (highest - lowest),
-            color="black",
-            linewidth=0.7,
+            color="red",
+            linewidth=1,
         )
-        ax.text(x=sleft - 0.01, y=sbottom + (spoint - 1 - i) * vspace, s=alg_names[indices][i], ha="right", va="center")
+        ax.text(x=sleft - 0.01, y=sbottom + (spoint - 1 - i) * vspace, s=f"$\\mathbf{{{alg_names[indices][i]}}}$", ha="right", va="center")
 
     # Plot lines/names for right models
     vspace = 0.5 * (stop - sbottom) / (num_alg - spoint + 1)
@@ -175,17 +175,17 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
             x=sleft + (lline * (rightalg[i] - lowest)) / (highest - lowest),
             ymin=sbottom + i * vspace,
             ymax=stop,
-            color="black",
-            linewidth=0.7,
+            color="green",
+            linewidth=1,
         )
         ax.hlines(
             y=sbottom + i * vspace,
             xmin=sleft + (lline * (rightalg[i] - lowest)) / (highest - lowest),
             xmax=sright,
-            color="black",
-            linewidth=0.7,
+            color="green",
+            linewidth=1,
         )
-        ax.text(x=sright + 0.01, y=sbottom + i * vspace, s=alg_names[indices][spoint + i], ha="left", va="center")
+        ax.text(x=sright + 0.01, y=sbottom + i * vspace, s=f"$\\mathbf{{{alg_names[indices][spoint+i]}}}$", ha="left", va="center")
 
     # Plot critical difference rule
     if sleft + (cd * lline) / (highest - lowest) <= sright:
@@ -194,7 +194,7 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
             x=sleft + 0.5 * (cd * lline) / (highest - lowest), y=stop + 0.21, s="CD=%.3f" % cd, ha="center", va="bottom"
         )
     else:
-        ax.text(x=(sleft + sright) / 2, y=stop + 0.2, s="CD=%.3f" % cd, ha="center", va="bottom")
+        ax.text(x=(sleft + sright) / 2, y=stop + 0.2, s=f"$\\mathbf{{CD={cd:.3f}}}$", ha="center", va="bottom")
 
     # Get pair of non-significant methods
     nonsig = _join_alg(avranks, num_alg, cd)
@@ -284,3 +284,9 @@ def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
         
         # Call the function to generate the CD plot for the current metric
         __CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
+
+if __name__ == "__main__":
+    # Example usage
+    data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
+    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
+    CDplot_csv(data, metrics)
