@@ -2,7 +2,7 @@ from SAES.statistical_tests.non_parametrical import wilcoxon_test
 from SAES.statistical_tests.non_parametrical import friedman_test
 import pandas as pd
 
-def base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
     Generates a LaTeX table with performance statistics for algorithms across different instances.
 
@@ -218,7 +218,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Return the final LaTeX code for the table
     return latex_doc
 
-def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
+def wilcoxon_table(title: str, df_og: pd.DataFrame) -> str:
     """
     Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
 
@@ -273,15 +273,15 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
                 compared_pairs.add(pair)  
                 for instance in instances:
                     # Filter the original dataframe for the relevant pair of algorithms and the current instance
-                    algorithms_wilconxon = [algorithm1, algorithm2]
-                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == instance)]
-                    df_wilconxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
-                    df_wilconxon = df_wilconxon.drop(columns="ExecutionId")
-                    og_columns = df_wilconxon.columns.tolist()
-                    df_wilconxon.columns = ["Algorithm A", "Algorithm B"]
+                    algorithms_wilcoxon = [algorithm1, algorithm2]
+                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilcoxon)) & (df_og["Instance"] == instance)]
+                    df_wilcoxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
+                    df_wilcoxon = df_wilcoxon.drop(columns="ExecutionId")
+                    og_columns = df_wilcoxon.columns.tolist()
+                    df_wilcoxon.columns = ["Algorithm A", "Algorithm B"]
 
                     # Perform the Wilcoxon signed-rank test and store the result
-                    wilconson_result = wilcoxon_test(df_wilconxon)
+                    wilconson_result = wilcoxon_test(df_wilcoxon)
                     if wilconson_result == "=":
                         latex_doc += "="
                     else:
@@ -315,7 +315,7 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     # Return the final LaTeX code for the table
     return latex_doc
 
-def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
     Generates a LaTeX table comparing the performance of algorithms using the Wilcoxon signed-rank test.
     The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm 
@@ -366,7 +366,7 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
     for instance in instances:
         # Start the row with the instance name
         row_data = f"{instance} & "
-        instance_wilconxon = instance
+        instance_wilcoxon = instance
 
         # Obtain the median and standard deviation for each algorithm for the current instance
         median = df1.loc[instance]
@@ -385,15 +385,15 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
             if algorithm != pivot_algorithm:
 
                 # Perform Wilcoxon test between the pivot algorithm and the current algorithm
-                algorithms_wilconxon = [pivot_algorithm, algorithm]
-                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == instance_wilconxon)]
-                df_wilconxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
-                df_wilconxon = df_wilconxon.drop(columns="ExecutionId")
-                df_wilconxon.columns = ["Algorithm A", "Algorithm B"]
+                algorithms_wilcoxon = [pivot_algorithm, algorithm]
+                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilcoxon)) & (df_og["Instance"] == instance_wilcoxon)]
+                df_wilcoxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
+                df_wilcoxon = df_wilcoxon.drop(columns="ExecutionId")
+                df_wilcoxon.columns = ["Algorithm A", "Algorithm B"]
                 
                 try:
                     # Run the Wilcoxon test (defined outside the function)
-                    wilconson_result = wilcoxon_test(df_wilconxon)
+                    wilconson_result = wilcoxon_test(df_wilcoxon)
                     algorithm_name = names[algorithms.index(algorithm)]
 
                     # Update ranks based on Wilcoxon test result

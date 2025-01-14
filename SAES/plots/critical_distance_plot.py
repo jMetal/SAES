@@ -10,7 +10,7 @@ import os
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: float = 0.05, higher_is_better: bool = False) -> None:
+def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: float = 0.05, higher_is_better: bool = False, show: bool = False) -> None:
     """
     Creates a critical distance plot to compare the performance of different algorithms on the different instances.
 
@@ -41,6 +41,9 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
 
         higher_is_better (bool): 
             Whether higher metric values indicate better performance. Default is False.
+        
+        show (bool):
+            A flag to indicate whether the plot should be displayed or not. Default is False.
 
     Returns:
         None: The function saves the critical distance plot as a PNG file.
@@ -234,9 +237,13 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
 
     output_path = os.path.join(output_dir, f"{metric}_cd_plot.png")
     plt.savefig(output_path, bbox_inches="tight")
-    plt.show()
 
-def CDplot_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
+    if show:
+        plt.show()
+    else:
+        plt.close()
+
+def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
     """
     Generates CD plots for a metric given as a parameter.
 
@@ -264,13 +271,13 @@ def CDplot_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, me
     os.makedirs(output_dir, exist_ok=True)
                                
     # Call the function to generate the CD plot for the current metric
-    __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize)
+    __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize, show=True)
 
     # Log the successful generation of the critical distance plot
     logger.info(f"Critical distance for metric {metric} saved in {output_dir}")
     return output_dir
 
-def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
+def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
     Generates CD plots for a list of metrics from the given data.
 

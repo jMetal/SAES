@@ -8,7 +8,7 @@ from SAES.utils.csv_processor import process_csv_metrics
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def __boxplot_instance_metric(df_m: pd.DataFrame, instance_name: str, metric: str) -> None:
+def __boxplot_instance_metric(df_m: pd.DataFrame, instance_name: str, metric: str, show: bool = False) -> None:
     """
     Creates a boxplot comparing different algorithms performance on a given instance.
 
@@ -21,6 +21,9 @@ def __boxplot_instance_metric(df_m: pd.DataFrame, instance_name: str, metric: st
         
         metric (str): 
             The metric to be used for the calculations. It should match the column name in the CSV file.
+        
+        show (bool):
+            A flag to indicate whether the plot should be displayed or not. Default is False.
 
     Returns:
         None: The function saves the boxplot as a PNG file.
@@ -69,12 +72,15 @@ def __boxplot_instance_metric(df_m: pd.DataFrame, instance_name: str, metric: st
     # Save the plot as a PNG image
     plt.savefig(os.path.join(os.getcwd(), "outputs", "boxplots", metric, f"{instance_name}.png"))
     
-    # Close the plot to free up memory
-    plt.close()
+    # Show or close the plot
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
-def boxplot_csv_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, instance_name: str = None) -> str:
+def boxplot_instance_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, instance_name: str) -> str:
     """
-    Generates boxplots for all algorithms in the given CSV file for a specific metric.
+    Generates a boxplot comparing different algorithms performance on a given instance for a specific metric.
 
     Args:
         data (pd.DataFrame | str):
@@ -87,7 +93,7 @@ def boxplot_csv_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, me
             The metric to be used for the calculations. It should match the column name in the CSV file.
         
         instance (str):
-            The name of the instance for which the boxplot is being created. If None, boxplots for all instances are generated.
+            The name of the instance for which the boxplot is being created.
     
     Returns:
         str: The path to the directory containing the generated boxplots.
@@ -102,20 +108,48 @@ def boxplot_csv_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, me
     # Create the output directory if it does not exist
     os.makedirs(output_dir, exist_ok=True)
 
-    # Check if a specific instance was provided
-    if instance_name is None:
-        # Generate boxplots for the current metric
-        for instance in df_m["Instance"].unique():
-            # Create and save the boxplot for the current instance
-            __boxplot_instance_metric(df_m, instance, metric)
-    else:
-        # If a specific instance was provided, create and save the boxplot for that instance
-        __boxplot_instance_metric(df_m, instance_name, metric)
+    # If a specific instance was provided, create and save the boxplot for that instance
+    __boxplot_instance_metric(df_m, instance_name, metric, show=True)
+
+    logger.info(f"Boxplots for metric {metric} saved to {output_dir}")
+    return output_dir+f"{instance_name}.png"
+
+def boxplot_all_problems(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
+    """
+    Generates boxplots for all algorithms in the given CSV file for a specific metric.
+
+    Args:
+        data (pd.DataFrame | str):
+            The DataFrame or CSV file containing the data to be plotted.
+        
+        metrics (pd.DataFrame | str):
+            The DataFrame or CSV file containing the metrics to be used for plotting.
+        
+        metric (str):
+            The metric to be used for the calculations. It should match the column name in the CSV file.
+            
+    Returns:
+        str: The path to the directory containing the generated boxplots.
+    """
+
+    # Process the input data and metrics
+    df_m, _ = process_csv_metrics(data, metrics, metric)
+
+    # Create the output directory for the boxplots
+    output_dir = os.path.join(os.getcwd(), "outputs", "boxplots", metric)
+
+    # Create the output directory if it does not exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Generate boxplots for the current metric
+    for instance in df_m["Instance"].unique():
+        # Create and save the boxplot for the current instance
+        __boxplot_instance_metric(df_m, instance, metric)
 
     logger.info(f"Boxplots for metric {metric} saved to {output_dir}")
     return output_dir
 
-def boxplots_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
+def boxplots_all_metrics_problems(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
     Generates boxplots for all instances in the given CSV file dividing them by the metric.
 

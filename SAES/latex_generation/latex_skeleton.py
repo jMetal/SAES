@@ -3,13 +3,15 @@ from SAES.utils.csv_processor import process_csv_metrics
 from SAES.utils.csv_processor import process_dataframe_basic
 from SAES.utils.csv_processor import process_dataframe_extended
 
-from SAES.latex_generation.latex_tables import base_table
+from SAES.latex_generation.latex_tables import median_table
 from SAES.latex_generation.latex_tables import friedman_table
-from SAES.latex_generation.latex_tables import wilconxon_pivot_table
-from SAES.latex_generation.latex_tables import wilconxon_table
+from SAES.latex_generation.latex_tables import wilcoxon_pivot_table
+from SAES.latex_generation.latex_tables import wilcoxon_table
 
 import pandas as pd
 import os
+
+from SAES.latex_generation.__init__ import TableTypes
 
 from SAES.logger import get_logger
 logger = get_logger(__name__)
@@ -60,7 +62,7 @@ def __latex_document_builder(body: str, output_path: str) -> None:
     with open(output_path+".tex", "w") as f:
         f.write(latex_doc)
 
-def __create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool, output_dir: str) -> None:
+def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, output_dir: str) -> None:
     """
     Generates and saves LaTeX tables based on the provided metric and CSV data.
 
@@ -85,22 +87,64 @@ def __create_tables_latex(csv: pd.DataFrame, metric: str, maximize: bool, output
     """
 
     # Process the input DataFrame to calculate aggregate values and standard deviations
-    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(csv, metric)
-    df_og, _ = process_dataframe_basic(csv, metric)
+    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric)
+    df_og, _ = process_dataframe_basic(df_m, metric)
 
     # Generate LaTeX tables for the given metric
-    base = base_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
+    median = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
     friedman = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize)
-    wilconxon_pivot = wilconxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilconxon Pivot ({metric})", df_og, df_agg, df_std)
-    wilconxon = wilconxon_table(f"Wilconxon Test 1vs1 ({metric})", df_og)
+    wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std)
+    wilcoxon = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og)
 
     # Save the LaTeX tables to disk
-    __latex_document_builder(base, os.path.join(output_dir, "medians_table"))
-    __latex_document_builder(friedman, os.path.join(output_dir, "friedman_table"))
-    __latex_document_builder(wilconxon_pivot, os.path.join(output_dir, "wilconxon_pivot_table"))
-    __latex_document_builder(wilconxon, os.path.join(output_dir, "wilconxon_table"))
+    __latex_document_builder(median, os.path.join(output_dir, "median"))
+    __latex_document_builder(friedman, os.path.join(output_dir, "friedman"))
+    __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
+    __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
 
-def create_tables_latex_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
+def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: list) -> str:
+    """
+    Generates LaTeX tables for the specified metric and selected analysis.
+
+    Args:
+        data (str | pd.DataFrame): 
+            The input data in CSV file path or DataFrame format.
+        
+        metrics (str | pd.DataFrame): 
+            The metrics in CSV file path or DataFrame format.
+        
+        metric (str):
+            The metric to analyze (e.g., "accuracy", "precision").
+        
+        selected (list):
+            The selected analysis to perform -> ("median", "friedman", "wilcoxon_pivot", "wilcoxon").
+    """
+
+    # Create the output directory for the tables
+    output_dir = os.path.join(os.getcwd(), "outputs", "latex", metric)
+
+    # Process the input data and metrics
+    df_m, maximize = process_csv_metrics(data, metrics, metric)
+    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric)
+    df_og, _ = process_dataframe_basic(df_m, metric)
+
+    if selected == TableTypes.MEDIAN.value:
+        body = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
+    elif selected == TableTypes.FRIEDMAN.value:
+        body = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize)
+    elif selected == TableTypes.WILCOXON_PIVOT.value:
+        body = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std)
+    elif selected == TableTypes.WILCOXON_PIVOT.value:
+        body = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og)
+    else:
+        logger.error(f"Invalid selected option: {selected}")
+
+    # Save the LaTeX tables to disk
+    __latex_document_builder(body, os.path.join(output_dir, selected))
+    logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
+    return os.path.join(output_dir, selected+".tex")
+
+def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
     """
     Processes the input data and metrics, and generates LaTeX tables for a specific metric.
 
@@ -131,7 +175,7 @@ def create_tables_latex_metric(data: str | pd.DataFrame, metrics: str | pd.DataF
     logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
     return output_dir
 
-def create_tables_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
+def create_latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
     Processes the input data and metrics, and generates LaTeX tables for each metric.
 
