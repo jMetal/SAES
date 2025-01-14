@@ -1,8 +1,8 @@
 MetricName,Maximize
-EP,True
-SP,True
-GD,True
-HV,False
+EP,False
+SP,False
+GD,False
+HV,True
 NHV,False
-IGD,True
-IGD+,True
+IGD,False
+IGD+,False

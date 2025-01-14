@@ -10,18 +10,18 @@ import os
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher_is_better: bool = False) -> None:
+def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: float = 0.05, higher_is_better: bool = False) -> None:
     """
-    Creates a critical distance plot to compare the performance of different algorithms on the different problems.
+    Creates a critical distance plot to compare the performance of different algorithms on the different instances.
 
     Args:
-        data (pd.DataFrame): a DataFrame containing the data for a specific problem with the following structure:
+        data (pd.DataFrame): a DataFrame containing the data for a specific instance with the following structure:
             - Columns:
-                * The first column contains the problem names (e.g., 'DTLZ1', 'DTLZ2', etc.).
+                * The first column contains the instance names (e.g., 'DTLZ1', 'DTLZ2', etc.).
                 * Subsequent columns contain algorithm names (e.g., 'AutoMOPSOD', 'AutoMOPSORE', etc.) with numerical performance metrics as their values.
             - Example:
                 +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
-                | Problem  | AutoMOPSOD  | AutoMOPSORE | AutoMOPSOW  | AutoMOPSOZ  | NSGAII  | OMOPSO  | SMPSO   |
+                | Instance | AutoMOPSOD  | AutoMOPSORE | AutoMOPSOW  | AutoMOPSOZ  | NSGAII  | OMOPSO  | SMPSO   |
                 +==========+=============+=============+=============+=============+=========+=========+=========+
                 | DTLZ1    | 0.008063    | 1.501062    | 1.204757    | 2.071152    | 0.41337 | 1.00012 | 0.01157 |
                 +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
@@ -32,6 +32,9 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
 
         metric (str): 
             The metric to be used for the calculations. It should match the column name in the DataFrame.
+        
+        output_dir (str):
+            The directory where the critical distance plot will be saved.
 
         alpha (float): 
             The significance level for the critical distance calculation. Default is 0.05.
@@ -64,8 +67,8 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
 
         return group
     
-    alg_names = data.columns
-    data = data.values
+    alg_names = df_agg.columns
+    data = df_agg.values
 
     if data.ndim == 2:
         num_dataset, num_alg = data.shape
@@ -75,7 +78,7 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
     # Get the critical difference
     cd = NemenyiCD(alpha, num_alg, num_dataset)
 
-    # Compute ranks. (ranks[i][j] rank of the i-th algorithm on the j-th problem.)
+    # Compute ranks. (ranks[i][j] rank of the i-th algorithm on the j-th Instance.)
     rranks = rankdata(-data, axis=1) if higher_is_better else rankdata(data, axis=1)
 
     # Compute for each algorithm the ranking averages.
@@ -229,13 +232,11 @@ def __CDplot_metric(data: pd.DataFrame, metric: str, alpha: float = 0.05, higher
                 linewidth=2,
             )
 
-    output_path = os.path.join(os.getcwd(), "outputs", "critical_distance", f"{metric}_cd_plot.png")
+    output_path = os.path.join(output_dir, f"{metric}_cd_plot.png")
     plt.savefig(output_path, bbox_inches="tight")
     plt.show()
-    logger.warning(f"Critical distance for metric {metric} saved in {output_path}")
 
-
-def CDplot_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> None:
+def CDplot_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
     """
     Generates CD plots for a metric given as a parameter.
 
@@ -250,16 +251,26 @@ def CDplot_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, me
             The metric to be used for the calculations. It should match the column name in the DataFrame.
 
     Returns:
-        None: The function saves the critical distance plot as a PNG file.
+        str: The path to the directory containing the generated critical distance plot.
     """
 
     # Process the dataframe to aggregate data for the given metric
-    df_agg_pivot, _, _, maximize = process_dataframe_extended(data, metric, metrics)
+    df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics)
     
-    # Call the function to generate the CD plot for the current metric
-    __CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
+    # Create the output directory for the critical distance plots
+    output_dir = os.path.join(os.getcwd(), "outputs", "critical_distance")
 
-def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
+    # Create the output directory if it does not exist
+    os.makedirs(output_dir, exist_ok=True)
+                               
+    # Call the function to generate the CD plot for the current metric
+    __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize)
+
+    # Log the successful generation of the critical distance plot
+    logger.info(f"Critical distance for metric {metric} saved in {output_dir}")
+    return output_dir
+
+def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
     Generates CD plots for a list of metrics from the given data.
 
@@ -271,22 +282,25 @@ def CDplot_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> None:
             Metric names or a DataFrame containing metrics.
 
     Returns:
-        None: The function saves the critical distance plot as a PNG file.
+        str: The path to the directory containing the generated critical distance plots.
     """
 
     # Obtain the list of metrics from the provided input
     list_metrics = obtain_list_metrics(metrics)
+
+    # Create the output directory for the critical distance plots
+    output_dir = os.path.join(os.getcwd(), "outputs", "critical_distance")
+
+    # Create the output directory if it does not exist
+    os.makedirs(output_dir, exist_ok=True)
     
     # Iterate through each metric in the list
     for metric in list_metrics:
         # Process the dataframe to aggregate data for the given metric
-        df_agg_pivot, _, _, maximize = process_dataframe_extended(data, metric, metrics)
+        df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics)
         
         # Call the function to generate the CD plot for the current metric
-        __CDplot_metric(df_agg_pivot, metric, higher_is_better=maximize)
+        __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize)
+        logger.info(f"Critical distance for metric {metric} saved in {output_dir}")
 
-if __name__ == "__main__":
-    # Example usage
-    data = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/data.csv"
-    metrics = "/home/khaosdev/algorithm-benchmark-toolkit/notebooks/metrics.csv"
-    CDplot_csv(data, metrics)
+    return output_dir

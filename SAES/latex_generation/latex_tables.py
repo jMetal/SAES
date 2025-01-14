@@ -4,28 +4,28 @@ import pandas as pd
 
 def base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
     """
-    Generates a LaTeX table with performance statistics for algorithms across different problems.
+    Generates a LaTeX table with performance statistics for algorithms across different instances.
 
     Args:
         title (str): 
             The title for the table.
         
         df_og (pd.DataFrame): 
-            Original DataFrame containing the algorithms and problems.
+            Original DataFrame containing the algorithms and instances.
         
         df1 (pd.DataFrame): 
-            DataFrame with median values for each algorithm and problem.
+            DataFrame with median values for each algorithm and instance.
         
         df2 (pd.DataFrame): 
-            DataFrame with standard deviation values for each algorithm and problem.
+            DataFrame with standard deviation values for each algorithm and instance.
 
     Returns:
         str: LaTeX formatted table as a string.
     """
 
-    # Extract the list of algorithms and problems from the DataFrame
+    # Extract the list of algorithms and instances from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Instance"].unique().tolist()
+    instances = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -41,14 +41,14 @@ def base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataF
     \\hline
     & """ + " & ".join(names) + " \\\\ \\hline\n"
 
-    # Loop through each problem to generate rows of the table
-    for problem in problems:
-        # Start the row with the problem name
-        row_data = f"{problem} & "
+    # Loop through each instance to generate rows of the table
+    for instance in instances:
+        # Start the row with the instance name
+        row_data = f"{instance} & "
 
-        # Obtain the median and standard deviation for each algorithm for the current problem
-        median = df1.loc[problem]
-        std_dev = df2.loc[problem]
+        # Obtain the median and standard deviation for each algorithm for the current instance
+        median = df1.loc[instance]
+        std_dev = df2.loc[instance]
 
         # Normalize the median by standard deviation
         df_global = median/std_dev
@@ -98,7 +98,7 @@ def base_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataF
 
 def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool) -> str:
     """
-    Generates a LaTeX table with performance statistics for algorithms across problems, including a Friedman test 
+    Generates a LaTeX table with performance statistics for algorithms across instances, including a Friedman test 
     for statistical significance between algorithms.
 
     Args:
@@ -106,13 +106,13 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
             The title for the table.
         
         df_og (pd.DataFrame): 
-            Original DataFrame containing the algorithms and problems.
+            Original DataFrame containing the algorithms and instances.
         
         df1 (pd.DataFrame): 
-            DataFrame with median values for each algorithm and problem.
+            DataFrame with median values for each algorithm and instance.
         
         df2 (pd.DataFrame): 
-            DataFrame with standard deviation values for each algorithm and problem.
+            DataFrame with standard deviation values for each algorithm and instance.
         
         maximize (bool): 
             Whether to maximize the metric for the Friedman test.
@@ -121,9 +121,9 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
         str: LaTeX formatted table as a string.
     """
     
-    # Extract the list of algorithms and problems from the DataFrame
+    # Extract the list of algorithms and instances from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Instance"].unique().tolist()
+    instances = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -139,15 +139,15 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\hline
     & """ + " & ".join(names) + " & FT \\\\ \\hline\n"
 
-    # Loop through each problem to generate rows of the table
-    for problem in problems:
-        # Start the row with the problem name
-        row_data = f"{problem} & "
-        problem_friedman = problem
+    # Loop through each instance to generate rows of the table
+    for instance in instances:
+        # Start the row with the instance name
+        row_data = f"{instance} & "
+        instance_friedman = instance
 
-        # Obtain the median and standard deviation for each algorithm for the current problem
-        median = df1.loc[problem]
-        std_dev = df2.loc[problem]
+        # Obtain the median and standard deviation for each algorithm for the current instance
+        median = df1.loc[instance]
+        std_dev = df2.loc[instance]
 
         # Normalize the median by standard deviation
         df_global = median/std_dev
@@ -175,7 +175,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
                 # Perform friedman test between the pivot algorithm and the current algorithm
                 algorithms_friedman = algorithms
-                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_friedman)) & (df_og["Instance"] == problem_friedman)]
+                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_friedman)) & (df_og["Instance"] == instance_friedman)]
                 df_friedman = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
                 df_friedman = df_friedman.drop(columns="ExecutionId")
                 df_friedman.columns = names
@@ -208,7 +208,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     for name, algorithm in zip(names, algorithms):
         latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
 
-    latex_doc += f"\\item \\texttt{{+ implies that the difference between the algorithms for the problem in the select row is significant}}\n"
+    latex_doc += f"\\item \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n"
         
     latex_doc += """
     \\end{itemize}
@@ -227,15 +227,15 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
             Title of the table.
 
         df_og (pd.DataFrame):
-            DataFrame containing columns 'Algorithm', 'Problem', and 'MetricValue'.
+            DataFrame containing columns 'Algorithm', 'Instance', and 'MetricValue'.
 
     Returns:
         str: LaTeX-formatted table string.
     """ 
 
-    # Extract the list of algorithms and problems from the columns of the DataFrame
+    # Extract the list of algorithms and instances from the columns of the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Instance"].unique().tolist()
+    instances = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -271,10 +271,10 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
             if pair not in compared_pairs:
                 # Mark the pair as processed
                 compared_pairs.add(pair)  
-                for problem in problems:
-                    # Filter the original dataframe for the relevant pair of algorithms and the current problem
+                for instance in instances:
+                    # Filter the original dataframe for the relevant pair of algorithms and the current instance
                     algorithms_wilconxon = [algorithm1, algorithm2]
-                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == problem)]
+                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == instance)]
                     df_wilconxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
                     df_wilconxon = df_wilconxon.drop(columns="ExecutionId")
                     og_columns = df_wilconxon.columns.tolist()
@@ -304,7 +304,7 @@ def wilconxon_table(title: str, df_og: pd.DataFrame) -> str:
     for name, algorithm in zip(names, algorithms):
         latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
 
-    latex_doc += f"\\item \\texttt{{Problems (in order)}} : {problems}\n"
+    latex_doc += f"\\item \\texttt{{Instances (in order)}} : {instances}\n"
     latex_doc += f"\\item \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n"
 
     latex_doc += """
@@ -319,28 +319,28 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
     """
     Generates a LaTeX table comparing the performance of algorithms using the Wilcoxon signed-rank test.
     The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm 
-    across different problems.
+    across different instances.
 
     Args:
         title (str): 
             The title to be displayed in the LaTeX table caption.
 
         df_og (pd.DataFrame): 
-            A DataFrame containing the raw data with columns 'Algorithm', 'Problem', 'ExecutionId', and 'MetricValue'.
+            A DataFrame containing the raw data with columns 'Algorithm', 'Instance', 'ExecutionId', and 'MetricValue'.
 
         df1 (pd.DataFrame): 
-            A DataFrame with the median values of each algorithm for each problem.
+            A DataFrame with the median values of each algorithm for each instance.
 
         df2 (pd.DataFrame): 
-            A DataFrame with the standard deviation values of each algorithm for each problem.
+            A DataFrame with the standard deviation values of each algorithm for each instance.
 
     Returns:
         str: The LaTeX code for the table comparing algorithms' performance.
     """
 
-    # Extract the list of algorithms and problems from the DataFrame
+    # Extract the list of algorithms and instances from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
-    problems = df_og["Instance"].unique().tolist()
+    instances = df_og["Instance"].unique().tolist()
 
     # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -362,15 +362,15 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
     \\hline
     & """ + " & ".join(names) + " \\\\ \\hline\n"
 
-    # Loop through each problem to generate rows of the table
-    for problem in problems:
-        # Start the row with the problem name
-        row_data = f"{problem} & "
-        problem_wilconxon = problem
+    # Loop through each instance to generate rows of the table
+    for instance in instances:
+        # Start the row with the instance name
+        row_data = f"{instance} & "
+        instance_wilconxon = instance
 
-        # Obtain the median and standard deviation for each algorithm for the current problem
-        median = df1.loc[problem]
-        std_dev = df2.loc[problem]
+        # Obtain the median and standard deviation for each algorithm for the current instance
+        median = df1.loc[instance]
+        std_dev = df2.loc[instance]
 
         # Normalize the median by standard deviation
         df_global = median/std_dev
@@ -386,7 +386,7 @@ def wilconxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df
 
                 # Perform Wilcoxon test between the pivot algorithm and the current algorithm
                 algorithms_wilconxon = [pivot_algorithm, algorithm]
-                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == problem_wilconxon)]
+                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilconxon)) & (df_og["Instance"] == instance_wilconxon)]
                 df_wilconxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
                 df_wilconxon = df_wilconxon.drop(columns="ExecutionId")
                 df_wilconxon.columns = ["Algorithm A", "Algorithm B"]

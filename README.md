@@ -1,5 +1,5 @@
 # SAES: Stochastic Algorithm Evaluation Suite
-![UMA CV 2025](https://github.com/rorro6787/rorro6787/blob/main/Images/SAES.png)
+![SAES_LOGO](SAES.png)
 
 `SAES` is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. 
 
@@ -69,8 +69,13 @@ You will also need a second file to store the information of the different metri
 - **Python**: >= 3.10
 
 ## 📦 Installation
+Before installing the project, we recommend creating a virtual environment to avoid conflicts with other Python projects:
+```sh
+python3 -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+```
 
-Run the following commands to clone and configure the repository in your local machine:
+Once you have activated the virtual environment, you can install the project with its dependencies using the following command:
 ```sh
 pip install SAES
 ```

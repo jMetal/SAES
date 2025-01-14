@@ -48,14 +48,14 @@ A stochastic algorithm is an algorithm that incorporates randomness as part of i
 Installation
 ============
 
-To install the project, you need to clone the repository and install the required dependencies. You will need to have Python 3.8 or higher installed on your system. Before installing the project, we recommend creating a virtual environment to avoid conflicts with other Python projects:
+To install the project, you need to clone the repository and install the required dependencies. You will need to have Python 3.10 or higher installed on your system. Before installing the project, we recommend creating a virtual environment to avoid conflicts with other Python projects:
 
 .. code-block:: bash
 
    python3 -m venv venv
    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 
-Once you have activated the virtual environment, you can install the project dependencies using the following command:
+Once you have activated the virtual environment, you can install the project and its dependencies using the following command:
 
 .. code-block:: bash
 

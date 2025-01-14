@@ -42,7 +42,7 @@ The above code snippet generates a critical distance diagram for the experimenta
    :width: 100%
    :align: center
 
-Single Critical Distance generation
+Full Critical Distance generation
 -----------------------------------
 
 If you prefer the library to generate all the critical distance diagrams for all the metrics in the data, you can use the following code snippet:

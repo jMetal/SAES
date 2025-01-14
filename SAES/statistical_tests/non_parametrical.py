@@ -6,12 +6,12 @@ from statsmodels.stats.libqsturng import qsturng
 
 def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
     """
-    Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple problems.
+    Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple instances.
     The Friedman test is a non-parametric statistical test used to detect differences in treatments (or algorithms) across multiple groups. The null hypothesis is that all algorithms perform equivalently, which implies their average ranks should be equal. The test is particularly useful when the data does not meet the assumptions of parametric tests like ANOVA.
 
     Args:
         data (pd.DataFrame): 
-            A 2D array or DataFrame containing the performance results. Each row represents the performance of different algorithms on a problem, and each column represents a different algorithm. For example, data.shape should be (n, k), where n is the number of problems, and k is the number of algorithms.
+            A 2D array or DataFrame containing the performance results. Each row represents the performance of different algorithms on a instance, and each column represents a different algorithm. For example, data.shape should be (n, k), where n is the number of instances, and k is the number of algorithms.
                 - Example:
                     +----------+-------------+-------------+-------------+-------------+
                     |          | Algorithm A | Algorithm B | Algorithm C | Algorithm D |
@@ -68,12 +68,12 @@ def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
 
 def wilcoxon_test(data: pd.DataFrame):
     """
-    Performs the Wilcoxon signed-rank test to compare the performance of two algorithms across multiple problems.
-    The Wilcoxon signed-rank test is a non-parametric statistical test used to compare the performance of two algorithms on multiple problems. The null hypothesis is that the algorithms perform equivalently, which implies their average ranks are equal.
+    Performs the Wilcoxon signed-rank test to compare the performance of two algorithms across multiple instances.
+    The Wilcoxon signed-rank test is a non-parametric statistical test used to compare the performance of two algorithms on multiple instances. The null hypothesis is that the algorithms perform equivalently, which implies their average ranks are equal.
 
     Args:
         data (pd.DataFrame):
-            A DataFrame containing the performance results. Each row represents the performance of both algorithms on a problem. The DataFrame should have two columns, one for each algorithm.
+            A DataFrame containing the performance results. Each row represents the performance of both algorithms on a instance. The DataFrame should have two columns, one for each algorithm.
                 - Example:
             +-------+-------------+-------------+
             |   0   | Algorithm A | Algorithm B |
@@ -120,7 +120,7 @@ def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
             The number of algorithms being compared.
         
         num_dataset (int):
-            The number of datasets/problems used for comparison.
+            The number of datasets/instances used for comparison.
     
     Returns:
         float: The critical difference value for Nemenyi's

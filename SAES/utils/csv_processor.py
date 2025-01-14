@@ -107,7 +107,7 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
 
     Args:
         data (pd.DataFrame): 
-            The input DataFrame containing 'Problem', 'Algorithm', and 'MetricValue' columns.
+            The input DataFrame containing 'Instance', 'Algorithm', and 'MetricValue' columns.
     
         metric (str): 
             The metric name to be included in the saved filenames.
@@ -146,12 +146,12 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
 
 def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> tuple:
     """
-    Processes a CSV DataFrame by grouping data by 'Problem' and 'Algorithm', calculating either the mean or median 
+    Processes a CSV DataFrame by grouping data by 'Instance' and 'Algorithm', calculating either the mean or median 
     of the 'MetricValue' column based on normality, and saving the aggregated data and standard deviations as CSV files.
     
     Args:
         data (pd.DataFrame): 
-            The input DataFrame containing 'Problem', 'Algorithm', and 'MetricValue' columns.
+            The input DataFrame containing 'Instance', 'Algorithm', and 'MetricValue' columns.
     
         metric (str): 
             The metric name to be included in the saved filenames.
@@ -160,10 +160,10 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
             A DataFrame containing metrics information.
     
     Returns:
-        pd.DataFrame: A pivoted DataFrame with 'Problem' as index and 'Algorithm' as columns, showing aggregated metric values.
+        pd.DataFrame: A pivoted DataFrame with 'Instance' as index and 'Algorithm' as columns, showing aggregated metric values.
             - Example:
                 +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
-                | Problem  | AutoMOPSOD  | AutoMOPSORE | AutoMOPSOW  | AutoMOPSOZ  | NSGAII  | OMOPSO  | SMPSO   |
+                | Instance | AutoMOPSOD  | AutoMOPSORE | AutoMOPSOW  | AutoMOPSOZ  | NSGAII  | OMOPSO  | SMPSO   |
                 +==========+=============+=============+=============+=============+=========+=========+=========+
                 | DTLZ1    | 0.008063    | 1.501062    | 1.204757    | 2.071152    | 0.41337 | 1.00012 | 0.01157 |
                 +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
@@ -199,7 +199,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     os.makedirs(os.path.join(os.getcwd(), "outputs"), exist_ok=True)
     os.makedirs(os.path.join(os.getcwd(), "CSVs"), exist_ok=True)
 
-    # Group by 'Problem' and 'Algorithm', then calculate the median or mean of the 'Metric Value' column
+    # Group by 'Instance' and 'Algorithm', then calculate the median or mean of the 'Metric Value' column
     normal = check_normality(df)
 
     if normal:
@@ -209,7 +209,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
         df_agg = df.groupby(['Instance', 'Algorithm'])['MetricValue'].median().reset_index()
         aggregation_type = "Median"
     
-    # Pivot the DataFrame to get 'Problem' as the index and 'Algorithm' as the columns with 'Metric Value' values
+    # Pivot the DataFrame to get 'Instance' as the index and 'Algorithm' as the columns with 'Metric Value' values
     df_agg_pivot = df_agg.pivot(index='Instance', columns='Algorithm', values='MetricValue')
 
     # Calculate the standard deviation DataFrame 
