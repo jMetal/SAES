@@ -137,7 +137,7 @@ def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
     elif selected == TableTypes.WILCOXON_PIVOT.value:
         body = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og)
     else:
-        logger.error(f"Invalid selected option: {selected}")
+        raise ValueError("Invalid selected analysis. Please choose one of the following: 'median', 'friedman', 'wilcoxon_pivot', 'wilcoxon'.")
 
     # Save the LaTeX tables to disk
     __latex_document_builder(body, os.path.join(output_dir, selected))
