@@ -6,6 +6,11 @@
 SAES
 ===========================
 
+.. image:: SAES.png
+   :alt: CD diagram
+   :width: 100%
+   :align: center
+
 This is the documentation for the `SAES` python library, which is a Python library designed to analyze and compare the performance of different algorithms across multiple problems automatically. The tool allows you to: 
 
 1. **Seamless CSV data processing**  
@@ -54,6 +59,9 @@ To install the project, you need to clone the repository and install the require
 
    python3 -m venv venv
    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+
+.. warning:: 
+   This project is currently in **BETA VERSION** and still has work in progress. We recommend using it with caution and reporting any issues you encounter to ensure the project's stability and reliability.
 
 Once you have activated the virtual environment, you can install the project and its dependencies using the following command:
 

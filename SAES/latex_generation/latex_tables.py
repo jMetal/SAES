@@ -27,9 +27,6 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     algorithms = df_og["Algorithm"].unique().tolist()
     instances = df_og["Instance"].unique().tolist()
 
-    # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
-    names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
-
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
@@ -39,7 +36,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     \\begin{scriptsize}
     \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-1) + """c}
     \\hline
-    & """ + " & ".join(names) + " \\\\ \\hline\n"
+    & """ + " & ".join(algorithms) + " \\\\ \\hline\n"
 
     # Loop through each instance to generate rows of the table
     for instance in instances:
@@ -81,15 +78,9 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     \\end{scriptsize}
     \\vspace{2mm}
     \\small
-    \\begin{itemize}
     """
-
-    # List the algorithms and their respective names
-    for name, algorithm in zip(names, algorithms):
-        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
-
+        
     latex_doc += """
-    \\end{itemize}
     \\end{table}
     """
 
@@ -137,7 +128,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\begin{scriptsize}
     \\begin{tabular}{l|""" + """c|""" * (len(algorithms)) + """c}
     \\hline
-    & """ + " & ".join(names) + " & FT \\\\ \\hline\n"
+    & """ + " & ".join(algorithms) + " & FT \\\\ \\hline\n"
 
     # Loop through each instance to generate rows of the table
     for instance in instances:
@@ -203,11 +194,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\small
     \\begin{itemize}
     """
-
-    # Add each algorithm with its respective change
-    for name, algorithm in zip(names, algorithms):
-        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
-
+        
     latex_doc += f"\\item \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n"
         
     latex_doc += """
@@ -249,15 +236,15 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame) -> str:
     \\begin{scriptsize}
     \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-2) + """c}
     \\hline
-    & """ + " & ".join(names[1:]) + " \\\\ \\hline\n"
+    & """ + " & ".join(algorithms[1:]) + " \\\\ \\hline\n"
 
     # Generate comparisons and populate table
     compared_pairs = set()
 
-    for algorithm1, name in zip(algorithms, names):
+    for algorithm1, _ in zip(algorithms, names):
         if algorithm1 == algorithms[-1]:
             continue
-        latex_doc += name + " & "
+        latex_doc += algorithm1 + " & "
         for algorithm2 in algorithms:
             if algorithm2 == algorithms[0]:
                 continue
@@ -299,10 +286,6 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame) -> str:
     \\small
     \\begin{itemize}
     """
-
-    # Add each algorithm with its respective change
-    for name, algorithm in zip(names, algorithms):
-        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
 
     latex_doc += f"\\item \\texttt{{Instances (in order)}} : {instances}\n"
     latex_doc += f"\\item \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n"
@@ -360,7 +343,7 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     \\begin{scriptsize}
     \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-1) + """c}
     \\hline
-    & """ + " & ".join(names) + " \\\\ \\hline\n"
+    & """ + " & ".join(algorithms) + " \\\\ \\hline\n"
 
     # Loop through each instance to generate rows of the table
     for instance in instances:
@@ -438,10 +421,6 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     \\small
     \\begin{itemize}
     """
-
-    # List the algorithms and their respective names
-    for name, algorithm in zip(names, algorithms):
-        latex_doc += f"\\item \\texttt{{{name}}} : {algorithm}\n"
 
     latex_doc += f"\\item \\texttt{{+ implies that the pivot algorithm (last column) was worse than the selected}}\n"
 

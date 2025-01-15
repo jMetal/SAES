@@ -1,5 +1,5 @@
-critical_distance_plot.py 
-=========================
+Critical Distance Graph Generation
+==================================
 
 .. automodule:: plots.critical_distance_plot
    :members:

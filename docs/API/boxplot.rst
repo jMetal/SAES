@@ -1,5 +1,5 @@
-boxplot.py
-==========
+Boxplot Generation
+==================
 
 .. automodule:: plots.boxplot
    :members:

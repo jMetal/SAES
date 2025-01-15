@@ -102,7 +102,7 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
     __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
 
-def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: list) -> str:
+def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: str) -> str:
     """
     Generates LaTeX tables for the specified metric and selected analysis.
 
@@ -116,8 +116,32 @@ def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
         metric (str):
             The metric to analyze (e.g., "accuracy", "precision").
         
-        selected (list):
+        selected (str):
             The selected analysis to perform -> ("median", "friedman", "wilcoxon_pivot", "wilcoxon").
+    
+    Returns:
+        str: The path to the directory containing the generated tables.
+
+    Example:
+        >>> from SAES.latex_generation.latex_skeleton import create_latex_selected
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Metric to analyze
+        >>> metric = "HV"
+        >>> 
+        >>> # Selected analysis
+        >>> selected = "wilcoxon_pivot"
+        >>> 
+        >>> # Save the latex reports on disk
+        >>> output_dir = create_latex_selected(data, metrics, metric)
+        >>> print(output_dir)
+        LaTeX wilcoxon_pivot document for metric HV saved to {output_dir}
+        {output_dir}
     """
 
     # Create the output directory for the tables
@@ -141,12 +165,12 @@ def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
 
     # Save the LaTeX tables to disk
     __latex_document_builder(body, os.path.join(output_dir, selected))
-    logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
+    logger.info(f"LaTeX {selected} document for metric {metric} saved to {output_dir}")
     return os.path.join(output_dir, selected+".tex")
 
 def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
     """
-    Processes the input data and metrics, and generates LaTeX tables for a specific metric.
+    Processes the input data and metrics, and generates all the LaTeX reports on disk for a specific metric.
 
     Args:
         data (str | pd.DataFrame): 
@@ -160,6 +184,24 @@ def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: 
 
     Returns:
         str: The path to the directory containing the generated tables.
+
+    Example:
+        >>> from SAES.latex_generation.latex_skeleton import create_latex
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Metric to analyze
+        >>> metric = "HV"
+        >>> 
+        >>> # Save the latex reports on disk
+        >>> output_dir = create_latex(data, metrics, metric)
+        >>> print(output_dir)
+        LaTeX document for metric HV saved to {output_dir}
+        {output_dir}
     """
 
     # Process the input data and metrics
@@ -177,7 +219,7 @@ def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: 
 
 def create_latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
-    Processes the input data and metrics, and generates LaTeX tables for each metric.
+    Processes the input data and metrics, and generates all the LaTeX reports for each metric.
 
     Args:
         data (str | pd.DataFrame): 
@@ -188,6 +230,21 @@ def create_latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFra
 
     Returns:
         str: The path to the directory containing the generated tables.
+
+    Example:
+        >>> from SAES.latex_generation.latex_skeleton import create_latex_all_metrics
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Save the latex reports on disk
+        >>> output_dir = create_latex_all_metrics(data, metrics)
+        >>> print(output_dir)
+        LaTeX document for metric HV saved to {output_dir}
+        {output_dir}
     """
 
     # Process the input data and metrics

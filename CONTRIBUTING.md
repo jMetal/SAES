@@ -1,6 +1,6 @@
-# Contributing to Algorithm Benchmark Toolkit
+# Contributing to SAES
 
-Thank you for considering contributing to the **Algorithm Benchmark Toolkit**! We welcome contributions that improve the tool, whether it's new features, bug fixes, or enhancements. By contributing, you help make this project better for everyone. Here's how you can get involved.
+Thank you for considering contributing to the **SAES**! We welcome contributions that improve the tool, whether it's new features, bug fixes, or enhancements. By contributing, you help make this project better for everyone. Here's how you can get involved.
 
 ## 🎯 **How to Contribute**
 
@@ -19,9 +19,9 @@ Thank you for considering contributing to the **Algorithm Benchmark Toolkit**! W
 
 ## 📝 **Reporting Issues**
 
-If you encounter bugs or have suggestions for improvements, please open an issue in the [Issues tab](https://github.com/rorro6787/algorithm-benchmark-toolkit/issues).
+If you encounter bugs or have suggestions for improvements, please open an issue in the [Issues tab](https://github.com/rorro6787/SAES).
 We look forward to your contributions!
 
 ## 🙌 **Thank You for Contributing!**
 
-Your contributions help make this tool better for everyone. We appreciate your time and effort in helping to improve the **Algorithm Benchmark Toolkit**!
+Your contributions help make this tool better for everyone. We appreciate your time and effort in helping to improve the **SAES**!

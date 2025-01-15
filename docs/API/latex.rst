@@ -1,5 +1,5 @@
-latex_skeleton.py 
-==================
+LaTeX Report Generation
+=======================
 
 .. automodule:: latex_generation.latex_skeleton
    :members:

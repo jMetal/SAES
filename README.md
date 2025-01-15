@@ -1,5 +1,5 @@
 # SAES: Stochastic Algorithm Evaluation Suite
-![SAES_LOGO](SAES.png)
+![SAES_LOGO](docs/SAES.png)
 
 `SAES` is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. 
 
@@ -64,6 +64,21 @@ You will also need a second file to store the information of the different metri
 | Loss       | False       |
 | ...        | ...         |
 
+## SAES API
+
+The SAES library offers a range of functions categorized into three groups, corresponding to its three main features. The following link provides the [API](https://rorro6787.github.io/SAES/API/api.html) documentation, including a detailed list of these functions:
+1. **Boxplot Generation**
+   - `boxplots_all_metrics_problems()`
+   - `boxplot_all_problems()`
+   - `boxplot_instance_metric()`
+2. **LaTeX Report Generation**
+   - `create_latex_all_metrics()`
+   - `create_latex()`
+   - `create_latex_selected()`
+3. **Critical Distance Graph Generation**
+   - `CDplot_all_metrics()`
+   - `CDplot_metric()`
+
 ## 🛠 Requirements
 
 - **Python**: >= 3.10
@@ -84,5 +99,3 @@ pip install SAES
 
 - [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/rorro6787) **Emilio Rodrigo Carreira Villalta**
 - [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/ajnebro) **Antonio J. Nebro**
-
-

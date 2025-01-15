@@ -236,14 +236,14 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
             )
 
     output_path = os.path.join(output_dir, f"{metric}_cd_plot.png")
-    plt.savefig(output_path, bbox_inches="tight")
 
     if show:
         plt.show()
     else:
+        plt.savefig(output_path, bbox_inches="tight")
         plt.close()
 
-def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
+def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, show: bool = False) -> str:
     """
     Generates CD plots for a metric given as a parameter.
 
@@ -257,8 +257,29 @@ def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric:
         metric (str):
             The metric to be used for the calculations. It should match the column name in the DataFrame.
 
+        show (bool):
+            A flag to indicate whether the plot should be displayed or saved in disk. Default is False.
+
     Returns:
         str: The path to the directory containing the generated critical distance plot.
+
+    Example:
+        >>> from SAES.plots.critical_distance_plot import CDplot_metric
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Metric to analyze
+        >>> metric = "HV"
+        >>> 
+        >>> # Save the critical distance plot on disk instead of displaying it
+        >>> output_dir = CDplot_metric(data, metrics, metric, show=False)
+        >>> print(output_dir)
+        Critical distance for metric HV saved to {output_dir}
+        {output_dir}
     """
 
     # Process the dataframe to aggregate data for the given metric
@@ -271,15 +292,18 @@ def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric:
     os.makedirs(output_dir, exist_ok=True)
                                
     # Call the function to generate the CD plot for the current metric
-    __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize, show=True)
+    __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize, show=show)
 
+    if show:
+        return "Critical distance plot displayed"
+    
     # Log the successful generation of the critical distance plot
-    logger.info(f"Critical distance for metric {metric} saved in {output_dir}")
+    logger.info(f"Critical distance for metric {metric} saved to {output_dir}")
     return output_dir
 
 def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
-    Generates CD plots for a list of metrics from the given data.
+    Generates CD plots for a all the metrics in the given data.
 
     Args:
         data (str | pd.DataFrame): 
@@ -290,6 +314,21 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) ->
 
     Returns:
         str: The path to the directory containing the generated critical distance plots.
+
+    Example:
+        >>> from SAES.plots.critical_distance_plot import CDplot_all_metrics
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Save the critical distance plots on disk
+        >>> output_dir = CDplot_all_metrics(data, metrics)
+        >>> print(output_dir)
+        Critical distance for metric HV saved to {output_dir}
+        {output_dir}
     """
 
     # Obtain the list of metrics from the provided input
@@ -308,6 +347,6 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) ->
         
         # Call the function to generate the CD plot for the current metric
         __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize)
-        logger.info(f"Critical distance for metric {metric} saved in {output_dir}")
+        logger.info(f"Critical distance for metric {metric} saved to {output_dir}")
 
     return output_dir

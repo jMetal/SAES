@@ -69,16 +69,15 @@ def __boxplot_instance_metric(df_m: pd.DataFrame, instance_name: str, metric: st
     # Adjust the layout for better spacing
     plt.tight_layout()
 
-    # Save the plot as a PNG image
-    plt.savefig(os.path.join(os.getcwd(), "outputs", "boxplots", metric, f"{instance_name}.png"))
-    
     # Show or close the plot
     if show:
         plt.show()
     else:
+        # Save the plot as a PNG image
+        plt.savefig(os.path.join(os.getcwd(), "outputs", "boxplots", metric, f"{instance_name}.png"))
         plt.close()
 
-def boxplot_instance_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, instance_name: str) -> str:
+def boxplot_instance_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, instance_name: str, show: bool = False) -> str:
     """
     Generates a boxplot comparing different algorithms performance on a given instance for a specific metric.
 
@@ -92,11 +91,34 @@ def boxplot_instance_metric(data: str | pd.DataFrame, metrics: str | pd.DataFram
         metric (str):
             The metric to be used for the calculations. It should match the column name in the CSV file.
         
-        instance (str):
+        instance_name (str):
             The name of the instance for which the boxplot is being created.
+
+        show (bool):
+            A flag to indicate whether the plot should be displayed or saved in disk. Default is False.
     
     Returns:
-        str: The path to the directory containing the generated boxplots.
+        str: The path to the directory containing the generated boxplot or a message indicating that the plot was displayed.
+
+    Example:
+        >>> from SAES.plots.boxplot import boxplot_instance_metric
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Metric to analyze
+        >>> metric = "HV"
+        >>> 
+        >>> # Instance to analyze
+        >>> instance_name = "ZDT1"
+        >>> 
+        >>> # Show the boxplot instead of saving it on disk
+        >>> output_dir = boxplot_instance_metric(data, metrics, metric, instance_name, show=True)
+        >>> print(output_dir)
+        Boxplot displayed
     """
 
     # Process the input data and metrics
@@ -109,8 +131,12 @@ def boxplot_instance_metric(data: str | pd.DataFrame, metrics: str | pd.DataFram
     os.makedirs(output_dir, exist_ok=True)
 
     # If a specific instance was provided, create and save the boxplot for that instance
-    __boxplot_instance_metric(df_m, instance_name, metric, show=True)
+    __boxplot_instance_metric(df_m, instance_name, metric, show=show)
 
+    if show:
+        return "Boxplot displayed"
+
+    # Log the successful generation of the boxplot
     logger.info(f"Boxplots for metric {metric} saved to {output_dir}")
     return output_dir+f"{instance_name}.png"
 
@@ -130,6 +156,24 @@ def boxplot_all_problems(data: str | pd.DataFrame, metrics: str | pd.DataFrame, 
             
     Returns:
         str: The path to the directory containing the generated boxplots.
+
+    Example:
+        >>> from SAES.plots.boxplot import boxplot_all_problems
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Metric to analyze
+        >>> metric = "HV"
+        >>> 
+        >>> # Save the boxplots on disk
+        >>> output_dir = boxplot_all_problems(data, metrics, metric)
+        >>> print(output_dir)
+        Boxplots for metric HV saved to {output_dir}
+        {output_dir}
     """
 
     # Process the input data and metrics
@@ -151,7 +195,7 @@ def boxplot_all_problems(data: str | pd.DataFrame, metrics: str | pd.DataFrame, 
 
 def boxplots_all_metrics_problems(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
-    Generates boxplots for all instances in the given CSV file dividing them by the metric.
+    Generates boxplots for all instances in the given CSV file for all metrics.
 
     Args:
         data (pd.DataFrame | str): 
@@ -162,6 +206,21 @@ def boxplots_all_metrics_problems(data: str | pd.DataFrame, metrics: str | pd.Da
         
     Returns:
         str: The path to the directory containing the generated boxplots.
+
+    Example:
+        >>> from SAES.plots.boxplot import boxplots_all_metrics_problems
+        >>> 
+        >>> # Data source
+        >>> experimentData = "swarmIntelligence.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # Save the boxplots on disk
+        >>> output_dir = boxplots_all_metrics_problems(data, metrics)
+        >>> print(output_dir)
+        Boxplots for metric HV saved to {output_dir}
+        {output_dir}
     """
 
     # Process the input data and metrics
