@@ -7,7 +7,7 @@ exclude = ["*.pyc", "*.log", ".git", "dist", "venv", "*__pycache__*", "*outputs*
 
 [project]
 name = "SAES"
-version = "1.0.0"
+version = "0.1.0"
 dependencies = [
     "python-dotenv==1.0.1",
     "numpy==2.1.2",

@@ -1,0 +1,43 @@
+# Workflow name: Upload Python Package to PyPI when a Release is Created
+name: Upload Python Package to PyPI when a Release is Created
+
+# Trigger the workflow on release creation
+on:
+  release:
+    types: [created]  # Specifies that this workflow runs when a release is created
+
+jobs:
+  pypi-publish:  # Job name for publishing the release to PyPI
+    name: Publish release to PyPI  # Descriptive name for the job
+    runs-on: ubuntu-latest  # Specifies the environment where the job will run (Ubuntu latest version)
+    environment:
+      name: release  # Name of the environment (used for deployment)
+      url: https://pypi.org/p/YNDRA  # URL of the PyPI package
+
+    permissions:  # Define permissions for the workflow
+      id-token: write  # Allows writing the ID token for authenticating with PyPI
+
+    steps:  # Steps to execute the job
+      # Step 1: Check out the repository
+      - uses: actions/checkout@v4  # Uses the checkout action to pull the repository code
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4  # Uses the setup-python action to configure Python
+        with:
+          python-version: "3.10"  # Specifies the Python version to use (3.10 in this case)
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |  # Runs a shell script
+          python -m pip install --upgrade pip  # Upgrades pip to the latest version
+          pip install build  # Installs the build library for creating distributions
+
+      # Step 4: Build the package
+      - name: Build package
+        run: |
+          python -m build  # Builds the package for distribution
+
+      # Step 5: Publish the package to PyPI
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1  # Uses the PyPI publish GitHub Action

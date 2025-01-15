@@ -19,7 +19,7 @@ Thank you for considering contributing to the **SAES**! We welcome contributions
 
 ## 📝 **Reporting Issues**
 
-If you encounter bugs or have suggestions for improvements, please open an issue in the [Issues tab](https://github.com/rorro6787/SAES).
+If you encounter bugs or have suggestions for improvements, please open an issue in the [Issues tab](https://github.com/jMetal/SAES).
 We look forward to your contributions!
 
 ## 🙌 **Thank You for Contributing!**
