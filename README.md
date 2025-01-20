@@ -68,16 +68,16 @@ You will also need a second file to store the information of the different metri
 
 The SAES library offers a range of functions categorized into three groups, corresponding to its three main features. The following link provides the [API](https://jMetal.github.io/SAES/API/api.html) documentation, including a detailed list of these functions:
 1. **Boxplot Generation**
-   - `boxplots_all_metrics_problems()`
-   - `boxplot_all_problems()`
-   - `boxplot_instance_metric()`
+   - `boxplots_all_metrics_instances()`
+   - `boxplot_all_instances()`
+   - `boxplot()`
 2. **LaTeX Report Generation**
-   - `create_latex_all_metrics()`
-   - `create_latex()`
-   - `create_latex_selected()`
+   - `latex_all_metrics()`
+   - `latex()`
+   - `latex_selected()`
 3. **Critical Distance Graph Generation**
    - `CDplot_all_metrics()`
-   - `CDplot_metric()`
+   - `CDplot()`
 
 ## 🛠 Requirements
 
