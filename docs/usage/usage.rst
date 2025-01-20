@@ -1,7 +1,7 @@
 Usage
 =====
 
-This section provides a brief overview of the two different features that this version of the library provides: boxplotting and LaTeX report generation.
+This section provides a brief overview of the three different features that this version of the library provides: boxplot, critical distance and LaTeX report generation.
 
 .. toctree::
    :maxdepth: 1

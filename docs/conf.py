@@ -7,12 +7,12 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import sys
-from pathlib import Path
+import os
 
-sys.path.insert(0, str(Path('..', 'SAES').resolve()))
+sys.path.insert(0, os.path.abspath('..'))
 
 project = 'SAES'
-copyright = '2024, Emilio Rodrigo Carreira Villalta and Antonio J. Nebro'
+copyright = '2025, Emilio Rodrigo Carreira Villalta and Antonio J. Nebro'
 author = 'Emilio Rodrigo Carreira Villalta and Antonio J. Nebro'
 release = 'dev'
 
@@ -28,4 +28,4 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+# html_static_path = ['_static']
