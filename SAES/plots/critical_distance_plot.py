@@ -82,7 +82,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     cd = NemenyiCD(alpha, num_alg, num_dataset)
 
     # Compute ranks. (ranks[i][j] rank of the i-th algorithm on the j-th Instance.)
-    rranks = rankdata(-data, axis=1) if higher_is_better else rankdata(data, axis=1)
+    rranks = rankdata(data, axis=1) if higher_is_better else rankdata(-data, axis=1)
 
     # Compute for each algorithm the ranking averages.
     avranks = np.transpose(np.mean(rranks, axis=0))
@@ -243,7 +243,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
         plt.savefig(output_path, bbox_inches="tight")
         plt.close()
 
-def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, show: bool = False) -> str:
+def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, show: bool = False) -> str:
     """
     Generates CD plots for a metric given as a parameter.
 
@@ -264,7 +264,7 @@ def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric:
         str: The path to the directory containing the generated critical distance plot.
 
     Example:
-        >>> from SAES.plots.critical_distance_plot import CDplot_metric
+        >>> from SAES.plots.critical_distance_plot import CDplot
         >>> 
         >>> # Data source
         >>> experimentData = "swarmIntelligence.csv"
@@ -276,7 +276,7 @@ def CDplot_metric(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric:
         >>> metric = "HV"
         >>> 
         >>> # Save the critical distance plot on disk instead of displaying it
-        >>> output_dir = CDplot_metric(data, metrics, metric, show=False)
+        >>> output_dir = CDplot(data, metrics, metric, show=False)
         >>> print(output_dir)
         Critical distance for metric HV saved to {output_dir}
         {output_dir}

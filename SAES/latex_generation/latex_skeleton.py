@@ -102,7 +102,7 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
     __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
 
-def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: str) -> str:
+def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: str) -> str:
     """
     Generates LaTeX tables for the specified metric and selected analysis.
 
@@ -123,7 +123,7 @@ def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
         str: The path to the directory containing the generated tables.
 
     Example:
-        >>> from SAES.latex_generation.latex_skeleton import create_latex_selected
+        >>> from SAES.latex_generation.latex_skeleton import latex_selected
         >>> 
         >>> # Data source
         >>> experimentData = "swarmIntelligence.csv"
@@ -138,7 +138,7 @@ def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
         >>> selected = "wilcoxon_pivot"
         >>> 
         >>> # Save the latex reports on disk
-        >>> output_dir = create_latex_selected(data, metrics, metric)
+        >>> output_dir = latex_selected(data, metrics, metric)
         >>> print(output_dir)
         LaTeX wilcoxon_pivot document for metric HV saved to {output_dir}
         {output_dir}
@@ -168,7 +168,7 @@ def create_latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
     logger.info(f"LaTeX {selected} document for metric {metric} saved to {output_dir}")
     return os.path.join(output_dir, selected+".tex")
 
-def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
+def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports on disk for a specific metric.
 
@@ -186,7 +186,7 @@ def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: 
         str: The path to the directory containing the generated tables.
 
     Example:
-        >>> from SAES.latex_generation.latex_skeleton import create_latex
+        >>> from SAES.latex_generation.latex_skeleton import latex
         >>> 
         >>> # Data source
         >>> experimentData = "swarmIntelligence.csv"
@@ -198,7 +198,7 @@ def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: 
         >>> metric = "HV"
         >>> 
         >>> # Save the latex reports on disk
-        >>> output_dir = create_latex(data, metrics, metric)
+        >>> output_dir = latex(data, metrics, metric)
         >>> print(output_dir)
         LaTeX document for metric HV saved to {output_dir}
         {output_dir}
@@ -217,7 +217,7 @@ def create_latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: 
     logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
     return output_dir
 
-def create_latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
+def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports for each metric.
 
@@ -232,7 +232,7 @@ def create_latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFra
         str: The path to the directory containing the generated tables.
 
     Example:
-        >>> from SAES.latex_generation.latex_skeleton import create_latex_all_metrics
+        >>> from SAES.latex_generation.latex_skeleton import latex_all_metrics
         >>> 
         >>> # Data source
         >>> experimentData = "swarmIntelligence.csv"
@@ -241,7 +241,7 @@ def create_latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFra
         >>> metrics = "metrics.csv"
         >>> 
         >>> # Save the latex reports on disk
-        >>> output_dir = create_latex_all_metrics(data, metrics)
+        >>> output_dir = latex_all_metrics(data, metrics)
         >>> print(output_dir)
         LaTeX document for metric HV saved to {output_dir}
         {output_dir}
