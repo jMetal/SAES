@@ -1,7 +1,7 @@
 Boxplot Generation
 ==================
 
-.. automodule:: plots.boxplot
+.. automodule:: SAES.plots.boxplot
    :members:
    :undoc-members:
    :show-inheritance:

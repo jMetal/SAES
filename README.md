@@ -1,5 +1,5 @@
 # SAES: Stochastic Algorithm Evaluation Suite
-![SAES_LOGO](docs/SAES.png)
+![SAES](https://raw.githubusercontent.com/jMetal/SAES/main/docs/SAES.png)
 
 `SAES` is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. 
 

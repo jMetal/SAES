@@ -7,7 +7,9 @@ exclude = ["*.pyc", "*.log", ".git", "dist", "venv", "*__pycache__*", "*outputs*
 
 [project]
 name = "SAES"
-version = "0.1.0"
+version = "0.5.1"
+description = "Python library designed to analyze and compare the performance of different algorithms across multiple problems using non-parametric statistical tests"
+readme = "README.md"
 dependencies = [
     "python-dotenv==1.0.1",
     "numpy<2",
@@ -19,6 +21,7 @@ dependencies = [
     "sphinx_rtd_theme==3.0.2",
     "ipython==8.30.0"
 ]
+
 requires-python = ">=3.10"
 authors = [
     {name = "Antonio J. Nebro", email = "ajnebro@uma.es"},
@@ -29,6 +32,7 @@ maintainers = [
     {name = "Antonio J. Nebro", email = "ajnebro@uma.es"},
     {name = "Emilio Rodrigo Carreira Villalta", email = "emiliorodrigo.ecr@gmail.com"}
 ]
+
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
