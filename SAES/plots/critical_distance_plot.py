@@ -267,7 +267,7 @@ def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, s
         >>> from SAES.plots.critical_distance_plot import CDplot
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
@@ -319,7 +319,7 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) ->
         >>> from SAES.plots.critical_distance_plot import CDplot_all_metrics
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"

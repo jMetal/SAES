@@ -104,7 +104,7 @@ def boxplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, 
         >>> from SAES.plots.boxplot import boxplot
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
@@ -161,7 +161,7 @@ def boxplot_all_instances(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
         >>> from SAES.plots.boxplot import boxplot_all_instances
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
@@ -211,7 +211,7 @@ def boxplots_all_metrics_instances(data: str | pd.DataFrame, metrics: str | pd.D
         >>> from SAES.plots.boxplot import boxplots_all_metrics_instances
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"

@@ -1,9 +1,8 @@
 name: Deploy Phinx Documentation to GitHub Pages
 
 on:
-  # Ejecuta el workflow al realizar un push en la rama principal
-  push:
-    branches: ["main"]
+  release:
+    types: [created]  # Specifies that this workflow runs when a release is created
 
   # Permite ejecutar manualmente desde la pestaña de Actions
   workflow_dispatch:

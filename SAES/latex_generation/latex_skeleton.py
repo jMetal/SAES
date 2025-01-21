@@ -126,7 +126,7 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
         >>> from SAES.latex_generation.latex_skeleton import latex_selected
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
@@ -189,7 +189,7 @@ def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) ->
         >>> from SAES.latex_generation.latex_skeleton import latex
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
@@ -235,7 +235,7 @@ def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> 
         >>> from SAES.latex_generation.latex_skeleton import latex_all_metrics
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
