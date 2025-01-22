@@ -87,8 +87,8 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     """
 
     # Process the input DataFrame to calculate aggregate values and standard deviations
-    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric)
-    df_og, _ = process_dataframe_basic(df_m, metric)
+    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
+    df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
 
     # Generate LaTeX tables for the given metric
     median = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
@@ -102,7 +102,7 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
     __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
 
-def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: str) -> str:
+def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: str, output_path: str = None) -> str:
     """
     Generates LaTeX tables for the specified metric and selected analysis.
 
@@ -118,6 +118,9 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
         
         selected (str):
             The selected analysis to perform -> ("median", "friedman", "wilcoxon_pivot", "wilcoxon").
+        
+        output_path (str):
+            The path to the directory where the LaTeX tables will be saved. Defaults to None.
     
     Returns:
         str: The path to the directory containing the generated tables.
@@ -145,12 +148,12 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
     """
 
     # Create the output directory for the tables
-    output_dir = os.path.join(os.getcwd(), "outputs", "latex", metric)
+    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "latex", metric)
 
     # Process the input data and metrics
     df_m, maximize = process_csv_metrics(data, metrics, metric)
-    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric)
-    df_og, _ = process_dataframe_basic(df_m, metric)
+    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_path)
+    df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_path)
 
     if selected == TableTypes.MEDIAN.value:
         body = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
@@ -168,7 +171,7 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
     logger.info(f"LaTeX {selected} document for metric {metric} saved to {output_dir}")
     return os.path.join(output_dir, selected+".tex")
 
-def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) -> str:
+def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, output_path: str = None) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports on disk for a specific metric.
 
@@ -181,6 +184,9 @@ def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) ->
         
         metric (str):
             The metric to analyze (e.g., "accuracy", "precision").
+
+        output_path (str):
+            The path to the directory where the LaTeX tables will be saved. Defaults to None.
 
     Returns:
         str: The path to the directory containing the generated tables.
@@ -208,7 +214,7 @@ def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) ->
     df_m, maximize = process_csv_metrics(data, metrics, metric)
 
     # Create the output directory for the tables
-    output_dir = os.path.join(os.getcwd(), "outputs", "latex", metric)
+    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "latex", metric)
 
     # Generate LaTeX tables for the current metric
     __create_tables_latex(df_m, metric, maximize, output_dir)
@@ -217,7 +223,7 @@ def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str) ->
     logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
     return output_dir
 
-def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
+def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, output_path: str = None) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports for each metric.
 
@@ -227,6 +233,9 @@ def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> 
         
         metrics (str | pd.DataFrame): 
             The metrics in CSV file path or DataFrame format.
+
+        output_path (str):
+            The path to the directory where the LaTeX tables will be saved. Defaults to None.
 
     Returns:
         str: The path to the directory containing the generated tables.
@@ -251,7 +260,7 @@ def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> 
     data = process_csv(data, metrics)
 
     # Create the output directory for the tables
-    output_dir = os.path.join(os.getcwd(), "outputs", "latex")
+    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "latex")
 
     # Process the input data and metrics
     for metric, (df_m, maximize) in data.items():

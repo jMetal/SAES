@@ -101,7 +101,7 @@ def obtain_list_metrics(metrics: str | pd.DataFrame) -> pd.DataFrame:
 
     return df_m["MetricName"].values    
 
-def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> tuple:
+def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None, output_path: str = None) -> tuple:
     """
     Saves a DataFrame as a CSV file in a 'CSVs' directory.
 
@@ -114,6 +114,9 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
     
         metrics (pd.DataFrame):
             A DataFrame containing metrics information.
+
+        output_path (str):
+            The path to save the CSV file. Defaults None.
 
     Returns:
         pd.DataFrame:
@@ -135,16 +138,18 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
     else:
         maximize = None
     
+    output_dir = output_path if output_path else os.getcwd()
+
     # Check if the input & output directories exist, if not create them
-    os.makedirs(os.path.join(os.getcwd(), "outputs"), exist_ok=True)
-    os.makedirs(os.path.join(os.getcwd(), "CSVs"), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "outputs"), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "CSVs"), exist_ok=True)
 
     # Save the data to a CSV file
-    df.to_csv(os.path.join(os.getcwd(), "CSVs", f"data_{metric}.csv"), index=False)
+    df.to_csv(os.path.join(output_dir, "CSVs", f"data_{metric}.csv"), index=False)
 
     return df, maximize
 
-def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None) -> tuple:
+def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None, output_path: str = None) -> tuple:
     """
     Processes a CSV DataFrame by grouping data by 'Instance' and 'Algorithm', calculating either the mean or median 
     of the 'MetricValue' column based on normality, and saving the aggregated data and standard deviations as CSV files.
@@ -158,6 +163,9 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     
         metrics (pd.DataFrame):
             A DataFrame containing metrics information.
+
+        output_path (str):
+            The path to save the CSV file. Defaults None.
     
     Returns:
         pd.DataFrame: A pivoted DataFrame with 'Instance' as index and 'Algorithm' as columns, showing aggregated metric values.
@@ -195,9 +203,11 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     else:
         maximize = None
 
+    output_dir = output_path if output_path else os.getcwd()
+
     # Check if the input & output directories exist, if not create them
-    os.makedirs(os.path.join(os.getcwd(), "outputs"), exist_ok=True)
-    os.makedirs(os.path.join(os.getcwd(), "CSVs"), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "outputs"), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "CSVs"), exist_ok=True)
 
     # Group by 'Instance' and 'Algorithm', then calculate the median or mean of the 'Metric Value' column
     normal = check_normality(df)
@@ -217,8 +227,8 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     df_std_pivot = df_std.pivot(index='Instance', columns='Algorithm', values='MetricValue')
     
     # Save the DataFrames to CSV files
-    df_agg_pivot.to_csv(os.path.join(os.getcwd(), "CSVs", f"data_{aggregation_type}_{metric}.csv"), index=False)
-    df_std_pivot.to_csv(os.path.join(os.getcwd(), "CSVs", f"data_std_{aggregation_type}_{metric}.csv"), index=False)
+    df_agg_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_{aggregation_type}_{metric}.csv"), index=False)
+    df_std_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_std_{aggregation_type}_{metric}.csv"), index=False)
 
     # Remove the index and column names for better presentation
     df_agg_pivot.index.name = None  
