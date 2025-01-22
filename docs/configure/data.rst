@@ -1,6 +1,6 @@
-data.csv
---------
-`data.csv` is a CSV file containing the results of the experiments. Each row in the file represents the performance of an algorithm on a specific problem. SAES assumes that the results of comparative study between a number of algorithms is provided in a CSV file with this scheme:
+Data File
+---------
+The `Data File` is a CSV file containing the results of the experiments. Each row in the file represents the performance of an algorithm on a specific problem. SAES assumes that the results of comparative study between a number of algorithms is provided in a CSV file with this scheme:
 
 - **Algorithm** (string):  Algorithm name.
 - **Instance** (string): Instance name. 

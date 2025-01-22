@@ -243,7 +243,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
         plt.savefig(output_path, bbox_inches="tight")
         plt.close()
 
-def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, show: bool = False) -> str:
+def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, show: bool = False, output_path: str = None) -> str:
     """
     Generates CD plots for a metric given as a parameter.
 
@@ -259,6 +259,9 @@ def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, s
 
         show (bool):
             A flag to indicate whether the plot should be displayed or saved in disk. Default is False.
+        
+        output_path (str):
+            The directory where the critical distance plot will be saved. Default is None.
 
     Returns:
         str: The path to the directory containing the generated critical distance plot.
@@ -267,7 +270,7 @@ def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, s
         >>> from SAES.plots.critical_distance_plot import CDplot
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
@@ -283,10 +286,10 @@ def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, s
     """
 
     # Process the dataframe to aggregate data for the given metric
-    df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics)
+    df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics, output_path=output_path)
     
     # Create the output directory for the critical distance plots
-    output_dir = os.path.join(os.getcwd(), "outputs", "critical_distance")
+    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "critical_distance")
 
     # Create the output directory if it does not exist
     os.makedirs(output_dir, exist_ok=True)
@@ -301,7 +304,7 @@ def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, s
     logger.info(f"Critical distance for metric {metric} saved to {output_dir}")
     return output_dir
 
-def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> str:
+def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, output_path: str = None) -> str:
     """
     Generates CD plots for a all the metrics in the given data.
 
@@ -312,6 +315,9 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) ->
         metrics (str | pd.DataFrame): 
             Metric names or a DataFrame containing metrics.
 
+        output_path (str):
+            The directory where the critical distance plot will be saved. Default is None.
+
     Returns:
         str: The path to the directory containing the generated critical distance plots.
 
@@ -319,7 +325,7 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) ->
         >>> from SAES.plots.critical_distance_plot import CDplot_all_metrics
         >>> 
         >>> # Data source
-        >>> experimentData = "swarmIntelligence.csv"
+        >>> experimentData = "experimentData.csv"
         >>> 
         >>> # Metrics source
         >>> metrics = "metrics.csv"
@@ -335,7 +341,7 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) ->
     list_metrics = obtain_list_metrics(metrics)
 
     # Create the output directory for the critical distance plots
-    output_dir = os.path.join(os.getcwd(), "outputs", "critical_distance")
+    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "critical_distance")
 
     # Create the output directory if it does not exist
     os.makedirs(output_dir, exist_ok=True)
@@ -343,7 +349,7 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame) ->
     # Iterate through each metric in the list
     for metric in list_metrics:
         # Process the dataframe to aggregate data for the given metric
-        df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics)
+        df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics, output_path=output_path)
         
         # Call the function to generate the CD plot for the current metric
         __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize)

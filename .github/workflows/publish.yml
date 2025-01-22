@@ -6,6 +6,9 @@ on:
   release:
     types: [created]  # Specifies that this workflow runs when a release is created
 
+  # Permite ejecutar manualmente desde la pestaña de Actions
+  workflow_dispatch:
+  
 jobs:
   pypi-publish:  # Job name for publishing the release to PyPI
     name: Publish release to PyPI  # Descriptive name for the job
