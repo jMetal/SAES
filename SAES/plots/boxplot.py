@@ -72,15 +72,16 @@ def __boxplot_instance_metric(df_m: pd.DataFrame, instance_name: str, metric: st
     # Adjust the layout for better spacing
     plt.tight_layout()
 
+    # Save the plot as a PNG image
+    if output_path:
+        plt.savefig(os.path.join(output_path, f"{instance_name}.png"))
+    else:
+        plt.savefig(os.path.join(os.getcwd(), "outputs", "boxplots", metric, f"{instance_name}.png"))
+
     # Show or close the plot
     if show:
         plt.show()
     else:
-        # Save the plot as a PNG image
-        if output_path:
-            plt.savefig(os.path.join(output_path, f"{instance_name}.png"))
-        else:
-            plt.savefig(os.path.join(os.getcwd(), "outputs", "boxplots", metric, f"{instance_name}.png"))
         plt.close()
 
 def boxplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, instance_name: str, show: bool = False, output_path: str = None) -> str:
@@ -134,13 +135,13 @@ def boxplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, 
     df_m, _ = process_csv_metrics(data, metrics, metric)
 
     # Create the output directory for the boxplots
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "boxplots", metric)
+    output_dir = os.path.join(output_path, "outputs", "boxplots", metric) if output_path else os.path.join(os.getcwd(), "outputs", "boxplots", metric)
 
     # Create the output directory if it does not exist
     os.makedirs(output_dir, exist_ok=True)
 
     # If a specific instance was provided, create and save the boxplot for that instance
-    __boxplot_instance_metric(df_m, instance_name, metric, show=show, output_path=output_path)
+    __boxplot_instance_metric(df_m, instance_name, metric, show=show, output_path=output_dir)
 
     if show:
         return "Boxplot displayed"
@@ -192,7 +193,7 @@ def boxplot_all_instances(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
     df_m, _ = process_csv_metrics(data, metrics, metric)
 
     # Create the output directory for the boxplots
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "boxplots", metric)
+    output_dir = os.path.join(output_path, "outputs", "boxplots", metric) if output_path else os.path.join(os.getcwd(), "outputs", "boxplots", metric)
 
     # Create the output directory if it does not exist
     os.makedirs(output_dir, exist_ok=True)
@@ -200,7 +201,7 @@ def boxplot_all_instances(data: str | pd.DataFrame, metrics: str | pd.DataFrame,
     # Generate boxplots for the current metric
     for instance in df_m["Instance"].unique():
         # Create and save the boxplot for the current instance
-        __boxplot_instance_metric(df_m, instance, metric, output_path=output_path)
+        __boxplot_instance_metric(df_m, instance, metric, output_path=output_dir)
 
     logger.info(f"Boxplots for metric {metric} saved to {output_dir}")
     return output_dir
@@ -242,7 +243,7 @@ def boxplots_all_metrics_instances(data: str | pd.DataFrame, metrics: str | pd.D
     df_m = process_csv(data, metrics)
 
     # Create the output directory for the boxplots
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "boxplots")
+    output_dir = os.path.join(output_path, "outputs", "boxplots") if output_path else os.path.join(os.getcwd(), "outputs", "boxplots")
 
     # Process the input data and metrics
     for metric, (df_m, _) in df_m.items():
@@ -252,7 +253,7 @@ def boxplots_all_metrics_instances(data: str | pd.DataFrame, metrics: str | pd.D
         # Generate boxplots for the current metric
         for instance in df_m["Instance"].unique():
             # Create and save the boxplot for the current instance
-            __boxplot_instance_metric(df_m, instance, metric, output_path=os.path.join(output_dir, metric) if output_path else None)
+            __boxplot_instance_metric(df_m, instance, metric, output_path=os.path.join(output_dir, metric))
 
         logger.info(f"Boxplots for metric {metric} saved to {os.path.join(output_dir, metric)}")
 

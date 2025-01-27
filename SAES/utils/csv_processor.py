@@ -200,6 +200,7 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
     
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame
     df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+    df = df[df["MetricName"] == metric]
 
     if metrics is not None:
         # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
@@ -213,7 +214,6 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
     output_dir = output_path if output_path else os.getcwd()
 
     # Check if the input & output directories exist, if not create them
-    os.makedirs(os.path.join(output_dir, "outputs"), exist_ok=True)
     os.makedirs(os.path.join(output_dir, "CSVs"), exist_ok=True)
 
     # Save the data to a CSV file
@@ -276,6 +276,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
 
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame
     df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+    df = df[df["MetricName"] == metric]
 
     if metrics is not None:
         # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
@@ -289,7 +290,6 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     output_dir = output_path if output_path else os.getcwd()
 
     # Check if the input & output directories exist, if not create them
-    os.makedirs(os.path.join(output_dir, "outputs"), exist_ok=True)
     os.makedirs(os.path.join(output_dir, "CSVs"), exist_ok=True)
 
     # Group by 'Instance' and 'Algorithm', then calculate the median or mean of the 'Metric Value' column

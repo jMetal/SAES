@@ -4,7 +4,7 @@ from scipy.stats import rankdata, chi2
 from scipy.stats import mannwhitneyu
 from statsmodels.stats.libqsturng import qsturng
 
-def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
+def friedman_test(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
     """
     Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple instances.
     The Friedman test is a non-parametric statistical test used to detect differences in treatments (or algorithms) across multiple groups. The null hypothesis is that all algorithms perform equivalently, which implies their average ranks should be equal. The test is particularly useful when the data does not meet the assumptions of parametric tests like ANOVA.
@@ -25,7 +25,7 @@ def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
                     |    30    | 0.871175    | 0.3505      | 0.546       | 0.5345      | 
                     +----------+-------------+-------------+-------------+-------------+
         
-        descending (bool):
+        maximize (bool):
             A boolean indicating whether to rank the data in descending order. If True, the algorithm with the highest performance will receive the lowest rank (i.e., rank 1). If False, the algorithm with the lowest performance will receive the lowest rank. Default is True.
         
     Returns:
@@ -47,7 +47,7 @@ def friedman_test(data: pd.DataFrame, descending: bool) -> pd.DataFrame:
         raise ValueError("Initialization ERROR: The data must have at least two columns.")
 
     # Compute ranks, in the order specified by the descending parameter
-    ranks = rankdata(-data, axis=1) if descending else rankdata(data, axis=1)
+    ranks = rankdata(-data, axis=1) if maximize else rankdata(data, axis=1)
 
     # Calculate average ranks for each algorithm (column)
     average_ranks = np.mean(ranks, axis=0)
