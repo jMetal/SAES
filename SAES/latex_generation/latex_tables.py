@@ -2,7 +2,7 @@ from SAES.statistical_tests.non_parametrical import wilcoxon_test
 from SAES.statistical_tests.non_parametrical import friedman_test
 import pandas as pd
 
-def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
     """
     Generates a LaTeX table with performance statistics for algorithms across different instances.
 
@@ -19,6 +19,9 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
         df2 (pd.DataFrame): 
             DataFrame with standard deviation values for each algorithm and instance.
 
+        metric (str):
+            The metric used to evaluate the algorithms.
+            
     Returns:
         str: LaTeX formatted table as a string.
     """
@@ -30,7 +33,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{EP. """ + title + """}
+    \\caption{""" + metric + """.  """ + title + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -87,7 +90,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     # Return the final LaTeX code for the table
     return latex_doc
 
-def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool) -> str:
+def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool, metric: str) -> str:
     """
     Generates a LaTeX table with performance statistics for algorithms across instances, including a Friedman test 
     for statistical significance between algorithms.
@@ -107,6 +110,9 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
         
         maximize (bool): 
             Whether to maximize the metric for the Friedman test.
+        
+        metric (str):
+            The metric used to evaluate the algorithms.
 
     Returns:
         str: LaTeX formatted table as a string.
@@ -122,7 +128,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{EP. """ + title + """}
+    \\caption{""" + metric + """.  """ + title + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -205,7 +211,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Return the final LaTeX code for the table
     return latex_doc
 
-def wilcoxon_table(title: str, df_og: pd.DataFrame) -> str:
+def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     """
     Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
 
@@ -215,6 +221,9 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame) -> str:
 
         df_og (pd.DataFrame):
             DataFrame containing columns 'Algorithm', 'Instance', and 'MetricValue'.
+        
+        metric (str):
+            The metric used to evaluate the algorithms.
 
     Returns:
         str: LaTeX-formatted table string.
@@ -230,7 +239,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame) -> str:
     # Initialize the LaTeX table with basic structure, including the table header
     latex_doc = """
     \\begin{table}[H]
-    \\caption{EP. """ + title + """}
+    \\caption{""" + metric + """.  """ + title + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -298,7 +307,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame) -> str:
     # Return the final LaTeX code for the table
     return latex_doc
 
-def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame) -> str:
+def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
     """
     Generates a LaTeX table comparing the performance of algorithms using the Wilcoxon signed-rank test.
     The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm 
@@ -316,6 +325,9 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
 
         df2 (pd.DataFrame): 
             A DataFrame with the standard deviation values of each algorithm for each instance.
+
+        metric (str):
+            The metric used to evaluate the algorithms.
 
     Returns:
         str: The LaTeX code for the table comparing algorithms' performance.
@@ -337,7 +349,7 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{EP. """ + title + """}
+    \\caption{""" + metric + """.  """ + title + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}

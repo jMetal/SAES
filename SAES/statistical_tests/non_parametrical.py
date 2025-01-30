@@ -46,7 +46,7 @@ def friedman_test(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
     if k < 2:
         raise ValueError("Initialization ERROR: The data must have at least two columns.")
 
-    # Compute ranks, in the order specified by the descending parameter
+    # Compute ranks, in the order specified by the maximize parameter
     ranks = rankdata(-data, axis=1) if maximize else rankdata(data, axis=1)
 
     # Calculate average ranks for each algorithm (column)

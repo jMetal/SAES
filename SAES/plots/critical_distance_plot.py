@@ -99,8 +99,8 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     # Figure settings.
     highest = np.ceil(np.max(avranks)).astype(np.uint8)  # highest shown rank
     lowest = np.floor(np.min(avranks)).astype(np.uint8)  # lowest shown rank
-    width = 6  # default figure width (in inches)
-    height = 0.575 * (rows + 1)  # figure height
+    width = 9  # default figure width (in inches)
+    height = 0.8625 * (rows + 1)  # figure height
 
     """
                         FIGURE
@@ -128,7 +128,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     lline = sright - sleft
 
     # Initialize figure
-    fig = plt.figure(figsize=(width, height), facecolor="#FAF9F2")
+    fig = plt.figure(figsize=(width, height), facecolor="white")
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -243,7 +243,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     else:
         plt.close()
 
-def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, show: bool = False, output_path: str = None) -> str:
+def CDplot(data, metrics, metric: str, show: bool = False, output_path: str = None) -> str:
     """
     Generates CD plots for a metric given as a parameter.
 
@@ -298,13 +298,13 @@ def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, s
     __CDplot_metric(df_agg, metric, output_dir, maximize=maximize, show=show)
 
     if show:
-        return "Critical distance plot displayed"
+        return None
     
     # Log the successful generation of the critical distance plot
     logger.info(f"Critical distance for metric {metric} saved to {output_dir}")
     return output_dir
 
-def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, output_path: str = None) -> str:
+def CDplot_all_metrics(data, metrics, output_path: str = None) -> str:
     """
     Generates CD plots for a all the metrics in the given data.
 
