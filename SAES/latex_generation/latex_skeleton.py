@@ -91,8 +91,8 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
 
     # Generate LaTeX tables for the given metric
-    median = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std, metric)
-    friedman = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize, metric)
+    median, _ = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std, metric)
+    friedman, _ = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize, metric)
     wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std, metric)
     wilcoxon = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og, metric)
 
@@ -102,7 +102,7 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
     __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
 
-def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: str, output_path: str = None) -> str:
+def latex_selected(data, metrics, metric: str, selected: str, show: bool = False, output_path: str = None) -> str:
     """
     Generates LaTeX tables for the specified metric and selected analysis.
 
@@ -156,9 +156,9 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
     df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
 
     if selected == TableTypes.MEDIAN.value:
-        body = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std, metric)
+        body, df_result = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std, metric)
     elif selected == TableTypes.FRIEDMAN.value:
-        body = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize, metric)
+        body, df_result = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize, metric)
     elif selected == TableTypes.WILCOXON_PIVOT.value:
         body = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std, metric)
     elif selected == TableTypes.WILCOXON.value:
@@ -169,9 +169,11 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
     # Save the LaTeX tables to disk
     __latex_document_builder(body, os.path.join(output_dir, selected))
     logger.info(f"LaTeX {selected} document for metric {metric} saved to {output_dir}")
+    if show:
+        return df_result
     return os.path.join(output_dir, selected+".tex")
 
-def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, output_path: str = None) -> str:
+def latex(data, metrics, metric: str, output_path: str = None) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports on disk for a specific metric.
 
@@ -223,7 +225,7 @@ def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, ou
     logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
     return output_dir
 
-def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, output_path: str = None) -> str:
+def latex_all_metrics(data, metrics, output_path: str = None) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports for each metric.
 
@@ -272,3 +274,10 @@ def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, out
         logger.info(f"LaTeX document for metric {metric} saved to {output_dir_metric}")
 
     return output_dir
+
+if __name__ == "__main__":
+    data = "/home/khaosdev/SAES/notebooks/ZCAT_study/ZCATSummary.csv"
+    metrics = "/home/khaosdev/SAES/notebooks/ZCAT_study/multiobjectiveMetrics.csv"
+    metric = "EP"
+
+    latex_selected(data, metrics, metric, "friedman")

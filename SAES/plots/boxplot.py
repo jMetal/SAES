@@ -390,21 +390,3 @@ def boxplots_all_metrics_instances(data, metrics, output_path: str = None) -> st
         logger.info(f"Boxplots for metric {metric} saved to {os.path.join(output_dir, metric)}")
 
     return output_dir
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/SAES/notebooks/ZCAT_study/ZCATSummary.csv"
-    metrics = "/home/khaosdev/SAES/notebooks/ZCAT_study/multiobjectiveMetrics.csv"
-    metric = "EP"
-
-    # Process the input data and metrics
-    df_m, _ = process_csv_metrics(data, metrics, metric)
-
-    # Create the output directory for the boxplots
-    output_dir = os.path.join(os.getcwd(), "outputs", "boxplots", metric)
-
-    # Create the output directory if it does not exist
-    # os.makedirs(output_dir, exist_ok=True)
-
-    #__boxplot_all_instances(df_m, metric, show=False, output_path=output_dir)
-    boxplot_all_instances(data, metrics, metric, output_path=output_dir)
-    # boxplot_all_instances_grid(data, metrics, metric, show=False)

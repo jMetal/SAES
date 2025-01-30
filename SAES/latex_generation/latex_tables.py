@@ -88,7 +88,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     """
 
     # Return the final LaTeX code for the table
-    return latex_doc
+    return latex_doc, df1
 
 def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool, metric: str) -> str:
     """
@@ -121,6 +121,8 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Extract the list of algorithms and instances from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
     instances = df_og["Instance"].unique().tolist()
+
+    friedman_results = {}
 
     # Define display names for algorithms (e.g., Algorithm A, Algorithm B)
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -182,8 +184,10 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
                     df_friedman_result = friedman_test(df_friedman, maximize)
                     if df_friedman_result["Results"]["p-value"] < 0.05:
                         row_data += "+ & "
+                        friedman_results[instance] = "+"
                     else:
                         row_data += "= & "
+                        friedman_results[instance] = "="
                 except:
                     print("Friedman test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
                     return ""
@@ -208,8 +212,24 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\end{table}
     """
 
+    df_friedman =__add_friedman_results(df1, friedman_results)
+
     # Return the final LaTeX code for the table
-    return latex_doc
+    return latex_doc, df_friedman
+
+def __add_friedman_results(df_agg: pd.DataFrame, friedman_results: dict) -> pd.DataFrame:
+    """
+    Adds the results of the Friedman test to the
+    DataFrame containing the algorithms and instances.
+    """
+
+    df = pd.DataFrame(df_agg, index=friedman_results.keys())
+
+    # Add the results of the Friedman test to the DataFrame
+    df['friedman'] = df.index.map(friedman_results)
+
+    # Return the updated DataFrame
+    return df
 
 def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     """
