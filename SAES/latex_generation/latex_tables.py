@@ -24,6 +24,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
             
     Returns:
         str: LaTeX formatted table as a string.
+        pd.DataFrame: DataFrame with the median values of the algorithms.
     """
 
     # Extract the list of algorithms and instances from the DataFrame
@@ -116,6 +117,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
     Returns:
         str: LaTeX formatted table as a string.
+        pd.DataFrame: DataFrame with the results of the Friedman test.
     """
     
     # Extract the list of algorithms and instances from the DataFrame
@@ -212,15 +214,24 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\end{table}
     """
 
-    df_friedman =__add_friedman_results(df1, friedman_results)
+    df_friedman = __add_friedman_results(df1, friedman_results)
 
     # Return the final LaTeX code for the table
     return latex_doc, df_friedman
 
 def __add_friedman_results(df_agg: pd.DataFrame, friedman_results: dict) -> pd.DataFrame:
     """
-    Adds the results of the Friedman test to the
-    DataFrame containing the algorithms and instances.
+    Adds the results of the Friedman test to the DataFrame containing the algorithms and instances.
+
+    Args:
+        df_agg (pd.DataFrame): 
+            DataFrame containing the algorithms and instances.
+        
+        friedman_results (dict): 
+            Dictionary containing the results of the Friedman test for each instance.
+
+    Returns:
+        pd.DataFrame: DataFrame with the results of the Friedman test.
     """
 
     df = pd.DataFrame(df_agg, index=friedman_results.keys())
@@ -247,11 +258,14 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
 
     Returns:
         str: LaTeX-formatted table string.
+        pd.DataFrame: DataFrame with the results of the Wilcoxon test.
     """ 
 
     # Extract the list of algorithms and instances from the columns of the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
     instances = df_og["Instance"].unique().tolist()
+
+    df_wilcoxon_result = pd.DataFrame("", index=algorithms, columns=algorithms)
 
     # Define display names for algorithms
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -300,9 +314,11 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
                     wilconson_result = wilcoxon_test(df_wilcoxon)
                     if wilconson_result == "=":
                         latex_doc += "="
+                        df_wilcoxon_result.loc[algorithm1, algorithm2] += "="
                     else:
                         winner = og_columns[0] if wilconson_result == "+" else og_columns[1]
                         latex_doc += "+" if algorithm1 == winner else "-"
+                        df_wilcoxon_result.loc[algorithm1, algorithm2] += "+" if algorithm1 == winner else "-"
             latex_doc += "} & "
         latex_doc = latex_doc.rstrip(" & ") + " \\\\\n" 
 
@@ -325,7 +341,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     """
 
     # Return the final LaTeX code for the table
-    return latex_doc
+    return latex_doc, df_wilcoxon_result
 
 def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
     """
