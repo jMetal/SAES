@@ -445,11 +445,11 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
 
             # Apply conditional formatting for the highest and second highest algorithms
             if algorithm == max_idx:
-                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
+                row_data += f"\\cellcolor{{gray95}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
             elif algorithm == second_idx:
-                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
+                row_data += f"\\cellcolor{{gray25}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
             else:
-                row_data += f"${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
+                row_data += f"$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
 
         # Add the formatted row to the LaTeX document
         latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
