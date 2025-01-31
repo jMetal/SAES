@@ -123,10 +123,11 @@ def latex_selected(data, metrics, metric: str, selected: str, show: bool = False
             The path to the directory where the LaTeX tables will be saved. Defaults to None.
     
     Returns:
-        str: The path to the directory containing the generated tables.
+        str | pd.DataFrame: The path to the directory containing the generated tables or the DataFrame with the results of the selected analysis.
 
     Example:
         >>> from SAES.latex_generation.latex_skeleton import latex_selected
+        >>> from SAES.latex_generation.__init__ import TableTypes
         >>> 
         >>> # Data source
         >>> experimentData = "experimentData.csv"
@@ -141,7 +142,7 @@ def latex_selected(data, metrics, metric: str, selected: str, show: bool = False
         >>> selected = "wilcoxon_pivot"
         >>> 
         >>> # Save the latex reports on disk
-        >>> output_dir = latex_selected(data, metrics, metric)
+        >>> output_dir = latex_selected(data, metrics, metric, TableTypes.WILCOXON_PIVOT.value, show=False)
         >>> print(output_dir)
         LaTeX wilcoxon_pivot document for metric HV saved to {output_dir}
         {output_dir}
@@ -276,10 +277,3 @@ def latex_all_metrics(data, metrics, output_path: str = None) -> str:
         logger.info(f"LaTeX document for metric {metric} saved to {output_dir_metric}")
 
     return output_dir
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/SAES/notebooks/ZCAT_study/ZCATSummary.csv"
-    metrics = "/home/khaosdev/SAES/notebooks/ZCAT_study/multiobjectiveMetrics.csv"
-    metric = "EP"
-
-    latex_selected(data, metrics, metric, "friedman")

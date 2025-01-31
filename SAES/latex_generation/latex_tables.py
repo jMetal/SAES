@@ -24,6 +24,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
             
     Returns:
         str: LaTeX formatted table as a string.
+        pd.DataFrame: DataFrame with the median values of the algorithms.
     """
 
     # Extract the list of algorithms and instances from the DataFrame
@@ -116,6 +117,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
     Returns:
         str: LaTeX formatted table as a string.
+        pd.DataFrame: DataFrame with the results of the Friedman test.
     """
     
     # Extract the list of algorithms and instances from the DataFrame
@@ -219,8 +221,17 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
 def __add_friedman_results(df_agg: pd.DataFrame, friedman_results: dict) -> pd.DataFrame:
     """
-    Adds the results of the Friedman test to the
-    DataFrame containing the algorithms and instances.
+    Adds the results of the Friedman test to the DataFrame containing the algorithms and instances.
+
+    Args:
+        df_agg (pd.DataFrame): 
+            DataFrame containing the algorithms and instances.
+        
+        friedman_results (dict): 
+            Dictionary containing the results of the Friedman test for each instance.
+
+    Returns:
+        pd.DataFrame: DataFrame with the results of the Friedman test.
     """
 
     df = pd.DataFrame(df_agg, index=friedman_results.keys())
@@ -247,6 +258,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
 
     Returns:
         str: LaTeX-formatted table string.
+        pd.DataFrame: DataFrame with the results of the Wilcoxon test.
     """ 
 
     # Extract the list of algorithms and instances from the columns of the DataFrame
