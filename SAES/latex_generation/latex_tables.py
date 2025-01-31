@@ -24,7 +24,6 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
             
     Returns:
         str: LaTeX formatted table as a string.
-        pd.DataFrame: DataFrame with the median values of the algorithms.
     """
 
     # Extract the list of algorithms and instances from the DataFrame
@@ -74,7 +73,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
 
         # Add the formatted row to the LaTeX document
         latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
-    
+
     # Close the table structure
     latex_doc += """
     \\hline
@@ -83,7 +82,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     \\vspace{2mm}
     \\small
     """
-        
+
     latex_doc += """
     \\end{table}
     """
@@ -93,33 +92,32 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
 
 def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool, metric: str) -> str:
     """
-    Generates a LaTeX table with performance statistics for algorithms across instances, including a Friedman test 
+    Generates a LaTeX table with performance statistics for algorithms across instances, including a Friedman test
     for statistical significance between algorithms.
 
     Args:
-        title (str): 
+        title (str):
             The title for the table.
-        
-        df_og (pd.DataFrame): 
+
+        df_og (pd.DataFrame):
             Original DataFrame containing the algorithms and instances.
-        
-        df1 (pd.DataFrame): 
+
+        df1 (pd.DataFrame):
             DataFrame with median values for each algorithm and instance.
-        
-        df2 (pd.DataFrame): 
+
+        df2 (pd.DataFrame):
             DataFrame with standard deviation values for each algorithm and instance.
-        
-        maximize (bool): 
+
+        maximize (bool):
             Whether to maximize the metric for the Friedman test.
-        
+
         metric (str):
             The metric used to evaluate the algorithms.
 
     Returns:
         str: LaTeX formatted table as a string.
-        pd.DataFrame: DataFrame with the results of the Friedman test.
     """
-    
+
     # Extract the list of algorithms and instances from the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
     instances = df_og["Instance"].unique().tolist()
@@ -180,7 +178,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
                 df_friedman = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
                 df_friedman = df_friedman.drop(columns="ExecutionId")
                 df_friedman.columns = names
-                
+
                 # Perform the Friedman test and store the result
                 try:
                     df_friedman_result = friedman_test(df_friedman, maximize)
@@ -206,32 +204,23 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\small
     \\begin{itemize}
     """
-        
+
     latex_doc += f"\\item \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n"
-        
+
     latex_doc += """
     \\end{itemize}
     \\end{table}
     """
 
-    df_friedman = __add_friedman_results(df1, friedman_results)
+    df_friedman =__add_friedman_results(df1, friedman_results)
 
     # Return the final LaTeX code for the table
     return latex_doc, df_friedman
 
 def __add_friedman_results(df_agg: pd.DataFrame, friedman_results: dict) -> pd.DataFrame:
     """
-    Adds the results of the Friedman test to the DataFrame containing the algorithms and instances.
-
-    Args:
-        df_agg (pd.DataFrame): 
-            DataFrame containing the algorithms and instances.
-        
-        friedman_results (dict): 
-            Dictionary containing the results of the Friedman test for each instance.
-
-    Returns:
-        pd.DataFrame: DataFrame with the results of the Friedman test.
+    Adds the results of the Friedman test to the
+    DataFrame containing the algorithms and instances.
     """
 
     df = pd.DataFrame(df_agg, index=friedman_results.keys())
@@ -247,25 +236,22 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
 
     Args:
-        title (str): 
+        title (str):
             Title of the table.
 
         df_og (pd.DataFrame):
             DataFrame containing columns 'Algorithm', 'Instance', and 'MetricValue'.
-        
+
         metric (str):
             The metric used to evaluate the algorithms.
 
     Returns:
         str: LaTeX-formatted table string.
-        pd.DataFrame: DataFrame with the results of the Wilcoxon test.
-    """ 
+    """
 
     # Extract the list of algorithms and instances from the columns of the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
     instances = df_og["Instance"].unique().tolist()
-
-    df_wilcoxon_result = pd.DataFrame("", index=algorithms, columns=algorithms)
 
     # Define display names for algorithms
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -300,7 +286,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
             # Only perform comparison if the pair has not been processed and are different
             if pair not in compared_pairs:
                 # Mark the pair as processed
-                compared_pairs.add(pair)  
+                compared_pairs.add(pair)
                 for instance in instances:
                     # Filter the original dataframe for the relevant pair of algorithms and the current instance
                     algorithms_wilcoxon = [algorithm1, algorithm2]
@@ -314,13 +300,11 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
                     wilconson_result = wilcoxon_test(df_wilcoxon)
                     if wilconson_result == "=":
                         latex_doc += "="
-                        df_wilcoxon_result.loc[algorithm1, algorithm2] += "="
                     else:
                         winner = og_columns[0] if wilconson_result == "+" else og_columns[1]
                         latex_doc += "+" if algorithm1 == winner else "-"
-                        df_wilcoxon_result.loc[algorithm1, algorithm2] += "+" if algorithm1 == winner else "-"
             latex_doc += "} & "
-        latex_doc = latex_doc.rstrip(" & ") + " \\\\\n" 
+        latex_doc = latex_doc.rstrip(" & ") + " \\\\\n"
 
     # Close the table structure in the LaTeX document
     latex_doc += """
@@ -341,7 +325,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     """
 
     # Return the final LaTeX code for the table
-    return latex_doc, df_wilcoxon_result
+    return latex_doc
 
 def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
     """
@@ -445,11 +429,11 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
 
             # Apply conditional formatting for the highest and second highest algorithms
             if algorithm == max_idx:
-                row_data += f"\\cellcolor{{gray95}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
+                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
             elif algorithm == second_idx:
-                row_data += f"\\cellcolor{{gray25}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
+                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
             else:
-                row_data += f"$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
+                row_data += f"${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
 
         # Add the formatted row to the LaTeX document
         latex_doc += row_data.rstrip(" & ") + " \\\\ \n"

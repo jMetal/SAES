@@ -71,10 +71,11 @@ The SAES library offers a range of functions categorized into three groups, corr
    - `boxplots_all_metrics_instances()`
    - `boxplot_all_instances()`
    - `boxplot()`
+   - `boxplot_all_instances_grid()`
 2. **LaTeX Report Generation**
    - `latex_all_metrics()`
    - `latex()`
-   - `latex_selected()`
+   - `generate_latex_table()`
 3. **Critical Distance Graph Generation**
    - `CDplot_all_metrics()`
    - `CDplot()`
