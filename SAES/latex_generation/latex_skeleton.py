@@ -39,6 +39,8 @@ def __latex_document_builder(body: str, output_path: str) -> None:
     \\usepackage{float}
     \\usepackage[table*]{xcolor}
     \\usepackage{tabularx}
+    \\usepackage{siunitx}
+    \\sisetup{output-exponent-marker=\\text{e}}
     \\xdefinecolor{gray95}{gray}{0.65}
     \\xdefinecolor{gray25}{gray}{0.8}
     \\author{YourName}

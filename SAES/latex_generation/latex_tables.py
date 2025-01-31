@@ -164,11 +164,11 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
             # Apply conditional formatting for the highest and second highest algorithms
             if algorithm == max_idx:
-                row_data += f"\\cellcolor{{gray95}}${score1:.2e}_{{ {score2:.2e} }}$ & "
+                row_data += f"\\cellcolor{{gray95}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }}$ & "
             elif algorithm == second_idx:
-                row_data += f"\\cellcolor{{gray25}}${score1:.2e}_{{ {score2:.2e} }}$ & "
+                row_data += f"\\cellcolor{{gray25}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }}$ & "
             else:
-                row_data += f"${score1:.2e}_{{ {score2:.2e} }}$ & "
+                row_data += f"$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }}$ & "
 
             if algorithm == algorithms[-1]:
 
