@@ -65,11 +65,11 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
 
             # Apply conditional formatting for the highest and second highest algorithms
             if algorithm == max_idx:
-                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"\\cellcolor{{gray95}}${score1:.2e}_{{ {score2:.2e} }}$ & "
             elif algorithm == second_idx:
-                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"\\cellcolor{{gray25}}${score1:.2e}_{{ {score2:.2e} }}$ & "
             else:
-                row_data += f"${score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"${score1:.2e}_{{ {score2:.2e} }}$ & "
 
         # Add the formatted row to the LaTeX document
         latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
@@ -164,11 +164,11 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
             # Apply conditional formatting for the highest and second highest algorithms
             if algorithm == max_idx:
-                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"\\cellcolor{{gray95}}${score1:.2e}_{{ {score2:.2e} }}$ & "
             elif algorithm == second_idx:
-                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"\\cellcolor{{gray25}}${score1:.2e}_{{ {score2:.2e} }}$ & "
             else:
-                row_data += f"${score1:.2f}_{{ {score2:.2f} }}$ & "
+                row_data += f"${score1:.2e}_{{ {score2:.2e} }}$ & "
 
             if algorithm == algorithms[-1]:
 
@@ -400,7 +400,7 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
 
         # Iterate over each algorithm to compute Wilcoxon test and populate the table
         for algorithm in algorithms:
-            wilconson_result = ""
+            wilcoxon_result = ""
             if algorithm != pivot_algorithm:
 
                 # Perform Wilcoxon test between the pivot algorithm and the current algorithm
@@ -412,19 +412,19 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
                 
                 try:
                     # Run the Wilcoxon test (defined outside the function)
-                    wilconson_result = wilcoxon_test(df_wilcoxon)
+                    wilcoxon_result = wilcoxon_test(df_wilcoxon)
                     algorithm_name = names[algorithms.index(algorithm)]
 
                     # Update ranks based on Wilcoxon test result
-                    if wilconson_result == "+":
+                    if wilcoxon_result == "+":
                         ranks[algorithm_name][0] += 1
-                    elif wilconson_result == "-":
+                    elif wilcoxon_result == "-":
                         ranks[algorithm_name][1] += 1
                     else:
                         ranks[algorithm_name][2] += 1
                 
                 except:
-                    print("Wilconson test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
+                    print("Wilcoxon test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
                     return ""
                 
             # Format the median and standard deviation values for the LaTeX table
@@ -433,11 +433,11 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
 
             # Apply conditional formatting for the highest and second highest algorithms
             if algorithm == max_idx:
-                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }} {wilconson_result} $ & "
+                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
             elif algorithm == second_idx:
-                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }} {wilconson_result} $ & "
+                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
             else:
-                row_data += f"${score1:.2f}_{{ {score2:.2f} }} {wilconson_result} $ & "
+                row_data += f"${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
 
         # Add the formatted row to the LaTeX document
         latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
