@@ -66,7 +66,7 @@ You will also need a second file to store the information of the different metri
 
 ## SAES API
 
-The SAES library offers a range of functions categorized into three groups, corresponding to its three main features. The following link provides the [API](https://jMetal.github.io/SAES/API/api.html) documentation, including a detailed list of these functions:
+The SAES library offers a range of functions categorized into three groups, corresponding to its three main features. The following links provide the SAES [Tutorial](https://github.com/jMetal/SAES/tree/main/notebooks) and the SAES [API](https://jMetal.github.io/SAES/API/api.html) documentation that includes a detailed list of these functions:
 1. **Boxplot Generation**
    - `boxplots_all_metrics_instances()`
    - `boxplot_all_instances()`
