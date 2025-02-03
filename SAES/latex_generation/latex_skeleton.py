@@ -279,3 +279,10 @@ def latex_all_metrics(data, metrics, output_path: str = None) -> str:
         logger.info(f"LaTeX document for metric {metric} saved to {output_dir_metric}")
 
     return output_dir
+
+
+if __name__ == "__main__":
+    data = "/home/khaosdev/SAES/notebooks/ZCAT_study/ZCATSummary.csv"
+    metrics = "/home/khaosdev/SAES/notebooks/ZCAT_study/multiobjectiveMetrics.csv"
+
+    latex(data, metrics, "HV")

@@ -80,11 +80,6 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    """
-        
-    latex_doc += """
     \\end{table}
     """
 
@@ -132,7 +127,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + """}
+    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -202,18 +197,9 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    \\begin{itemize}
-    """
-        
-    latex_doc += f"\\item \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n"
-        
-    latex_doc += """
-    \\end{itemize}
     \\end{table}
     """
-
+        
     df_friedman = __add_friedman_results(df1, friedman_results)
 
     # Return the final LaTeX code for the table
@@ -273,7 +259,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     # Initialize the LaTeX table with basic structure, including the table header
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + """}
+    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n" + f"\\\\ \\texttt{{Instances (in order)}} : {instances}\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -327,16 +313,6 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    \\begin{itemize}
-    """
-
-    latex_doc += f"\\item \\texttt{{Instances (in order)}} : {instances}\n"
-    latex_doc += f"\\item \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n"
-
-    latex_doc += """
-    \\end{itemize}
     \\end{table}
     """
 
@@ -385,7 +361,7 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + """}
+    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{+ implies that the pivot algorithm (last column) was worse than the selected}}\n" +"""}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -465,15 +441,6 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    \\begin{itemize}
-    """
-
-    latex_doc += f"\\item \\texttt{{+ implies that the pivot algorithm (last column) was worse than the selected}}\n"
-
-    latex_doc += """
-    \\end{itemize}
     \\end{table}
     """
 
