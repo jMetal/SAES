@@ -253,7 +253,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
                 +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
     
         pd.DataFrame: 
-            A pivoted DataFrame showing standard deviations of metric values.
+            A pivoted DataFrame showing standard deviations or IQR of metric values.
                 - Example: (Same structure as the aggregated DataFrame)
         
         str: 
@@ -271,7 +271,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
         >>> # metric
         >>> metric = "HV"
         >>> 
-        >>> df_agg_pivot, df_std_pivot, aggregation_type, maximize = process_dataframe_extended(data, metric)
+        >>> df_agg_pivot, df_stats_pivot, aggregation_type, maximize = process_dataframe_extended(data, metric)
     """
 
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame

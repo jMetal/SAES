@@ -75,10 +75,17 @@ The SAES library offers a range of functions categorized into three groups, corr
 2. **LaTeX Report Generation**
    - `latex_all_metrics()`
    - `latex()`
-   - `generate_latex_table()`
+   - `latex_table()`
 3. **Critical Distance Graph Generation**
    - `CDplot_all_metrics()`
    - `CDplot()`
+4. **CSV Dataset Manipulation**
+   - `process_dataframe_extended()`
+   - `process_dataframe_basic()`
+   - `process_csv_metrics()`
+   - `process_csv()`
+   - `obtain_list_instances()`
+   - `obtain_list_metrics()`
 
 ## 🛠 Requirements
 

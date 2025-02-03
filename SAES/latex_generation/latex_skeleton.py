@@ -106,7 +106,7 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
     __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
 
-def generate_latex_table(data, metrics, metric: str, selected: str, show: bool = False, output_path: str = None) -> str:
+def latex_table(data, metrics, metric: str, selected: str, show: bool = False, output_path: str = None) -> str:
     """
     Generates LaTeX tables for the specified metric and selected analysis.
 
@@ -130,7 +130,7 @@ def generate_latex_table(data, metrics, metric: str, selected: str, show: bool =
         str | pd.DataFrame: The path to the directory containing the generated tables or the DataFrame with the results of the selected analysis.
 
     Example:
-        >>> from SAES.latex_generation.latex_skeleton import generate_latex_table
+        >>> from SAES.latex_generation.latex_skeleton import latex_table
         >>> from SAES.latex_generation.__init__ import TableTypes
         >>> 
         >>> # Data source
@@ -146,7 +146,7 @@ def generate_latex_table(data, metrics, metric: str, selected: str, show: bool =
         >>> selected = "wilcoxon_pivot"
         >>> 
         >>> # Save the latex reports on disk
-        >>> output_dir = generate_latex_table(data, metrics, metric, TableTypes.WILCOXON_PIVOT.value, show=False)
+        >>> output_dir = latex_table(data, metrics, metric, TableTypes.WILCOXON_PIVOT.value, show=False)
         >>> print(output_dir)
         LaTeX wilcoxon_pivot document for metric HV saved to {output_dir}
         {output_dir}
