@@ -89,13 +89,15 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     """
 
     # Process the input DataFrame to calculate aggregate values and standard deviations
-    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
+    df_agg, df_stats, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
     df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
 
+    stat = "Standard Deviation" if aggregation_type == "Mean" else "Interquartile Range"
+
     # Generate LaTeX tables for the given metric
-    median, _ = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std, metric)
-    friedman, _ = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize, metric)
-    wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std, metric)
+    median, _ = median_table(f"{aggregation_type} and {stat} ({metric})", df_og, df_agg, df_stats, metric)
+    friedman, _ = friedman_table(f"{aggregation_type} and {stat} - Friedman Test ({metric})", df_og, df_agg, df_stats, maximize, metric)
+    wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot ({metric})", df_og, df_agg, df_stats, metric)
     wilcoxon, _ = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og, metric)
 
     # Save the LaTeX tables to disk
@@ -155,15 +157,17 @@ def generate_latex_table(data, metrics, metric: str, selected: str, show: bool =
 
     # Process the input data and metrics
     df_m, maximize = process_csv_metrics(data, metrics, metric)
-    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
+    df_agg, df_stats, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
     df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
 
+    stat = "Standard Deviation" if aggregation_type == "Mean" else "Interquartile Range"
+
     if selected == TableTypes.MEDIAN.value:
-        body, df_result = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std, metric)
+        body, df_result = median_table(f"{aggregation_type} and {stat} ({metric})", df_og, df_agg, df_stats, metric)
     elif selected == TableTypes.FRIEDMAN.value:
-        body, df_result = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize, metric)
+        body, df_result = friedman_table(f"{aggregation_type} and {stat} - Friedman Test ({metric})", df_og, df_agg, df_stats, maximize, metric)
     elif selected == TableTypes.WILCOXON_PIVOT.value:
-        body = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std, metric)
+        body = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot ({metric})", df_og, df_agg, df_stats, metric)
     elif selected == TableTypes.WILCOXON.value:
         body, df_result = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og, metric)
     else:
@@ -279,10 +283,3 @@ def latex_all_metrics(data, metrics, output_path: str = None) -> str:
         logger.info(f"LaTeX document for metric {metric} saved to {output_dir_metric}")
 
     return output_dir
-
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/SAES/notebooks/ZCAT_study/ZCATSummary.csv"
-    metrics = "/home/khaosdev/SAES/notebooks/ZCAT_study/multiobjectiveMetrics.csv"
-
-    latex(data, metrics, "HV")
