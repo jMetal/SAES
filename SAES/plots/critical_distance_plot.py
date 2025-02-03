@@ -10,7 +10,7 @@ import os
 from SAES.logger import get_logger
 logger = get_logger(__name__)
 
-def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: float = 0.05, higher_is_better: bool = False, show: bool = False) -> None:
+def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: float = 0.05, maximize: bool = False, show: bool = False) -> None:
     """
     Creates a critical distance plot to compare the performance of different algorithms on the different instances.
 
@@ -39,7 +39,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
         alpha (float): 
             The significance level for the critical distance calculation. Default is 0.05.
 
-        higher_is_better (bool): 
+        maximize (bool): 
             Whether higher metric values indicate better performance. Default is False.
         
         show (bool):
@@ -82,7 +82,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     cd = NemenyiCD(alpha, num_alg, num_dataset)
 
     # Compute ranks. (ranks[i][j] rank of the i-th algorithm on the j-th Instance.)
-    rranks = rankdata(data, axis=1) if higher_is_better else rankdata(-data, axis=1)
+    rranks = rankdata(-data, axis=1) if maximize else rankdata(data, axis=1)
 
     # Compute for each algorithm the ranking averages.
     avranks = np.transpose(np.mean(rranks, axis=0))
@@ -99,8 +99,8 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     # Figure settings.
     highest = np.ceil(np.max(avranks)).astype(np.uint8)  # highest shown rank
     lowest = np.floor(np.min(avranks)).astype(np.uint8)  # lowest shown rank
-    width = 6  # default figure width (in inches)
-    height = 0.575 * (rows + 1)  # figure height
+    width = 9  # default figure width (in inches)
+    height = 0.8625 * (rows + 1)  # figure height
 
     """
                         FIGURE
@@ -128,7 +128,7 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     lline = sright - sleft
 
     # Initialize figure
-    fig = plt.figure(figsize=(width, height), facecolor="#FAF9F2")
+    fig = plt.figure(figsize=(width, height), facecolor="white")
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -236,14 +236,14 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
             )
 
     output_path = os.path.join(output_dir, f"{metric}_cd_plot.png")
+    plt.savefig(output_path, bbox_inches="tight")
 
     if show:
         plt.show()
     else:
-        plt.savefig(output_path, bbox_inches="tight")
         plt.close()
 
-def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, show: bool = False, output_path: str = None) -> str:
+def CDplot(data, metrics, metric: str, show: bool = False, output_path: str = None) -> str:
     """
     Generates CD plots for a metric given as a parameter.
 
@@ -284,27 +284,27 @@ def CDplot(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, s
         Critical distance for metric HV saved to {output_dir}
         {output_dir}
     """
-
-    # Process the dataframe to aggregate data for the given metric
-    df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics, output_path=output_path)
     
     # Create the output directory for the critical distance plots
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "critical_distance")
+    output_dir = os.path.join(output_path, "outputs", "critical_distance") if output_path else os.path.join(os.getcwd(), "outputs", "critical_distance")
+
+    # Process the dataframe to aggregate data for the given metric
+    df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics, output_path=output_dir)
 
     # Create the output directory if it does not exist
     os.makedirs(output_dir, exist_ok=True)
                                
     # Call the function to generate the CD plot for the current metric
-    __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize, show=show)
+    __CDplot_metric(df_agg, metric, output_dir, maximize=maximize, show=show)
 
     if show:
-        return "Critical distance plot displayed"
+        return None
     
     # Log the successful generation of the critical distance plot
     logger.info(f"Critical distance for metric {metric} saved to {output_dir}")
     return output_dir
 
-def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, output_path: str = None) -> str:
+def CDplot_all_metrics(data, metrics, output_path: str = None) -> str:
     """
     Generates CD plots for a all the metrics in the given data.
 
@@ -341,7 +341,7 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, ou
     list_metrics = obtain_list_metrics(metrics)
 
     # Create the output directory for the critical distance plots
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "critical_distance")
+    output_dir = os.path.join(output_path, "outputs", "critical_distance") if output_path else os.path.join(os.getcwd(), "outputs", "critical_distance")
 
     # Create the output directory if it does not exist
     os.makedirs(output_dir, exist_ok=True)
@@ -349,10 +349,10 @@ def CDplot_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, ou
     # Iterate through each metric in the list
     for metric in list_metrics:
         # Process the dataframe to aggregate data for the given metric
-        df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics, output_path=output_path)
+        df_agg, _, _, maximize = process_dataframe_extended(data, metric, metrics, output_path=output_dir)
         
         # Call the function to generate the CD plot for the current metric
-        __CDplot_metric(df_agg, metric, output_dir, higher_is_better=maximize)
+        __CDplot_metric(df_agg, metric, output_dir, maximize=maximize)
         logger.info(f"Critical distance for metric {metric} saved to {output_dir}")
 
     return output_dir

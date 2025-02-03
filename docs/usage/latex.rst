@@ -6,33 +6,33 @@ Another feauture of the library is the ability to generate LaTeX reports of the 
 .. code-block:: python
 
     import pandas as pd
-    from SAES.latex_generation.latex_skeleton import create_latex
+    from SAES.latex_generation.latex_skeleton import latex
 
     # Load the data and metrics from the CSV files
     data = pd.read_csv('swarmIntelligence.csv')
-    metrics = pd.read_csv('metrics.csv')
+    metrics = pd.read_csv('multiobjectiveMetrics.csv')
 
     # Choose the metric to generate the boxplot
-    metric = 'NHV'
+    metric = 'HV'
 
     # Save the latex reports on disk
-    output_dir = create_latex(data, metric, metric)
+    output_dir = latex(data, metrics, metric)
 
 or
 
 .. code-block:: python
 
-    from SAES.latex_generation.latex_skeleton import create_latex
+    from SAES.latex_generation.latex_skeleton import latex
 
     # Path to the CSV file containing the benchmarking data.
     data = 'swarmIntelligence.csv'
-    metrics = 'metrics.csv'
+    metrics = 'multiobjectiveMetrics.csv'
 
     # Choose the metric to generate the boxplot
-    metric = 'NHV'
+    metric = 'HV'
     
     # Save the latex reports on disk
-    output_dir = create_latex(data, metrics, metric)
+    output_dir = latex(data, metrics, metric)
 
 The above code snippet generates all the 4 LaTeX reports of the results of the experiments as for the selected metric. The reports can be saved as a PDF file in the current working directory and it will look something like this:
 

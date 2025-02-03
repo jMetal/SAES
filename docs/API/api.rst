@@ -10,3 +10,4 @@ The following sections document the public API of the `SAES` library.
    boxplot
    latex
    critical
+   utils

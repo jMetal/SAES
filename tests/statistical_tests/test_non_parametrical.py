@@ -23,7 +23,7 @@ class TestStatisticalTests(unittest.TestCase):
 
     def test_friedman_test(self):
         """Test the friedman_test function."""
-        result = friedman_test(self.friedman_data, descending=True)
+        result = friedman_test(self.friedman_data, maximize=True)
         self.assertIn("Results", result.columns)
         self.assertGreater(result.loc["Friedman-statistic", "Results"], 0)
         self.assertGreaterEqual(result.loc["p-value", "Results"], 0)
@@ -32,7 +32,7 @@ class TestStatisticalTests(unittest.TestCase):
     def test_friedman_test_raises(self):
         """Test that friedman_test raises exceptions with invalid inputs."""
         with self.assertRaises(ValueError):
-            friedman_test(pd.DataFrame(), descending=True)  # No data
+            friedman_test(pd.DataFrame(), maximize=True)  # No data
 
     def test_wilcoxon_test_equal(self):
         """Test the wilcoxon_test function with equal data."""

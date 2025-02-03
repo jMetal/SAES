@@ -60,10 +60,13 @@ class TestProcessCSV(unittest.TestCase):
         pd.testing.assert_frame_equal(df_pivot, expected_pivot)
 
         # Validate the pivoted DataFrame for standard deviation
-        expected_std = self.df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
-        expected_std = expected_std.pivot(index='Instance', columns='Algorithm', values='MetricValue')
+        Q1 = self.df.groupby(['Instance', 'Algorithm'])['MetricValue'].quantile(0.25).reset_index()
+        Q3 = self.df.groupby(['Instance', 'Algorithm'])['MetricValue'].quantile(0.75).reset_index()
+        Q3["MetricValue"] = Q3["MetricValue"] - Q1["MetricValue"]
+        expected_iqr = Q3
+        expected_iqr = expected_iqr.pivot(index='Instance', columns='Algorithm', values='MetricValue')
 
-        pd.testing.assert_frame_equal(df_std_pivot, expected_std)
+        pd.testing.assert_frame_equal(df_std_pivot, expected_iqr)
         remove_files()
 
     def test_process_csv(self):

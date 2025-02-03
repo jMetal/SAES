@@ -6,7 +6,7 @@ on:
   release:
     types: [created]  # Specifies that this workflow runs when a release is created
 
-  # Permite ejecutar manualmente desde la pestaña de Actions
+  # Allows manual execution from the Actions tab
   workflow_dispatch:
   
 jobs:

@@ -39,6 +39,8 @@ def __latex_document_builder(body: str, output_path: str) -> None:
     \\usepackage{float}
     \\usepackage[table*]{xcolor}
     \\usepackage{tabularx}
+    \\usepackage{siunitx}
+    \\sisetup{output-exponent-marker=\\text{e}}
     \\xdefinecolor{gray95}{gray}{0.65}
     \\xdefinecolor{gray25}{gray}{0.8}
     \\author{YourName}
@@ -87,14 +89,16 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     """
 
     # Process the input DataFrame to calculate aggregate values and standard deviations
-    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
+    df_agg, df_stats, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
     df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
 
+    stat = "Standard Deviation" if aggregation_type == "Mean" else "Interquartile Range"
+
     # Generate LaTeX tables for the given metric
-    median = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
-    friedman = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize)
-    wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std)
-    wilcoxon = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og)
+    median, _ = median_table(f"{aggregation_type} and {stat} ({metric})", df_og, df_agg, df_stats, metric)
+    friedman, _ = friedman_table(f"{aggregation_type} and {stat} - Friedman Test ({metric})", df_og, df_agg, df_stats, maximize, metric)
+    wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot ({metric})", df_og, df_agg, df_stats, metric)
+    wilcoxon, _ = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og, metric)
 
     # Save the LaTeX tables to disk
     __latex_document_builder(median, os.path.join(output_dir, "median"))
@@ -102,7 +106,7 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
     __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
 
-def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, selected: str, output_path: str = None) -> str:
+def latex_table(data, metrics, metric: str, selected: str, show: bool = False, output_path: str = None) -> str:
     """
     Generates LaTeX tables for the specified metric and selected analysis.
 
@@ -123,10 +127,11 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
             The path to the directory where the LaTeX tables will be saved. Defaults to None.
     
     Returns:
-        str: The path to the directory containing the generated tables.
+        str | pd.DataFrame: The path to the directory containing the generated tables or the DataFrame with the results of the selected analysis.
 
     Example:
-        >>> from SAES.latex_generation.latex_skeleton import latex_selected
+        >>> from SAES.latex_generation.latex_skeleton import latex_table
+        >>> from SAES.latex_generation.__init__ import TableTypes
         >>> 
         >>> # Data source
         >>> experimentData = "experimentData.csv"
@@ -141,37 +146,43 @@ def latex_selected(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric
         >>> selected = "wilcoxon_pivot"
         >>> 
         >>> # Save the latex reports on disk
-        >>> output_dir = latex_selected(data, metrics, metric)
+        >>> output_dir = latex_table(data, metrics, metric, TableTypes.WILCOXON_PIVOT.value, show=False)
         >>> print(output_dir)
         LaTeX wilcoxon_pivot document for metric HV saved to {output_dir}
         {output_dir}
     """
 
     # Create the output directory for the tables
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "latex", metric)
+    output_dir = os.path.join(output_path, "outputs", "latex", metric) if output_path else os.path.join(os.getcwd(), "outputs", "latex", metric)
 
     # Process the input data and metrics
     df_m, maximize = process_csv_metrics(data, metrics, metric)
-    df_agg, df_std, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_path)
-    df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_path)
+    df_agg, df_stats, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
+    df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
+
+    stat = "Standard Deviation" if aggregation_type == "Mean" else "Interquartile Range"
 
     if selected == TableTypes.MEDIAN.value:
-        body = median_table(f"{aggregation_type} and Standard Deviation ({metric})", df_og, df_agg, df_std)
+        body, df_result = median_table(f"{aggregation_type} and {stat} ({metric})", df_og, df_agg, df_stats, metric)
     elif selected == TableTypes.FRIEDMAN.value:
-        body = friedman_table(f"{aggregation_type} and Standard Deviation - Friedman Test ({metric})", df_og, df_agg, df_std, maximize)
+        body, df_result = friedman_table(f"{aggregation_type} and {stat} - Friedman Test ({metric})", df_og, df_agg, df_stats, maximize, metric)
     elif selected == TableTypes.WILCOXON_PIVOT.value:
-        body = wilcoxon_pivot_table(f"{aggregation_type} and Standard Deviation - Wilcoxon Pivot ({metric})", df_og, df_agg, df_std)
-    elif selected == TableTypes.WILCOXON_PIVOT.value:
-        body = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og)
+        body = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot ({metric})", df_og, df_agg, df_stats, metric)
+    elif selected == TableTypes.WILCOXON.value:
+        body, df_result = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og, metric)
     else:
         raise ValueError("Invalid selected analysis. Please choose one of the following: 'median', 'friedman', 'wilcoxon_pivot', 'wilcoxon'.")
 
     # Save the LaTeX tables to disk
     __latex_document_builder(body, os.path.join(output_dir, selected))
+    
+    if show:
+        return df_result
+    
     logger.info(f"LaTeX {selected} document for metric {metric} saved to {output_dir}")
     return os.path.join(output_dir, selected+".tex")
 
-def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, output_path: str = None) -> str:
+def latex(data, metrics, metric: str, output_path: str = None) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports on disk for a specific metric.
 
@@ -214,7 +225,7 @@ def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, ou
     df_m, maximize = process_csv_metrics(data, metrics, metric)
 
     # Create the output directory for the tables
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "latex", metric)
+    output_dir = os.path.join(output_path, "outputs", "latex", metric) if output_path else os.path.join(os.getcwd(), "outputs", "latex", metric)
 
     # Generate LaTeX tables for the current metric
     __create_tables_latex(df_m, metric, maximize, output_dir)
@@ -223,7 +234,7 @@ def latex(data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, ou
     logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
     return output_dir
 
-def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, output_path: str = None) -> str:
+def latex_all_metrics(data, metrics, output_path: str = None) -> str:
     """
     Processes the input data and metrics, and generates all the LaTeX reports for each metric.
 
@@ -260,15 +271,15 @@ def latex_all_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, out
     data = process_csv(data, metrics)
 
     # Create the output directory for the tables
-    output_dir = output_path if output_path else os.path.join(os.getcwd(), "outputs", "latex")
+    output_dir = os.path.join(output_path, "outputs", "latex") if output_path else os.path.join(os.getcwd(), "outputs", "latex")
 
     # Process the input data and metrics
     for metric, (df_m, maximize) in data.items():
         # Create the output directory for the current metric
-        output_path = os.path.join(output_dir, metric)
+        output_dir_metric = os.path.join(output_dir, metric)
 
         # Generate LaTeX tables for the current metric
-        __create_tables_latex(df_m, metric, maximize, output_path)
-        logger.info(f"LaTeX document for metric {metric} saved to {output_path}")
+        __create_tables_latex(df_m, metric, maximize, output_dir_metric)
+        logger.info(f"LaTeX document for metric {metric} saved to {output_dir_metric}")
 
     return output_dir

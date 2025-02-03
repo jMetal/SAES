@@ -1,10 +1,11 @@
 name: Deploy Phinx Documentation to GitHub Pages
 
 on:
-  release:
-    types: [created]  # Specifies that this workflow runs when a release is created
+  # Execute the workflow when pushing to the main branch
+  push:
+    branches: ["main"]
 
-  # Permite ejecutar manualmente desde la pestaña de Actions
+  # Allows manual execution from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -17,33 +18,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Job de construcción
+  # Construction job
   build:
     runs-on: ubuntu-latest
     steps:
-      # Clona el repositorio
+      # Clone repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Instala dependencias (si aplica)
+      # Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .[docs]
 
-      # Cambia al directorio `docs` y genera la documentación HTML
+      # Build HTML documentation
       - name: Build HTML documentation
         run: |
           cd docs
           make html
 
-      # Sube los archivos generados como artefacto
+      # Upload artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/_build/html # Ruta de salida de la documentación generada
+          path: docs/_build/html # Path to the HTML documentation
 
-  # Job de despliegue
+  # Deployment job
   deploy:
     environment:
       name: github-pages

@@ -24,6 +24,7 @@ def main():
     parser.add_argument('-i', type=str, help='Specify the instance to be used to generate the results. Works only for --bp')
     parser.add_argument('-s', type=str, help='Specify the type of LaTeX report to be generated. Works only for --ls')
     parser.add_argument('-op', type=str, help='Specify the output path for the generated files. Works for the three features')
+    parser.add_argument('-g', action='store_true', help='Choose to generate all the boxplots for a specific metric in grid format. Works only for --bp')
 
     # Parse the command-line arguments
     args = parser.parse_args()
@@ -35,7 +36,10 @@ def main():
             parser.error("The argument '-i/--instance' requires '-m/--metric' to be specified.")
         # Generate boxplot for all instances if only the metric is provided
         elif args.m and not args.i:
-            bp.boxplot_all_instances(args.ds, args.ms, args.m, output_path=args.op)
+            if args.g:
+                bp.boxplot_all_instances_grid(args.ds, args.ms, args.m, output_path=args.op)
+            else:
+                bp.boxplot_all_instances(args.ds, args.ms, args.m, output_path=args.op)
         # Generate boxplot for a specific instance and metric
         elif args.m and args.i:
             bp.boxplot(args.ds, args.ms, args.m, args.i, output_path=args.op)

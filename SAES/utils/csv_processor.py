@@ -2,6 +2,58 @@ import pandas as pd
 import os
 from SAES.utils.statistical_checks import check_normality
 
+def obtain_list_metrics(metrics: pd.DataFrame) -> pd.DataFrame:
+    """
+    Extracts a list of metric names from a given dataset.
+
+    Args:
+        metrics (pd.DataFrame): A path to a CSV file containing metrics or an existing DataFrame.
+
+    Returns:
+        pd.DataFrame: A NumPy array of metric names extracted from the "MetricName" column.
+
+    Example:
+        >>> from SAES.utils.csv_processor import obtain_list_metrics
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> metrics_list = obtain_list_metrics(metrics)
+        >>> print(metrics_list)
+        ['EP', 'HV', 'NHV', 'IGD+']
+    """
+
+    # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
+    df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
+
+    return df_m["MetricName"].tolist()
+
+def obtain_list_instances(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Extracts a list of instance names from a given dataset.
+
+    Args:
+        data (pd.DataFrame): A path to a CSV file containing data or an existing DataFrame.
+
+    Returns:
+        pd.DataFrame: A NumPy array of instance names extracted from the "Instance" column.
+
+    Example:
+        >>> from SAES.utils.csv_processor import obtain_list_instances
+        >>> 
+        >>> # Data source
+        >>> experimentData = "experimentData.csv"
+        >>> 
+        >>> instances_list = obtain_list_instances(data)
+        >>> print(instances_list)
+        ['ZCAT1','ZCAT2',...,'ZCAT20']
+    """
+
+    # Load the data DataFrame, either from a CSV file or as an existing DataFrame
+    df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+
+    return df["Instance"].unique().tolist()
+
 def process_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> dict:
     """
     Processes two CSV or DataFrame inputs: one containing metrics information and the other containing data.
@@ -17,6 +69,17 @@ def process_csv(data: str | pd.DataFrame, metrics: str | pd.DataFrame) -> dict:
     
     Returns:
         dict: A dictionary containing the filtered data and the 'Maximize' flag for each metric.
+
+    Example:
+        >>> from SAES.utils.csv_processor import process_csv
+        >>> 
+        >>> # Data source
+        >>> experimentData = "experimentData.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> data = process_csv(experimentData, metrics)
     """
 
     # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
@@ -65,6 +128,20 @@ def process_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, m
     
     Raises:
         ValueError: If the specified metric is not found in the metrics DataFrame.
+
+    Example:
+        >>> from SAES.utils.csv_processor import process_csv_metrics
+        >>> 
+        >>> # Data source
+        >>> experimentData = "experimentData.csv"
+        >>> 
+        >>> # Metrics source
+        >>> metrics = "metrics.csv"
+        >>> 
+        >>> # metric
+        >>> metric = "HV"
+        >>> 
+        >>> df_n, maximize = process_csv_metrics(experimentData, metrics, metric)
     """
 
     # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
@@ -84,22 +161,6 @@ def process_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, m
         return df_n, maximize
     except Exception as e:
         raise ValueError(f"Metric '{metric}' not found in the metrics DataFrame.") from e
-
-def obtain_list_metrics(metrics: str | pd.DataFrame) -> pd.DataFrame:
-    """
-    Extracts a list of metric names from a given dataset.
-
-    Parameters:
-        metrics (str | pd.DataFrame): A path to a CSV file containing metrics or an existing DataFrame.
-
-    Returns:
-        pd.DataFrame: A NumPy array of metric names extracted from the "MetricName" column.
-    """
-
-    # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
-    df_m = pd.read_csv(metrics, delimiter=",") if isinstance(metrics, str) else metrics
-
-    return df_m["MetricName"].values    
 
 def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str | pd.DataFrame = None, output_path: str = None) -> tuple:
     """
@@ -124,10 +185,22 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
 
         bool
             The maximize flag for the specified metric.
+
+    Example:
+        >>> from SAES.utils.csv_processor import process_dataframe_basic
+        >>> 
+        >>> # Data source
+        >>> experimentData = "experimentData.csv"
+        >>> 
+        >>> # metric
+        >>> metric = "HV"
+        >>> 
+        >>> df, maximize = process_dataframe_basic(data, metric)
     """
     
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame
     df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+    df = df[df["MetricName"] == metric]
 
     if metrics is not None:
         # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
@@ -141,7 +214,6 @@ def process_dataframe_basic(data: str | pd.DataFrame, metric: str, metrics: str 
     output_dir = output_path if output_path else os.getcwd()
 
     # Check if the input & output directories exist, if not create them
-    os.makedirs(os.path.join(output_dir, "outputs"), exist_ok=True)
     os.makedirs(os.path.join(output_dir, "CSVs"), exist_ok=True)
 
     # Save the data to a CSV file
@@ -181,7 +253,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
                 +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
     
         pd.DataFrame: 
-            A pivoted DataFrame showing standard deviations of metric values.
+            A pivoted DataFrame showing standard deviations or IQR of metric values.
                 - Example: (Same structure as the aggregated DataFrame)
         
         str: 
@@ -189,10 +261,22 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
         
         bool: 
             The maximize flag for the specified metric.
+
+    Example:
+        >>> from SAES.utils.csv_processor import process_dataframe_extended
+        >>> 
+        >>> # Data source
+        >>> experimentData = "experimentData.csv"
+        >>> 
+        >>> # metric
+        >>> metric = "HV"
+        >>> 
+        >>> df_agg_pivot, df_stats_pivot, aggregation_type, maximize = process_dataframe_extended(data, metric)
     """
 
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame
     df = pd.read_csv(data, delimiter=",") if isinstance(data, str) else data
+    df = df[df["MetricName"] == metric]
 
     if metrics is not None:
         # Load the metrics DataFrame, either from a CSV file or as an existing DataFrame
@@ -206,7 +290,6 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     output_dir = output_path if output_path else os.getcwd()
 
     # Check if the input & output directories exist, if not create them
-    os.makedirs(os.path.join(output_dir, "outputs"), exist_ok=True)
     os.makedirs(os.path.join(output_dir, "CSVs"), exist_ok=True)
 
     # Group by 'Instance' and 'Algorithm', then calculate the median or mean of the 'Metric Value' column
@@ -215,24 +298,31 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     if normal:
         df_agg = df.groupby(['Instance', 'Algorithm'])['MetricValue'].mean().reset_index()
         aggregation_type = "Mean"
+
+        df_stats = df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
     else:
         df_agg = df.groupby(['Instance', 'Algorithm'])['MetricValue'].median().reset_index()
         aggregation_type = "Median"
+
+        Q1 = df.groupby(['Instance', 'Algorithm'])['MetricValue'].quantile(0.25).reset_index()
+        Q3 = df.groupby(['Instance', 'Algorithm'])['MetricValue'].quantile(0.75).reset_index()
+
+        Q3["MetricValue"] = Q3["MetricValue"] - Q1["MetricValue"]
+        df_stats = Q3
     
     # Pivot the DataFrame to get 'Instance' as the index and 'Algorithm' as the columns with 'Metric Value' values
     df_agg_pivot = df_agg.pivot(index='Instance', columns='Algorithm', values='MetricValue')
 
     # Calculate the standard deviation DataFrame 
-    df_std = df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
-    df_std_pivot = df_std.pivot(index='Instance', columns='Algorithm', values='MetricValue')
+    df_stats_pivot = df_stats.pivot(index='Instance', columns='Algorithm', values='MetricValue')
     
     # Save the DataFrames to CSV files
     df_agg_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_{aggregation_type}_{metric}.csv"), index=False)
-    df_std_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_std_{aggregation_type}_{metric}.csv"), index=False)
+    df_stats_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_std_{aggregation_type}_{metric}.csv"), index=False)
 
     # Remove the index and column names for better presentation
     df_agg_pivot.index.name = None  
     df_agg_pivot.columns.name = None 
 
     # Return the DataFrames and the aggregation type
-    return df_agg_pivot, df_std_pivot, aggregation_type, maximize
+    return df_agg_pivot, df_stats_pivot, aggregation_type, maximize

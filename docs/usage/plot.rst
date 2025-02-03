@@ -10,11 +10,11 @@ The first feauture of the library is the ability to generate boxplots of the res
 .. code-block:: python
 
     import pandas as pd
-    from SAES.plots.boxplot import boxplot_instance_metric
+    from SAES.plots.boxplot import boxplot
 
     # Load the data and metrics from the CSV files
     data = pd.read_csv('swarmIntelligence.csv')
-    metrics = pd.read_csv('metrics.csv')
+    metrics = pd.read_csv('multiobjectiveMetrics.csv')
 
     # Choose the metric to generate the boxplot
     metric = 'NHV'
@@ -23,17 +23,17 @@ The first feauture of the library is the ability to generate boxplots of the res
     instance_name = 'WFG9'
 
     # Show the boxplot instead of saving it on disk
-    boxplot_instance_metric(data, metrics, metric, instance_name, show=True)
+    boxplot(data, metrics, metric, instance_name, show=True)
 
 or 
 
 .. code-block:: python
 
-    from SAES.plots.boxplot import boxplot_instance_metric
+    from SAES.plots.boxplot import boxplot
 
     # Path to the CSV file containing the benchmarking data.
     data = 'swarmIntelligence.csv'
-    metrics = 'metrics.csv'
+    metrics = 'multiobjectiveMetrics.csv'
 
     # Choose the metric to generate the boxplot
     metric = 'NHV'
@@ -42,7 +42,7 @@ or
     instance_name = 'WFG9'
     
     # Show the boxplot instead of saving it on disk
-    boxplot_instance_metric(data, metrics, metric, instance_name, show=True)
+    boxplot(data, metrics, metric, instance_name, show=True)
 
 The above code snippet generates a boxplot for the experimental results of the selected problem "WFG9" and the selected metric "NHV." The is not saved in disk and it is just displayed because of the "show" flag value used. The boxplot should look something similar to this:
 
