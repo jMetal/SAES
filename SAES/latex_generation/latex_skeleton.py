@@ -95,10 +95,10 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     stat = "Standard Deviation" if aggregation_type == "Mean" else "Interquartile Range"
 
     # Generate LaTeX tables for the given metric
-    median, _ = median_table(f"{aggregation_type} and {stat} ({metric})", df_og, df_agg, df_stats, metric)
-    friedman, _ = friedman_table(f"{aggregation_type} and {stat} - Friedman Test ({metric})", df_og, df_agg, df_stats, maximize, metric)
-    wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot ({metric})", df_og, df_agg, df_stats, metric)
-    wilcoxon, _ = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og, metric)
+    median, _ = median_table(f"{aggregation_type} and {stat}", df_og, df_agg, df_stats, metric)
+    friedman, _ = friedman_table(f"{aggregation_type} and {stat} - Friedman Test", df_og, df_agg, df_stats, maximize, metric)
+    wilcoxon_pivot = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot", df_og, df_agg, df_stats, metric)
+    wilcoxon, _ = wilcoxon_table(f"Wilcoxon Test 1vs1", df_og, metric)
 
     # Save the LaTeX tables to disk
     __latex_document_builder(median, os.path.join(output_dir, "median"))
@@ -163,13 +163,13 @@ def latex_table(data, metrics, metric: str, selected: str, show: bool = False, o
     stat = "Standard Deviation" if aggregation_type == "Mean" else "Interquartile Range"
 
     if selected == TableTypes.MEDIAN.value:
-        body, df_result = median_table(f"{aggregation_type} and {stat} ({metric})", df_og, df_agg, df_stats, metric)
+        body, df_result = median_table(f"{aggregation_type} and {stat}", df_og, df_agg, df_stats, metric)
     elif selected == TableTypes.FRIEDMAN.value:
-        body, df_result = friedman_table(f"{aggregation_type} and {stat} - Friedman Test ({metric})", df_og, df_agg, df_stats, maximize, metric)
+        body, df_result = friedman_table(f"{aggregation_type} and {stat} - Friedman Test", df_og, df_agg, df_stats, maximize, metric)
     elif selected == TableTypes.WILCOXON_PIVOT.value:
-        body = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot ({metric})", df_og, df_agg, df_stats, metric)
+        body = wilcoxon_pivot_table(f"{aggregation_type} and {stat} - Wilcoxon Pivot", df_og, df_agg, df_stats, metric)
     elif selected == TableTypes.WILCOXON.value:
-        body, df_result = wilcoxon_table(f"Wilcoxon Test 1vs1 ({metric})", df_og, metric)
+        body, df_result = wilcoxon_table(f"Wilcoxon Test 1vs1", df_og, metric)
     else:
         raise ValueError("Invalid selected analysis. Please choose one of the following: 'median', 'friedman', 'wilcoxon_pivot', 'wilcoxon'.")
 

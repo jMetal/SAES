@@ -127,7 +127,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n" + """}
+    \\caption{""" + metric + """.  """ + title + f"(+ implies that the difference between the algorithms for the instance in the select row is significant)\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -257,9 +257,12 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
 
     # Initialize the LaTeX table with basic structure, including the table header
+    header_explanation = (". Each symbol in the cells represents a problem. Symbol +/- indicates that the row/column "
+                          "algorithm performs better with statistical confidence;  symbol = implies that "
+                          "the differences are not significant.")
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n" + f"\\\\ \\texttt{{Instances (in order)}} : {instances}\n" + """}
+    \\caption{""" + metric + """.  """ + title + header_explanation + f" Instances (in order) : {instances}\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -361,7 +364,8 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{+ implies that the pivot algorithm (last column) was worse than the selected}}\n" +"""}
+    \\caption{""" + metric + """.  """ + title + (f" (+/- implies that the pivot algorithm (last column) is statistically "
+                                                  f"worse/better, = indicates that the differences are not significant.)\n") +"""}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
