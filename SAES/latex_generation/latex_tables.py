@@ -2,6 +2,7 @@ from SAES.statistical_tests.non_parametrical import wilcoxon_test
 from SAES.statistical_tests.non_parametrical import friedman_test
 import pandas as pd
 
+
 def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
     """
     Generates a LaTeX table with performance statistics for algorithms across different instances.
@@ -9,21 +10,22 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     Args:
         title (str): 
             The title for the table.
-        
-        df_og (pd.DataFrame): 
+
+        df_og (pd.DataFrame):
             Original DataFrame containing the algorithms and instances.
-        
-        df1 (pd.DataFrame): 
+
+        df1 (pd.DataFrame):
             DataFrame with median values for each algorithm and instance.
-        
-        df2 (pd.DataFrame): 
+
+        df2 (pd.DataFrame):
             DataFrame with standard deviation values for each algorithm and instance.
 
         metric (str):
             The metric used to evaluate the algorithms.
-            
+
     Returns:
         str: LaTeX formatted table as a string.
+        pd.DataFrame: DataFrame with the median values of the algorithms.
     """
 
     # Extract the list of algorithms and instances from the DataFrame
@@ -37,7 +39,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-1) + """c}
+    \\begin{tabular}{l|""" + """c|""" * (len(algorithms) - 1) + """c}
     \\hline
     & """ + " & ".join(algorithms) + " \\\\ \\hline\n"
 
@@ -51,7 +53,7 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
         std_dev = df2.loc[instance]
 
         # Normalize the median by standard deviation
-        df_global = median/std_dev
+        df_global = median / std_dev
 
         # Algorithm with the highest and second highest normalized value
         max_idx = df_global.idxmax()
@@ -79,18 +81,15 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    """
-
-    latex_doc += """
     \\end{table}
     """
 
     # Return the final LaTeX code for the table
     return latex_doc, df1
 
-def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool, metric: str) -> str:
+
+def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool,
+                   metric: str) -> str:
     """
     Generates a LaTeX table with performance statistics for algorithms across instances, including a Friedman test
     for statistical significance between algorithms.
@@ -116,6 +115,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
     Returns:
         str: LaTeX formatted table as a string.
+        pd.DataFrame: DataFrame with the results of the Friedman test.
     """
 
     # Extract the list of algorithms and instances from the DataFrame
@@ -130,7 +130,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + """}
+    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -149,7 +149,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
         std_dev = df2.loc[instance]
 
         # Normalize the median by standard deviation
-        df_global = median/std_dev
+        df_global = median / std_dev
 
         # Algorithm with the highest and second highest normalized value
         max_idx = df_global.idxmax()
@@ -174,8 +174,10 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
 
                 # Perform friedman test between the pivot algorithm and the current algorithm
                 algorithms_friedman = algorithms
-                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_friedman)) & (df_og["Instance"] == instance_friedman)]
-                df_friedman = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
+                dg_og_filtered = df_og[
+                    (df_og["Algorithm"].isin(algorithms_friedman)) & (df_og["Instance"] == instance_friedman)]
+                df_friedman = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm",
+                                                   values="MetricValue").reset_index()
                 df_friedman = df_friedman.drop(columns="ExecutionId")
                 df_friedman.columns = names
 
@@ -189,7 +191,8 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
                         row_data += "= & "
                         friedman_results[instance] = "="
                 except:
-                    print("Friedman test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
+                    print(
+                        "Friedman test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
                     return ""
 
         # Add the formatted row to the LaTeX document
@@ -200,27 +203,28 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    \\begin{itemize}
-    """
-
-    latex_doc += f"\\item \\texttt{{+ implies that the difference between the algorithms for the instance in the select row is significant}}\n"
-
-    latex_doc += """
-    \\end{itemize}
     \\end{table}
     """
 
-    df_friedman =__add_friedman_results(df1, friedman_results)
+    df_friedman = __add_friedman_results(df1, friedman_results)
 
     # Return the final LaTeX code for the table
     return latex_doc, df_friedman
 
+
 def __add_friedman_results(df_agg: pd.DataFrame, friedman_results: dict) -> pd.DataFrame:
     """
-    Adds the results of the Friedman test to the
-    DataFrame containing the algorithms and instances.
+    Adds the results of the Friedman test to the DataFrame containing the algorithms and instances.
+
+    Args:
+        df_agg (pd.DataFrame):
+            DataFrame containing the algorithms and instances.
+
+        friedman_results (dict):
+            Dictionary containing the results of the Friedman test for each instance.
+
+    Returns:
+        pd.DataFrame: DataFrame with the results of the Friedman test.
     """
 
     df = pd.DataFrame(df_agg, index=friedman_results.keys())
@@ -230,6 +234,7 @@ def __add_friedman_results(df_agg: pd.DataFrame, friedman_results: dict) -> pd.D
 
     # Return the updated DataFrame
     return df
+
 
 def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     """
@@ -247,11 +252,14 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
 
     Returns:
         str: LaTeX-formatted table string.
+        pd.DataFrame: DataFrame with the results of the Wilcoxon test.
     """
 
     # Extract the list of algorithms and instances from the columns of the DataFrame
     algorithms = df_og["Algorithm"].unique().tolist()
     instances = df_og["Instance"].unique().tolist()
+
+    df_wilcoxon_result = pd.DataFrame("", index=algorithms, columns=algorithms)
 
     # Define display names for algorithms
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
@@ -259,11 +267,11 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     # Initialize the LaTeX table with basic structure, including the table header
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + """}
+    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n" + f"\\\\ \\texttt{{Instances (in order)}} : {instances}\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-2) + """c}
+    \\begin{tabular}{l|""" + """c|""" * (len(algorithms) - 2) + """c}
     \\hline
     & """ + " & ".join(algorithms[1:]) + " \\\\ \\hline\n"
 
@@ -290,8 +298,10 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
                 for instance in instances:
                     # Filter the original dataframe for the relevant pair of algorithms and the current instance
                     algorithms_wilcoxon = [algorithm1, algorithm2]
-                    dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilcoxon)) & (df_og["Instance"] == instance)]
-                    df_wilcoxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
+                    dg_og_filtered = df_og[
+                        (df_og["Algorithm"].isin(algorithms_wilcoxon)) & (df_og["Instance"] == instance)]
+                    df_wilcoxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm",
+                                                       values="MetricValue").reset_index()
                     df_wilcoxon = df_wilcoxon.drop(columns="ExecutionId")
                     og_columns = df_wilcoxon.columns.tolist()
                     df_wilcoxon.columns = ["Algorithm A", "Algorithm B"]
@@ -300,50 +310,43 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
                     wilconson_result = wilcoxon_test(df_wilcoxon)
                     if wilconson_result == "=":
                         latex_doc += "="
+                        df_wilcoxon_result.loc[algorithm1, algorithm2] += "="
                     else:
                         winner = og_columns[0] if wilconson_result == "+" else og_columns[1]
                         latex_doc += "+" if algorithm1 == winner else "-"
+                        df_wilcoxon_result.loc[algorithm1, algorithm2] += "+" if algorithm1 == winner else "-"
             latex_doc += "} & "
         latex_doc = latex_doc.rstrip(" & ") + " \\\\\n"
 
-    # Close the table structure in the LaTeX document
+        # Close the table structure in the LaTeX document
     latex_doc += """
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    \\begin{itemize}
-    """
-
-    latex_doc += f"\\item \\texttt{{Instances (in order)}} : {instances}\n"
-    latex_doc += f"\\item \\texttt{{Algorithm (row) vs Algorithm (column) = + implies Algorithm (row) better than Algorithm (column)}}\n"
-
-    latex_doc += """
-    \\end{itemize}
     \\end{table}
     """
 
     # Return the final LaTeX code for the table
-    return latex_doc
+    return latex_doc, df_wilcoxon_result
+
 
 def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
     """
     Generates a LaTeX table comparing the performance of algorithms using the Wilcoxon signed-rank test.
-    The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm 
+    The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm
     across different instances.
 
     Args:
-        title (str): 
+        title (str):
             The title to be displayed in the LaTeX table caption.
 
-        df_og (pd.DataFrame): 
+        df_og (pd.DataFrame):
             A DataFrame containing the raw data with columns 'Algorithm', 'Instance', 'ExecutionId', and 'MetricValue'.
 
-        df1 (pd.DataFrame): 
+        df1 (pd.DataFrame):
             A DataFrame with the median values of each algorithm for each instance.
 
-        df2 (pd.DataFrame): 
+        df2 (pd.DataFrame):
             A DataFrame with the standard deviation values of each algorithm for each instance.
 
         metric (str):
@@ -369,11 +372,11 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     # Initialize the LaTeX document with the table structure and formatting
     latex_doc = """
     \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + """}
+    \\caption{""" + metric + """.  """ + title + f"\\\\ \\texttt{{+ implies that the pivot algorithm (last column) was worse than the selected}}\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
-    \\begin{tabular}{l|""" + """c|""" * (len(algorithms)-1) + """c}
+    \\begin{tabular}{l|""" + """c|""" * (len(algorithms) - 1) + """c}
     \\hline
     & """ + " & ".join(algorithms) + " \\\\ \\hline\n"
 
@@ -388,7 +391,7 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
         std_dev = df2.loc[instance]
 
         # Normalize the median by standard deviation
-        df_global = median/std_dev
+        df_global = median / std_dev
 
         # Algorithm with the highest and second highest normalized value
         max_idx = df_global.idxmax()
@@ -401,11 +404,13 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
 
                 # Perform Wilcoxon test between the pivot algorithm and the current algorithm
                 algorithms_wilcoxon = [pivot_algorithm, algorithm]
-                dg_og_filtered = df_og[(df_og["Algorithm"].isin(algorithms_wilcoxon)) & (df_og["Instance"] == instance_wilcoxon)]
-                df_wilcoxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm", values="MetricValue").reset_index()
+                dg_og_filtered = df_og[
+                    (df_og["Algorithm"].isin(algorithms_wilcoxon)) & (df_og["Instance"] == instance_wilcoxon)]
+                df_wilcoxon = dg_og_filtered.pivot(index="ExecutionId", columns="Algorithm",
+                                                   values="MetricValue").reset_index()
                 df_wilcoxon = df_wilcoxon.drop(columns="ExecutionId")
                 df_wilcoxon.columns = ["Algorithm A", "Algorithm B"]
-                
+
                 try:
                     # Run the Wilcoxon test (defined outside the function)
                     wilcoxon_result = wilcoxon_test(df_wilcoxon)
@@ -418,22 +423,23 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
                         ranks[algorithm_name][1] += 1
                     else:
                         ranks[algorithm_name][2] += 1
-                
+
                 except:
-                    print("Wilcoxon test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
+                    print(
+                        "Wilcoxon test failed: your dataset either does not contain enough data or the variaty of the data is too low.")
                     return ""
-                
+
             # Format the median and standard deviation values for the LaTeX table
             score1 = median[algorithm]
             score2 = std_dev[algorithm]
 
             # Apply conditional formatting for the highest and second highest algorithms
             if algorithm == max_idx:
-                row_data += f"\\cellcolor{{gray95}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
+                row_data += f"\\cellcolor{{gray95}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
             elif algorithm == second_idx:
-                row_data += f"\\cellcolor{{gray25}}${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
+                row_data += f"\\cellcolor{{gray25}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
             else:
-                row_data += f"${score1:.2f}_{{ {score2:.2f} }} {wilcoxon_result} $ & "
+                row_data += f"$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {wilcoxon_result}$ & "
 
         # Add the formatted row to the LaTeX document
         latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
@@ -442,22 +448,13 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     latex_doc += """\\hline + / - / ="""
     for name, rank in ranks.items():
         latex_doc += f" & \\textbf{rank[0]} / \\textbf{rank[1]} / \\textbf{rank[2]}"
-    
+
     # Close the table structure
     latex_doc += """
     \\\\
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\vspace{2mm}
-    \\small
-    \\begin{itemize}
-    """
-
-    latex_doc += f"\\item \\texttt{{+ implies that the pivot algorithm (last column) was worse than the selected}}\n"
-
-    latex_doc += """
-    \\end{itemize}
     \\end{table}
     """
 

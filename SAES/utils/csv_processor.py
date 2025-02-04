@@ -253,7 +253,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
                 +----------+-------------+-------------+-------------+-------------+---------+---------+---------+
     
         pd.DataFrame: 
-            A pivoted DataFrame showing standard deviations of metric values.
+            A pivoted DataFrame showing standard deviations or IQR of metric values.
                 - Example: (Same structure as the aggregated DataFrame)
         
         str: 
@@ -271,7 +271,7 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
         >>> # metric
         >>> metric = "HV"
         >>> 
-        >>> df_agg_pivot, df_std_pivot, aggregation_type, maximize = process_dataframe_extended(data, metric)
+        >>> df_agg_pivot, df_stats_pivot, aggregation_type, maximize = process_dataframe_extended(data, metric)
     """
 
     # Load the data DataFrame, either from a CSV file or as an existing DataFrame
@@ -298,24 +298,31 @@ def process_dataframe_extended(data: str | pd.DataFrame, metric: str, metrics: s
     if normal:
         df_agg = df.groupby(['Instance', 'Algorithm'])['MetricValue'].mean().reset_index()
         aggregation_type = "Mean"
+
+        df_stats = df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
     else:
         df_agg = df.groupby(['Instance', 'Algorithm'])['MetricValue'].median().reset_index()
         aggregation_type = "Median"
+
+        Q1 = df.groupby(['Instance', 'Algorithm'])['MetricValue'].quantile(0.25).reset_index()
+        Q3 = df.groupby(['Instance', 'Algorithm'])['MetricValue'].quantile(0.75).reset_index()
+
+        Q3["MetricValue"] = Q3["MetricValue"] - Q1["MetricValue"]
+        df_stats = Q3
     
     # Pivot the DataFrame to get 'Instance' as the index and 'Algorithm' as the columns with 'Metric Value' values
     df_agg_pivot = df_agg.pivot(index='Instance', columns='Algorithm', values='MetricValue')
 
     # Calculate the standard deviation DataFrame 
-    df_std = df.groupby(['Instance', 'Algorithm'])['MetricValue'].std().reset_index()
-    df_std_pivot = df_std.pivot(index='Instance', columns='Algorithm', values='MetricValue')
+    df_stats_pivot = df_stats.pivot(index='Instance', columns='Algorithm', values='MetricValue')
     
     # Save the DataFrames to CSV files
     df_agg_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_{aggregation_type}_{metric}.csv"), index=False)
-    df_std_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_std_{aggregation_type}_{metric}.csv"), index=False)
+    df_stats_pivot.to_csv(os.path.join(output_dir, "CSVs", f"data_std_{aggregation_type}_{metric}.csv"), index=False)
 
     # Remove the index and column names for better presentation
     df_agg_pivot.index.name = None  
     df_agg_pivot.columns.name = None 
 
     # Return the DataFrames and the aggregation type
-    return df_agg_pivot, df_std_pivot, aggregation_type, maximize
+    return df_agg_pivot, df_stats_pivot, aggregation_type, maximize
