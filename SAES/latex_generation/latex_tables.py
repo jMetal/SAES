@@ -2,7 +2,7 @@ from SAES.statistical_tests.non_parametrical import wilcoxon_test
 from SAES.statistical_tests.non_parametrical import friedman_test
 import pandas as pd
 
-def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
+def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str, sideways: bool) -> str:
     """
     Generates a LaTeX table with performance statistics for algorithms across different instances.
 
@@ -32,8 +32,14 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     instances = df_og["Instance"].unique().tolist()
 
     # Initialize the LaTeX document with the table structure and formatting
-    latex_doc = """
-    \\begin{table}[H]
+    if sideways:
+        begin_table = "\\begin{sidewaystable}"
+        end_table = "\\end{sidewaystable}"
+    else:
+        begin_table = "\\begin{table}[H]"
+        end_table = "\\end{table}"
+
+    latex_doc = begin_table + """
     \\caption{""" + metric + """.  """ + title + """}
     \\vspace{1mm}
     \\centering
@@ -80,13 +86,12 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\end{table}
-    """
+    """ + end_table
 
     # Return the final LaTeX code for the table
     return latex_doc, df1
 
-def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool, metric: str) -> str:
+def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool, metric: str, sideways: bool) -> str:
     """
     Generates a LaTeX table with performance statistics for algorithms across instances, including a Friedman test 
     for statistical significance between algorithms.
@@ -125,9 +130,14 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     names = [f"Algorithm {chr(65 + i)}" for i in range(len(algorithms))]
 
     # Initialize the LaTeX document with the table structure and formatting
-    latex_doc = """
-    \\begin{table}[H]
-    \\caption{""" + metric + """.  """ + title + f"(+ implies that the difference between the algorithms for the instance in the select row is significant)\n" + """}
+    if sideways:
+        begin_table = "\\begin{sidewaystable}"
+        end_table = "\\end{sidewaystable}"
+    else:
+        begin_table = "\\begin{table}[H]"
+        end_table = "\\end{table}"
+    latex_doc = begin_table + """
+    \\caption{""" + metric + """.  """ + title + f" (+ implies that the difference between the algorithms for the instance in the select row is significant)\n" + """}
     \\vspace{1mm}
     \\centering
     \\begin{scriptsize}
@@ -197,8 +207,7 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\end{table}
-    """
+    """ + end_table
         
     df_friedman = __add_friedman_results(df1, friedman_results)
 
@@ -228,7 +237,7 @@ def __add_friedman_results(df_agg: pd.DataFrame, friedman_results: dict) -> pd.D
     # Return the updated DataFrame
     return df
 
-def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
+def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str, sideways: bool) -> str:
     """
     Creates a LaTeX table for Wilcoxon test results between algorithms (each one against each other one in pairs).
 
@@ -260,8 +269,14 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     header_explanation = (". Each symbol in the cells represents a problem. Symbol +/- indicates that the row/column "
                           "algorithm performs better with statistical confidence;  symbol = implies that "
                           "the differences are not significant.")
-    latex_doc = """
-    \\begin{table}[H]
+    if sideways:
+        begin_table = "\\begin{sidewaystable}"
+        end_table = "\\end{sidewaystable}"
+    else:
+        begin_table = "\\begin{table}[H]"
+        end_table = "\\end{table}"
+
+    latex_doc = begin_table + """
     \\caption{""" + metric + """.  """ + title + header_explanation + f" Instances (in order) : {instances}\n" + """}
     \\vspace{1mm}
     \\centering
@@ -316,13 +331,12 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str) -> str:
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\end{table}
-    """
+    """ + end_table
 
     # Return the final LaTeX code for the table
     return latex_doc, df_wilcoxon_result
 
-def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str) -> str:
+def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str, sideways: bool) -> str:
     """
     Generates a LaTeX table comparing the performance of algorithms using the Wilcoxon signed-rank test.
     The table includes the median, standard deviation, and the result of the Wilcoxon test for each algorithm 
@@ -362,8 +376,15 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     pivot_algorithm = df_og.iloc[-1]["Algorithm"]
 
     # Initialize the LaTeX document with the table structure and formatting
-    latex_doc = """
-    \\begin{table}[H]
+
+    if sideways:
+        begin_table = "\\begin{sidewaystable}"
+        end_table = "\\end{sidewaystable}"
+    else:
+        begin_table = "\\begin{table}[H]"
+        end_table = "\\end{table}"
+
+    latex_doc = begin_table + """
     \\caption{""" + metric + """.  """ + title + (f" (+/- implies that the pivot algorithm (last column) is statistically "
                                                   f"worse/better, = indicates that the differences are not significant.)\n") +"""}
     \\vspace{1mm}
@@ -445,8 +466,7 @@ def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2
     \\hline
     \\end{tabular}
     \\end{scriptsize}
-    \\end{table}
-    """
+    """ + end_table
 
     # Return the final LaTeX code for the table
     return latex_doc
