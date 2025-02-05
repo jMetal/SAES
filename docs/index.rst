@@ -75,5 +75,6 @@ Once you have activated the virtual environment, you can install the project and
 
    configure/configuration
    API/api
+   command_line/command_line
    usage/usage
 
