@@ -246,13 +246,17 @@ def __add_friedman_results(df_agg: pd.DataFrame, df_og: pd.DataFrame, friedman_r
         pd.DataFrame: DataFrame with the results of the Friedman test.
     """
 
+    # Create a new DataFrame with the results of the Friedman test
     df = pd.DataFrame(df_agg, index=friedman_results.keys())
+
+    # Filter the DataFrame to include only the columns with the algorithms
+    df = df[list(dict.fromkeys(df_og["Algorithm"]))]
 
     # Add the results of the Friedman test to the DataFrame
     df['friedman'] = df.index.map(friedman_results)
 
     # Return the updated DataFrame
-    return df[list(dict.fromkeys(df_og["Algorithm"]))]
+    return df
 
 
 def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str, sideways: bool = False) -> str:
