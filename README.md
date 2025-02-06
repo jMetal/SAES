@@ -9,8 +9,6 @@ The current version of the tool offers the following capabilities:
    - Handle datasets of varying sizes with ease.  
 
 2. **Statistical analysis**  
-   - **Parametric tests**:
-     - Normality test
    - **Non-parametric tests**:  
      - Friedman test  
      - Wilcoxon signed-rank test  
@@ -27,6 +25,9 @@ The current version of the tool offers the following capabilities:
 4. **Visualization**  
    - **Boxplot graphs** for algorithm comparison.  
    - **Critical distance plots** for statistical significance.  
+
+5. **CL Interface**
+   - Command Line feature to access the different `SAES` functions 
 
 This tool is aimed at researchers and developers interested in algorithm benchmarking studies for artificial intelligence, optimization, machine learning, and more.
 
