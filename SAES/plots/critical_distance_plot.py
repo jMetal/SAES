@@ -61,7 +61,8 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
             if elements.size > 0:
                 sets[i, :] = [avranks[i], avranks[elements[-1]]]
         sets = np.delete(sets, np.where(sets[:, 0] < 0)[0], axis=0)
-
+        if sets.size == 0:
+            return sets
         # group pairs
         group = sets[0, :]
         for i in range(1, sets.shape[0]):
@@ -204,7 +205,10 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
 
     # Get pair of non-significant methods
     nonsig = _join_alg(avranks, num_alg, cd)
-    if nonsig.ndim == 2:
+    if nonsig.size == 0:  # No pairs to process
+        left_lines = np.array([])  # Initialize as empty array
+        right_lines = np.array([])  # Initialize as empty array
+    elif nonsig.ndim == 2:
         if nonsig.shape[0] == 2:
             left_lines = np.reshape(nonsig[0, :], (1, 2))
             right_lines = np.reshape(nonsig[1, :], (1, 2))
@@ -214,26 +218,27 @@ def __CDplot_metric(df_agg: pd.DataFrame, metric: str, output_dir: str, alpha: f
     else:
         left_lines = np.reshape(nonsig, (1, nonsig.shape[0]))
 
-    # plot from the left
-    vspace = 0.5 * (stop - sbottom) / (left_lines.shape[0] + 1)
-    for i in range(left_lines.shape[0]):
-        ax.hlines(
-            y=stop - (i + 1) * vspace,
-            xmin=sleft + lline * (left_lines[i, 0] - lowest - 0.025) / (highest - lowest),
-            xmax=sleft + lline * (left_lines[i, 1] - lowest + 0.025) / (highest - lowest),
-            linewidth=2,
-        )
-
-    # plot from the rigth
-    if nonsig.ndim == 2:
-        vspace = 0.5 * (stop - sbottom) / (left_lines.shape[0])
-        for i in range(right_lines.shape[0]):
+    if nonsig.size > 0:
+        # plot from the left
+        vspace = 0.5 * (stop - sbottom) / (left_lines.shape[0] + 1)
+        for i in range(left_lines.shape[0]):
             ax.hlines(
                 y=stop - (i + 1) * vspace,
-                xmin=sleft + lline * (right_lines[i, 0] - lowest - 0.025) / (highest - lowest),
-                xmax=sleft + lline * (right_lines[i, 1] - lowest + 0.025) / (highest - lowest),
+                xmin=sleft + lline * (left_lines[i, 0] - lowest - 0.025) / (highest - lowest),
+                xmax=sleft + lline * (left_lines[i, 1] - lowest + 0.025) / (highest - lowest),
                 linewidth=2,
             )
+
+        # plot from the rigth
+        if nonsig.ndim == 2:
+            vspace = 0.5 * (stop - sbottom) / (left_lines.shape[0])
+            for i in range(right_lines.shape[0]):
+                ax.hlines(
+                    y=stop - (i + 1) * vspace,
+                    xmin=sleft + lline * (right_lines[i, 0] - lowest - 0.025) / (highest - lowest),
+                    xmax=sleft + lline * (right_lines[i, 1] - lowest + 0.025) / (highest - lowest),
+                    linewidth=2,
+                )
 
     output_path = os.path.join(output_dir, f"{metric}_cd_plot.png")
     plt.savefig(output_path, bbox_inches="tight")

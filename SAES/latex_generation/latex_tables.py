@@ -2,7 +2,6 @@ from SAES.statistical_tests.non_parametrical import wilcoxon_test
 from SAES.statistical_tests.non_parametrical import friedman_test
 import pandas as pd
 
-
 def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str,
                  sideways: bool = False) -> str:
     """
@@ -95,7 +94,6 @@ def median_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.Dat
 
     # Return the final LaTeX code for the table
     return latex_doc, df1
-
 
 def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, maximize: bool, metric: str,
                    sideways: bool = False) -> str:
@@ -227,7 +225,6 @@ def friedman_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.D
     # Return the final LaTeX code for the table
     return latex_doc, df_friedman
 
-
 def __add_friedman_results(df_agg: pd.DataFrame, df_og: pd.DataFrame, friedman_results: dict) -> pd.DataFrame:
     """
     Adds the results of the Friedman test to the DataFrame containing the algorithms and instances.
@@ -257,7 +254,6 @@ def __add_friedman_results(df_agg: pd.DataFrame, df_og: pd.DataFrame, friedman_r
 
     # Return the updated DataFrame
     return df
-
 
 def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str, sideways: bool = False) -> str:
     """
@@ -362,7 +358,6 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str, sideways: bool 
 
     # Return the final LaTeX code for the table
     return latex_doc, df_wilcoxon_result
-
 
 def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str,
                          sideways: bool = False) -> str:

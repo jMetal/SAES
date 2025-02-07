@@ -12,11 +12,8 @@ import pandas as pd
 import os
 
 from SAES.latex_generation.__init__ import TableTypes
-
 from SAES.logger import get_logger
-
 logger = get_logger(__name__)
-
 
 def __latex_document_builder(body: str, output_path: str) -> None:
     """
@@ -67,7 +64,6 @@ def __latex_document_builder(body: str, output_path: str) -> None:
     with open(output_path + ".tex", "w") as f:
         f.write(latex_doc)
 
-
 def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, output_dir: str) -> None:
     """
     Generates and saves LaTeX tables based on the provided metric and CSV data.
@@ -111,7 +107,6 @@ def __create_tables_latex(df_m: pd.DataFrame, metric: str, maximize: bool, outpu
     __latex_document_builder(friedman, os.path.join(output_dir, "friedman"))
     __latex_document_builder(wilcoxon_pivot, os.path.join(output_dir, "wilcoxon_pivot"))
     __latex_document_builder(wilcoxon, os.path.join(output_dir, "wilcoxon"))
-
 
 def latex_table(data, metrics, metric: str, selected: str, show: bool = False, output_path: str = None,
                 sideways: bool = False) -> str:
@@ -170,6 +165,11 @@ def latex_table(data, metrics, metric: str, selected: str, show: bool = False, o
 
     # Process the input data and metrics
     df_m, maximize = process_csv_metrics(data, metrics, metric)
+    
+    if df_m["MetricValue"].nunique() < (len(df_m)/100):
+        print("The data is not diverse enough to perform the analysis")
+        return None
+    
     df_agg, df_stats, aggregation_type, _ = process_dataframe_extended(df_m, metric, output_path=output_dir)
     df_og, _ = process_dataframe_basic(df_m, metric, output_path=output_dir)
 
@@ -198,7 +198,6 @@ def latex_table(data, metrics, metric: str, selected: str, show: bool = False, o
 
     logger.info(f"LaTeX {selected} document for metric {metric} saved to {output_dir}")
     return os.path.join(output_dir, selected + ".tex")
-
 
 def latex(data, metrics, metric: str, output_path: str = None) -> str:
     """
@@ -242,6 +241,10 @@ def latex(data, metrics, metric: str, output_path: str = None) -> str:
     # Process the input data and metrics
     df_m, maximize = process_csv_metrics(data, metrics, metric)
 
+    if df_m["MetricValue"].nunique() < (len(df_m)/10):
+        print("The data is not diverse enough to perform the analysis")
+        return None
+
     # Create the output directory for the tables
     output_dir = os.path.join(output_path, "outputs", "latex", metric) if output_path else os.path.join(os.getcwd(),
                                                                                                         "outputs",
@@ -253,7 +256,6 @@ def latex(data, metrics, metric: str, output_path: str = None) -> str:
     # Log the successful generation of the LaTeX tables
     logger.info(f"LaTeX document for metric {metric} saved to {output_dir}")
     return output_dir
-
 
 def latex_all_metrics(data, metrics, output_path: str = None) -> str:
     """

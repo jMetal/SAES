@@ -153,7 +153,7 @@ def process_csv_metrics(data: str | pd.DataFrame, metrics: str | pd.DataFrame, m
     try:
         # Retrieve the maximize flag (True/False) for the specified metric
         maximize = df_m[df_m["MetricName"] == metric]["Maximize"].values[0]
-
+    
         # Filter the data DataFrame for the rows matching the specified metric
         df_n = df[df["MetricName"] == metric].reset_index()
 
