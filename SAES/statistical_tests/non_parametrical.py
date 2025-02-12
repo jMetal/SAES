@@ -66,7 +66,7 @@ def friedman_test(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
         columns=["Results"]
     )
 
-def wilcoxon_test(data: pd.DataFrame):
+def wilcoxon_test(data: pd.DataFrame, maximize: bool):
     """
     Performs the Wilcoxon signed-rank test to compare the performance of two algorithms across multiple instances.
     The Wilcoxon signed-rank test is a non-parametric statistical test used to compare the performance of two algorithms on multiple instances. The null hypothesis is that the algorithms perform equivalently, which implies their average ranks are equal.
@@ -86,6 +86,8 @@ def wilcoxon_test(data: pd.DataFrame):
             +-------+-------------+-------------+
             |  30   | 0.871175    | 0.3505      |
             +-------+-------------+-------------+
+        maximize (bool):
+            A boolean indicating whether to rank the data in descending order. If True, the algorithm with the highest performance will receive the lowest rank (i.e., rank 1). If False, the algorithm with the lowest performance will receive the lowest rank. Default is True.
 
     Returns:
         str: A string indicating the result of the Wilcoxon test. The result can be one of the following:
@@ -103,7 +105,10 @@ def wilcoxon_test(data: pd.DataFrame):
     # Interpretar el resultado
     alpha = 0.05
     if p_value <= alpha:
-        return "+" if median_a > median_b else "-"
+        if maximize:
+            return "+" if median_a > median_b else "-"
+        else:
+            return "+" if median_a < median_b else "-"
     else:
         return "="
 

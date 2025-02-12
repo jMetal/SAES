@@ -3,10 +3,10 @@ from SAES.utils.csv_processor import process_csv_metrics
 from SAES.utils.csv_processor import process_dataframe_basic
 from SAES.utils.csv_processor import process_dataframe_extended
 
-from SAES.latex_generation.latex_tables import median_table
-from SAES.latex_generation.latex_tables import friedman_table
-from SAES.latex_generation.latex_tables import wilcoxon_pivot_table
-from SAES.latex_generation.latex_tables import wilcoxon_table
+from SAES.latex_generation.latex_tables2 import median_table
+from SAES.latex_generation.latex_tables2 import friedman_table
+from SAES.latex_generation.latex_tables2 import wilcoxon_pivot_table
+from SAES.latex_generation.latex_tables2 import wilcoxon_table
 
 import pandas as pd
 import os
@@ -307,3 +307,10 @@ def latex_all_metrics(data, metrics, output_path: str = None) -> str:
         logger.info(f"LaTeX document for metric {metric} saved to {output_dir_metric}")
 
     return output_dir
+
+
+if __name__ == "__main__":
+    data = '/home/khaosdev/SAES/notebooks/swarmIntelligence.csv'
+    metrics = '/home/khaosdev/SAES/notebooks/multiobjectiveMetrics.csv'
+    metric = 'EP'
+    latex_table(data, metrics, metric, TableTypes.WILCOXON_PIVOT.value)
