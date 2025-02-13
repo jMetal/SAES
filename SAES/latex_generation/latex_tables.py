@@ -45,14 +45,17 @@ class Table(ABC):
     def print_latex(self):
         pass
 
-class MeanMedianTable(Table):
+class MeanMedian(Table):
     def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
         super().__init__(data, metrics, metric)
 
     def compute_table(self):
         self.compute_base_table()
 
-class FriedmanTable(Table):
+    def print_latex(self):
+        self.compute_table()
+
+class Friedman(Table):
     def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
         super().__init__(data, metrics, metric)
 
@@ -76,7 +79,7 @@ class FriedmanTable(Table):
                 self.table.loc[instance, 'Friedman'] = "="
 
     def print_latex(self):
-        pass
+        self.compute_table()
 
 class WilcoxonPivot(Table):
     def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
@@ -106,14 +109,43 @@ class WilcoxonPivot(Table):
                 self.table.loc[instance, algorithm] = (self.table.loc[instance, algorithm][0], wilcoxon_result)
 
     def print_latex(self):
-        pass
+        self.compute_table()
 
+class Wilcoxon(Table):
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
+        super().__init__(data, metrics, metric)
 
+    def compute_table(self):
+        if self.normal:
+            logger.warning('Wilcoxon test is only applicable for non normal data. The test will be skipped.')
+            return
+
+        self.compute_base_table()
+
+        self.table = pd.DataFrame("", index=self.algorithms[:-1], columns=self.algorithms[1:])
+
+        for i, fila in enumerate(self.algorithms[:-1]):
+            for _, columna in enumerate(self.algorithms[i+1:]):
+                wilcoxon_result = ""
+                for instance in self.instances:
+                    data = self.data[self.data['Instance'] == instance]
+                    data = data.pivot(index='ExecutionId', columns='Algorithm', values='MetricValue').reset_index().drop(columns='ExecutionId')
+                    wilcoxon_table = data[[fila, columna]]
+                    wilcoxon_table.index.name, wilcoxon_table.columns.name = None, None
+                    wilcoxon_table.columns = ["Algorithm A", "Algorithm B"]
+                    wilcoxon_result += wilcoxon_test(wilcoxon_table, self.maximize)
+                
+                self.table.at[fila, columna] = wilcoxon_result
+
+    def print_latex(self):
+        self.compute_table()
 
 if __name__ == "__main__":
-    data = '/home/khaosdev/SAES/notebooks/swarmIntelligence.csv'
+    data = 'resultados_mean.csv'
     metrics = '/home/khaosdev/SAES/notebooks/multiobjectiveMetrics.csv'
-    metric = 'EP'
+    metric = 'IGD+'
     table = WilcoxonPivot(data, metrics, metric)
+    
+
     table.compute_table()
     print(table.table)

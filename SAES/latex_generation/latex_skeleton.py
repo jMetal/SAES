@@ -313,4 +313,4 @@ if __name__ == "__main__":
     data = '/home/khaosdev/SAES/notebooks/swarmIntelligence.csv'
     metrics = '/home/khaosdev/SAES/notebooks/multiobjectiveMetrics.csv'
     metric = 'EP'
-    latex_table(data, metrics, metric, TableTypes.WILCOXON_PIVOT.value)
+    latex_table(data, metrics, metric, TableTypes.WILCOXON.value)

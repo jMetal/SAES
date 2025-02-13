@@ -344,7 +344,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str, sideways: bool 
                     df_wilcoxon.columns = ["Algorithm A", "Algorithm B"]
 
                     # Perform the Wilcoxon signed-rank test and store the result
-                    wilconson_result = wilcoxon_test(df_wilcoxon)
+                    wilconson_result = wilcoxon_test(df_wilcoxon, maximize=False)
                     if wilconson_result == "=":
                         latex_doc += "="
                         df_wilcoxon_result.loc[algorithm1, algorithm2] += "="
@@ -363,6 +363,7 @@ def wilcoxon_table(title: str, df_og: pd.DataFrame, metric: str, sideways: bool 
     """ + end_table
 
     # Return the final LaTeX code for the table
+    print(df_wilcoxon_result)
     return latex_doc, df_wilcoxon_result
 
 def wilcoxon_pivot_table(title: str, df_og: pd.DataFrame, df1: pd.DataFrame, df2: pd.DataFrame, metric: str,
