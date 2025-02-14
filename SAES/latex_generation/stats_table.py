@@ -127,7 +127,7 @@ class Table(ABC):
         pass
 
 class MeanMedian(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, sideways: bool = False):
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
         super().__init__(data, metrics, metric)
 
     def compute_table(self):
@@ -185,7 +185,7 @@ class MeanMedian(Table):
             return "Median and Interquartile Range Table"
 
 class Friedman(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, sideways: bool = False):
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
         super().__init__(data, metrics, metric)
 
     def compute_table(self):
@@ -270,7 +270,7 @@ class Friedman(Table):
             return "Median and Interquartile Range Friedman Table"
 
 class WilcoxonPivot(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, sideways: bool = False):
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
         super().__init__(data, metrics, metric)
 
     def compute_table(self):
@@ -365,7 +365,7 @@ class WilcoxonPivot(Table):
             return "Median and Interquartile Range Wilcoxon Pivot Table"
 
 class Wilcoxon(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, sideways: bool = False):
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
         super().__init__(data, metrics, metric)
 
     def compute_table(self):
