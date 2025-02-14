@@ -7,7 +7,7 @@ exclude = ["*.pyc", "*.log", ".git", "dist", "venv", "*__pycache__*", "*outputs*
 
 [project]
 name = "SAES"
-version = "1.0.3"
+version = "1.1.0"
 description = "Python library designed to analyze and compare the performance of different algorithms across multiple problems using non-parametric statistical tests"
 readme = "README.md"
 dependencies = [

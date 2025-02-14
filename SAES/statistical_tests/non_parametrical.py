@@ -1,10 +1,10 @@
-import pandas as pd
-import numpy as np
+from statsmodels.stats.libqsturng import qsturng
 from scipy.stats import rankdata, chi2
 from scipy.stats import mannwhitneyu
-from statsmodels.stats.libqsturng import qsturng
+import pandas as pd
+import numpy as np
 
-def friedman_test(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
+def friedman(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
     """
     Performs Friedman's rank sum test to compare the performance of multiple algorithms across multiple instances.
     The Friedman test is a non-parametric statistical test used to detect differences in treatments (or algorithms) across multiple groups. The null hypothesis is that all algorithms perform equivalently, which implies their average ranks should be equal. The test is particularly useful when the data does not meet the assumptions of parametric tests like ANOVA.
@@ -66,7 +66,7 @@ def friedman_test(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
         columns=["Results"]
     )
 
-def wilcoxon_test(data: pd.DataFrame, maximize: bool):
+def wilcoxon(data: pd.DataFrame, maximize: bool):
     """
     Performs the Wilcoxon signed-rank test to compare the performance of two algorithms across multiple instances.
     The Wilcoxon signed-rank test is a non-parametric statistical test used to compare the performance of two algorithms on multiple instances. The null hypothesis is that the algorithms perform equivalently, which implies their average ranks are equal.
@@ -118,14 +118,11 @@ def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
         CD = q_alpha * sqrt(num_alg * (num_alg + 1) / (6 * num_prob))
 
     Args:
-        alpha (float):
-            The significance level for the critical difference calculation.
+        alpha (float): The significance level for the critical difference calculation.
         
-        num_alg (int):
-            The number of algorithms being compared.
+        num_alg (int): The number of algorithms being compared.
         
-        num_dataset (int):
-            The number of datasets/instances used for comparison.
+        num_dataset (int): The number of datasets/instances used for comparison.
     
     Returns:
         float: The critical difference value for Nemenyi's

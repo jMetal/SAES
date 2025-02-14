@@ -1,5 +1,5 @@
 import unittest
-from SAES.plots.boxplot import boxplots_all_metrics_instances
+from SAES.plots.extra import boxplots_all_metrics_instances
 from pathlib import Path
 import pandas as pd
 import os

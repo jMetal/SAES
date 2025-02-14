@@ -2,8 +2,8 @@ import unittest
 import pandas as pd
 import os
 import shutil
-from SAES.utils.csv_processor import process_dataframe_basic, process_dataframe_extended
-from SAES.utils.csv_processor import process_csv, process_csv_metrics
+from SAES.utils.dataframe_processor import process_dataframe_basic, process_dataframe_extended
+from SAES.utils.dataframe_processor import process_csv, process_csv_metrics
 
 def remove_files():
     """Clean up directories and files created during testing."""
