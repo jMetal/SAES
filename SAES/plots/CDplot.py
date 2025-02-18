@@ -222,7 +222,6 @@ class CDplot:
                         linewidth=2,
                     )
 
-
 if __name__ == "__main__":
     data = '/home/khaosdev/SAES/notebooks/swarmIntelligence.csv'
     metrics = '/home/khaosdev/SAES/notebooks/multiobjectiveMetrics.csv'

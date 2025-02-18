@@ -1,7 +1,7 @@
 from scipy.stats import shapiro
 import pandas as pd
 
-def get_metrics(data: pd.DataFrame) -> pd.DataFrame:
+def get_metrics(data: pd.DataFrame) -> list:
     """
     Extract the unique metrics from the input data DataFrame.
 
@@ -9,7 +9,7 @@ def get_metrics(data: pd.DataFrame) -> pd.DataFrame:
         data (pd.DataFrame): The input DataFrame containing the data to extract metrics from.
 
     Returns:
-        pd.DataFrame: A DataFrame containing the unique metrics in the input data.
+        list: A list of unique metric names present in the input data.
     """
 
     return data["MetricName"].unique()

@@ -1,11 +1,12 @@
+
 import unittest
 import pandas as pd
-from SAES.statistical_tests.non_parametrical import friedman_test, wilcoxon_test
+from SAES.statistical_tests.non_parametrical import friedman, wilcoxon
 
 class TestStatisticalTests(unittest.TestCase):
     
     def setUp(self):
-        """Configure test data for the tests."""
+        
         self.friedman_data = pd.DataFrame({
             "Algorithm A": [0.9, 0.85, 0.95, 0.8, 0.92],
             "Algorithm B": [0.8, 0.75, 0.85, 0.85, 0.87],
@@ -22,29 +23,29 @@ class TestStatisticalTests(unittest.TestCase):
         })
 
     def test_friedman_test(self):
-        """Test the friedman_test function."""
-        result = friedman_test(self.friedman_data, maximize=True)
+        
+        result = friedman(self.friedman_data, maximize=True)
         self.assertIn("Results", result.columns)
         self.assertGreater(result.loc["Friedman-statistic", "Results"], 0)
         self.assertGreaterEqual(result.loc["p-value", "Results"], 0)
         self.assertLessEqual(result.loc["p-value", "Results"], 1)
 
     def test_friedman_test_raises(self):
-        """Test that friedman_test raises exceptions with invalid inputs."""
+        
         with self.assertRaises(ValueError):
-            friedman_test(pd.DataFrame(), maximize=True)  # No data
+            friedman(pd.DataFrame(), maximize=True)  # No data
 
     def test_wilcoxon_test_equal(self):
-        """Test the wilcoxon_test function with equal data."""
-        result = wilcoxon_test(self.wilcoxon_data_equal)
+       
+        result = wilcoxon(self.wilcoxon_data_equal, maximize=True)
         self.assertEqual(result, "=")
 
     def test_wilcoxon_test_different(self):
-        """Test the wilcoxon_test function with different data."""
-        result = wilcoxon_test(self.wilcoxon_data_different)
+        
+        result = wilcoxon(self.wilcoxon_data_different, maximize=True)
         self.assertIn(result, ["+", "-"])  # It will be depend of the medians
 
     def test_wilcoxon_test_raises(self):
-        """Test that wilcoxon_test raises exceptions with invalid inputs."""
+       
         with self.assertRaises(KeyError):
-            wilcoxon_test(pd.DataFrame({"InvalidA": [1, 2], "InvalidB": [2, 3]}))  # Invalid columns
+            wilcoxon(pd.DataFrame({"InvalidA": [1, 2], "InvalidB": [2, 3]}), maximize=True)  # Invalid columns

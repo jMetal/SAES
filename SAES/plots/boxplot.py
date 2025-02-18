@@ -40,7 +40,7 @@ class Boxplot:
     def _plot_instance(self, instance: str):
         dataframe_instance = self.data[self.data["Instance"] == instance]
 
-        plt.figure(figsize=(10, 6))  
+        plt.figure(figsize=(8, 4.5))  
         sns.boxplot(
             x='Algorithm', y='MetricValue', data=dataframe_instance, 
             boxprops=dict(facecolor=(0, 0, 1, 0.3), edgecolor="darkblue", linewidth=1.5),  

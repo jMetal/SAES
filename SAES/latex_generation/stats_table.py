@@ -19,10 +19,11 @@ def _highlight_min(table: pd.DataFrame):
     return ['background-color: green' if v else '' for v in is_min] + ['']
 
 class Table(ABC):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False):
         self.data, self.maximize = process_dataframe_metric(data, metrics, metric)
         self.metric = metric
-        self.normal = check_normality(self.data)
+        self.normality = check_normality(self.data)
+        self.normal = normal
         self.algorithms = self.data['Algorithm'].unique()
         self.instances = self.data['Instance'].unique()
 
@@ -127,8 +128,8 @@ class Table(ABC):
         pass
 
 class MeanMedian(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
-        super().__init__(data, metrics, metric)
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False):
+        super().__init__(data, metrics, metric, normal=normal)
 
     def compute_table(self):
         self.compute_base_table()
@@ -185,8 +186,8 @@ class MeanMedian(Table):
             return "Median and Interquartile Range Table"
 
 class Friedman(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
-        super().__init__(data, metrics, metric)
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False):
+        super().__init__(data, metrics, metric, normal=normal)
 
     def compute_table(self):
         if self.normal:
@@ -270,8 +271,8 @@ class Friedman(Table):
             return "Median and Interquartile Range Friedman Table"
 
 class WilcoxonPivot(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
-        super().__init__(data, metrics, metric)
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False):
+        super().__init__(data, metrics, metric, normal=normal)
 
     def compute_table(self):
         if self.normal:
@@ -280,7 +281,7 @@ class WilcoxonPivot(Table):
         
         self.compute_base_table()
 
-        self.table = self.mean_median.copy().map(lambda x: ({x}, ''))
+        self.table = self.mean_median.copy().map(lambda x: (x, ''))
         pivot_algorithm = self.algorithms[-1]
         for instance in self.instances:
             data = self.data[self.data['Instance'] == instance]
@@ -365,8 +366,8 @@ class WilcoxonPivot(Table):
             return "Median and Interquartile Range Wilcoxon Pivot Table"
 
 class Wilcoxon(Table):
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str):
-        super().__init__(data, metrics, metric)
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False):
+        super().__init__(data, metrics, metric, normal=normal)
 
     def compute_table(self):
         if self.normal:
