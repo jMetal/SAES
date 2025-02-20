@@ -393,7 +393,7 @@ class Wilcoxon(Table):
     
     def show(self):
         self.compute_table()
-        return self.table.style.set_properties(**{'font-size': '20px'})
+        return self.table.style.set_properties(**{'font-size': '12px', 'font-family': 'monospace'})
 
     def _create_latex_table(self):
         # Generate comparisons and populate table
