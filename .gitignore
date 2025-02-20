@@ -9,6 +9,9 @@ __pycache__/
 # C extensions
 *.so
 
+*meta2023-wfg/
+*ZCAT2DStudyLevel250k/
+
 # Distribution / packaging
 .Python
 build/

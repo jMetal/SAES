@@ -1,8 +1,13 @@
 import argparse
 
-from SAES.latex_generation import latex_skeleton as ls
-from SAES.plots import boxplot as bp
-from SAES.plots import critical_distance_plot as cdp
+from SAES.latex_generation.stats_table import MeanMedian
+from SAES.latex_generation.stats_table import Friedman
+from SAES.latex_generation.stats_table import WilcoxonPivot
+from SAES.latex_generation.stats_table import Wilcoxon
+
+from SAES.plots.boxplot import Boxplot
+from SAES.plots.CDplot import CDplot
+from SAES.utils.dataframe_processor import get_metrics
 
 def main():
     # Create the argument parser object
@@ -28,53 +33,56 @@ def main():
 
     # Parse the command-line arguments
     args = parser.parse_args()
+    metrics = get_metrics(args.ms)
 
     # Boxplot generation
     if args.bp:
+        boxplot = Boxplot(args.ds, args.ms, args.m)
         # Ensure that the required argument '-m' is provided if '-i' is specified
         if args.i and not args.m:
             parser.error("The argument '-i/--instance' requires '-m/--metric' to be specified.")
         # Generate boxplot for all instances if only the metric is provided
         elif args.m and not args.i:
             if args.g:
-                bp.boxplot_all_instances_grid(args.ds, args.ms, args.m, output_path=args.op)
+                boxplot.save_all_instances(args.op)
             else:
-                bp.boxplot_all_instances(args.ds, args.ms, args.m, output_path=args.op)
+                for instance in boxplot.instances:
+                    boxplot.save_instance(instance, args.op)
         # Generate boxplot for a specific instance and metric
         elif args.m and args.i:
-            bp.boxplot(args.ds, args.ms, args.m, args.i, output_path=args.op)
+            boxplot.save_instance(args.i, args.op)
         # Generate boxplots for all metrics and instances
         else:
-            bp.boxplots_all_metrics_instances(args.ds, args.ms, output_path=args.op)
+            for metric in metrics:
+                boxplot = Boxplot(args.ds, args.ms, metric)
+                for instance in boxplot.instances:
+                    boxplot.save_instance(instance, args.op)
+    
     # LaTeX report generation
     elif args.ls:
         if args.m:
-            # Generate LaTeX report for a specific metric
-            if args.s:
-                ls.latex_selected(args.ds, args.ms, args.m, args.s, output_path=args.op)
-            else:
-                ls.latex(args.ds, args.ms, args.m, output_path=args.op)
+            MeanMedian(args.ds, args.ms, args.m).save(args.op)
+            Friedman(args.ds, args.ms, args.m).save(args.op)
+            WilcoxonPivot(args.ds, args.ms, args.m).save(args.op)
+            Wilcoxon(args.ds, args.ms, args.m).save(args.op)
         else:
-            # Generate LaTeX report for all metrics
-            ls.latex_all_metrics(args.ds, args.ms, output_path=args.op)
+            for metric in metrics:
+                MeanMedian(args.ds, args.ms, metric).save(args.op)
+                Friedman(args.ds, args.ms, metric).save(args.op)
+                WilcoxonPivot(args.ds, args.ms, metric).save(args.op)
+                Wilcoxon(args.ds, args.ms, metric).save(args.op)
+            
     # Critical Distance Plot generation
     elif args.cdp:
+        cdplot = CDplot(args.ds, args.ms, args.m)
         if args.m:
             # Generate critical distance plot for a specific metric
-            cdp.CDplot(args.ds, args.ms, args.m, output_path=args.op)
+            cdplot.save(args.op)
         else:
             # Generate critical distance plot for all metrics
-            cdp.CDplot_all_metrics(args.ds, args.ms, output_path=args.op)
-    # Default case: Generate all reports and plots
-    else:
-        # Generate boxplots for all metrics and instances
-        bp.boxplots_all_metrics_instances(args.ds, args.ms, output_path=args.op)
-
-        # Generate LaTeX report for all metrics
-        ls.latex_all_metrics(args.ds, args.ms, output_path=args.op)
-        
-        # Generate critical distance plot for all metrics
-        cdp.CDplot_all_metrics(args.ds, args.ms, output_path=args.op)
+            for metric in metrics:
+                cdplot = CDplot(args.ds, args.ms, metric)
+                cdplot.save(args.op)
 
 if __name__ == "__main__":
     main()
