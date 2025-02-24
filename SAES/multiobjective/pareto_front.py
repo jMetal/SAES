@@ -66,7 +66,7 @@ class Front2D(Front):
         _, axes = plt.subplots(rows, cols, figsize=(cols*6, rows*6))
         axes = axes.flatten()  
 
-        for i, (front_path, algorithm) in enumerate(zip(front_paths + [f"{self.references_path}/{instance}.2D.csv"], self.algorithms + ["Reference"])):
+        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.2D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
             
@@ -105,7 +105,7 @@ class Front3D(Front):
         
         fig = plt.figure(figsize=(cols * 6, rows * 6))
         
-        for i, (front_path, algorithm) in enumerate(zip(front_paths + [f"{self.references_path}/{instance}.3D.csv"], self.algorithms + ["Reference"])):
+        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.3D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
             
@@ -124,7 +124,41 @@ class Front3D(Front):
             ax.set_xlabel("X")
             ax.set_ylabel("Y")
             ax.set_zlabel("Z")
+
+            ax.view_init(elev=20, azim=45)
         
         # Remove empty plots
         plt.tight_layout()
+
+class FrontND(Front):
+    def __init__(self, fronts_path: str, references_path: str, metric: str):
+        super().__init__(fronts_path, references_path, metric)
+
+    def _front(self, front_paths: list, instance: str):
+        # Veriffy that the number of front_paths and algorithms are the same
+        if len(front_paths) != len(self.algorithms):
+            raise ValueError("The paths and algorithms lists must have the same length.")
+    
+        # Number of plots
+        num_plots = len(front_paths) + 1
+        rows = int(num_plots ** 0.5)
+        cols = (num_plots + rows - 1) // rows  
         
+        _, axes = plt.subplots(rows, cols, figsize=(cols * 6, rows * 6))
+        axes = axes.flatten()
+        
+        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.3D.csv"] + front_paths, ["Reference"] + self.algorithms)):
+            if not os.path.exists(front_path):
+                raise FileNotFoundError(f"Front {front_path} not found")
+            
+            # Read the front
+            df = pd.read_csv(front_path, header=None, names=["f1", "f2", "f3"])
+            df["Name"] = "Value"
+
+            # Create the plot
+            pd.plotting.parallel_coordinates(df, 'Name', color = ('red') if algorithm == "Reference" else ('blue'), ax=axes[i])
+            axes[i].set_title(algorithm)
+            axes[i].get_legend().remove()
+
+        # Remove empty plots
+        plt.tight_layout()
