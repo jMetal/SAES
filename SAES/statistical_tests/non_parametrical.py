@@ -118,14 +118,18 @@ def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
         CD = q_alpha * sqrt(num_alg * (num_alg + 1) / (6 * num_prob))
 
     Args:
-        alpha (float): The significance level for the critical difference calculation.
+        alpha (float): 
+            The significance level for the critical difference calculation.
         
-        num_alg (int): The number of algorithms being compared.
+        num_alg (int): 
+            The number of algorithms being compared.
         
-        num_dataset (int): The number of datasets/instances used for comparison.
+        num_dataset (int): 
+            The number of datasets/instances used for comparison.
     
     Returns:
-        float: The critical difference value for Nemenyi's
+        float: 
+            The critical difference value for Nemenyi's
     """
 
     # get critical value

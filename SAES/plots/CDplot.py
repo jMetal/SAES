@@ -1,31 +1,123 @@
-from SAES.latex_generation.stats_table import MeanMedian
 from SAES.statistical_tests.non_parametrical import NemenyiCD
+from SAES.latex_generation.stats_table import MeanMedian
 from SAES.logger import get_logger
 
-import matplotlib.pyplot as plt
 from scipy.stats import rankdata
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
 
-logger = get_logger(__name__)
-
 class CDplot:
-    def __init__(self, data: pd.DataFrame, metrics: pd.DataFrame, metric: str):
+    """
+    Class to generate a critical difference plot to compare the performance of different algorithms on multiple instances.
+
+    Attributes:
+        table (pd.DataFrame):
+            A pandas DataFrame containing the performance results of different algorithms across multiple instances.
+
+        metric (str):
+            The metric to be used for comparison.
+
+        logger (Logger):
+            A logger object to record and display log messages.
+
+    Methods:
+        __init__(data: pd.DataFrame, metrics: pd.DataFrame, metric: str):
+            Initializes the CDplot object with the given data, metrics, and metric.
+        
+        save(output_path: str):
+            Generates a critical difference plot and saves it to the specified output path.
+
+        show():
+            Generates a critical difference plot and displays it.
+    """
+
+    def __init__(self, data: pd.DataFrame, metrics: pd.DataFrame, metric: str) -> None:
+        """
+        Initializes the CDplot object with the given data, metrics, and metric.
+
+        Args:
+            data (pd.DataFrame):
+                A pandas DataFrame containing the performance results of different algorithms across multiple instances.
+            
+            metrics (pd.DataFrame):
+                A pandas DataFrame containing the metric information.
+            
+            metric (str):
+                The metric to be used for comparison.
+
+        Returns:
+            None
+
+        Example:
+            >>> frtom SAES.plots.CDplot import CDplot
+            >>> 
+            >>> data = pd.read_csv("data.csv")
+            >>> metrics = pd.read_csv("metrics.csv")
+            >>> metric = "HV"
+            >>> cd_plot = CDplot(data, metrics, metric)
+        """
+
         mean_median = MeanMedian(data, metrics, metric)
         mean_median.compute_table()
 
         self.table, self.maximize = mean_median.table, mean_median.maximize
         self.metric = metric
+        self.logger = get_logger(__name__)
 
     def save(self, output_path: str):
+        """
+        Generates a critical difference plot and saves it to the specified output path.
+
+        Args:
+            self.metric (str):
+                The metric to be used for comparison.
+        
+            output_path (str):
+                The path where the CDplot image will be saved.
+
+        Returns:
+            None
+
+        Example:
+            >>> frtom SAES.plots.CDplot import CDplot
+            >>> import os
+            >>> 
+            >>> data = pd.read_csv("data.csv")
+            >>> metrics = pd.read_csv("metrics.csv")
+            >>> metric = "HV"
+            >>> cd_plot = CDplot(data, metrics, metric)
+            >>> cd_plot.save(os.getcwd())
+        """
+
         self._plot()
         os.makedirs(output_path, exist_ok=True)
         plt.savefig(f"{output_path}/cdplot_{self.metric}.png")
         plt.close()
-        logger.info(f"CDplot {self.metric} saved to {output_path}")
+        self.logger.info(f"CDplot {self.metric} saved to {output_path}")
 
     def show(self):
+        """
+        Generates a critical difference plot and displays it.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Example:
+            >>> frtom SAES.plots.CDplot import CDplot
+            >>> import os
+            >>> 
+            >>> data = pd.read_csv("data.csv")
+            >>> metrics = pd.read_csv("metrics.csv")
+            >>> metric = "HV"
+            >>> cd_plot = CDplot(data, metrics, metric)
+            >>> cd_plot.show()
+        """
+
         self._plot()
         plt.show()
 
@@ -221,12 +313,3 @@ class CDplot:
                         xmax=sleft + lline * (right_lines[i, 1] - lowest + 0.025) / (highest - lowest),
                         linewidth=2,
                     )
-
-if __name__ == "__main__":
-    data = '/home/khaosdev/SAES/notebooks/swarmIntelligence.csv'
-    metrics = '/home/khaosdev/SAES/notebooks/multiobjectiveMetrics.csv'
-    metric = 'IGD+'
-    cdplot = CDplot(data, metrics, metric)
-    import os
-
-    cdplot.save(os.getcwd())

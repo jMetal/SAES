@@ -6,10 +6,12 @@ def get_metrics(data: pd.DataFrame) -> list:
     Extract the unique metrics from the input data DataFrame.
 
     Args:
-        data (pd.DataFrame): The input DataFrame containing the data to extract metrics from.
+        data (pd.DataFrame): 
+            The input DataFrame containing the data to extract metrics from.
 
     Returns:
-        list: A list of unique metric names present in the input data.
+        list: 
+            A list of unique metric names present in the input data.
     """
 
     return data["MetricName"].unique()
@@ -22,10 +24,12 @@ def check_normality(data: pd.DataFrame) -> bool:
     if any group fails the normality test, and `True` otherwise.
     
     Args:
-        data (pd.DataFrame): The input DataFrame containing the data to be tested for normality. Must include columns "Algorithm", "Instance", and "MetricValue".
+        data (pd.DataFrame): 
+            The input DataFrame containing the data to be tested for normality. Must include columns "Algorithm", "Instance", and "MetricValue".
     
     Returns:
-        bool: `True` if all groups pass the Shapiro-Wilk test for normality, `False` if any group fails.
+        bool: 
+            `True` if all groups pass the Shapiro-Wilk test for normality, `False` if any group fails.
     """
 
     # Group the data by Algorithm and Instance
@@ -52,13 +56,21 @@ def process_dataframe_metric(data: str | pd.DataFrame, metrics: str | pd.DataFra
     Processes the given CSV data and metrics to extract and return the data for a specific metric.
     
     Args:
-        data (str | pd.DataFrame): Path to CSV file or a DataFrame containing data.
-        metrics (str | pd.DataFrame): Path to CSV file or a DataFrame containing metric information.
-        metric (str): The specific metric to extract from the data.
+        data (str | pd.DataFrame): 
+            Path to CSV file or a DataFrame containing data.
+
+        metrics (str | pd.DataFrame): 
+            Path to CSV file or a DataFrame containing metric information.
+
+        metric (str): 
+            The specific metric to extract from the data.
     
     Returns:
-        pd.DataFrame: A filtered DataFrame containing data for the specified metric.
-        bool: Whether the metric should be maximized (True) or minimized (False).
+        pd.DataFrame: 
+            A filtered DataFrame containing data for the specified metric.
+            
+        bool: 
+            Whether the metric should be maximized (True) or minimized (False).
     
     Raises:
         ValueError: If the specified metric is not found in the metrics DataFrame.
