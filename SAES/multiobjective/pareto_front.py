@@ -131,8 +131,9 @@ class Front3D(Front):
         plt.tight_layout()
 
 class FrontND(Front):
-    def __init__(self, fronts_path: str, references_path: str, metric: str):
+    def __init__(self, fronts_path: str, references_path: str, metric: str, dimensions: int):
         super().__init__(fronts_path, references_path, metric)
+        self.dimensions = dimensions
 
     def _front(self, front_paths: list, instance: str):
         # Veriffy that the number of front_paths and algorithms are the same
@@ -147,12 +148,12 @@ class FrontND(Front):
         _, axes = plt.subplots(rows, cols, figsize=(cols * 6, rows * 6))
         axes = axes.flatten()
         
-        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.3D.csv"] + front_paths, ["Reference"] + self.algorithms)):
+        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.{self.dimensions}D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
             
             # Read the front
-            df = pd.read_csv(front_path, header=None, names=["f1", "f2", "f3"])
+            df = pd.read_csv(front_path, header=None, names=[f"f{j}" for j in range(self.dimensions)])
             df["Name"] = "Value"
 
             # Create the plot
