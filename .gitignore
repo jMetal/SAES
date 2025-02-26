@@ -1,5 +1,6 @@
 CSVs/
 outputs/
+data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -8,6 +9,10 @@ __pycache__/
 
 # C extensions
 *.so
+
+*meta2023-wfg/
+*ZCAT2DStudyLevel250k/
+DTLZMOEADGECCO2025/
 
 # Distribution / packaging
 .Python

@@ -1,4 +1,4 @@
-Example Boxplot
+Boxplot
 ===============
 
 .. contents:: Table of Contents
@@ -8,43 +8,18 @@ Example Boxplot
 The first feauture of the library is the ability to generate boxplots of the results of the experiments. The following code snippet demonstrates how to generate a boxplot of the results of the experiments:
 
 .. code-block:: python
-
-    import pandas as pd
-    from SAES.plots.boxplot import boxplot
+    
+    from SAES.plots.boxplot import Boxplot
 
     # Load the data and metrics from the CSV files
-    data = pd.read_csv('swarmIntelligence.csv')
-    metrics = pd.read_csv('multiobjectiveMetrics.csv')
-
-    # Choose the metric to generate the boxplot
-    metric = 'NHV'
-
-    # Name of the instance to generate the boxplot
-    instance_name = 'WFG9'
+    data = "swarmIntelligence.csv"
+    metrics = "multiobjectiveMetrics.csv"
 
     # Show the boxplot instead of saving it on disk
-    boxplot(data, metrics, metric, instance_name, show=True)
+    boxplot = Boxplot(experimentData, metrics, "NHV")
+    boxplot.show_instance("WFG9")
 
-or 
-
-.. code-block:: python
-
-    from SAES.plots.boxplot import boxplot
-
-    # Path to the CSV file containing the benchmarking data.
-    data = 'swarmIntelligence.csv'
-    metrics = 'multiobjectiveMetrics.csv'
-
-    # Choose the metric to generate the boxplot
-    metric = 'NHV'
-
-    # Name of the instance to generate the boxplot
-    instance_name = 'WFG9'
-    
-    # Show the boxplot instead of saving it on disk
-    boxplot(data, metrics, metric, instance_name, show=True)
-
-The above code snippet generates a boxplot for the experimental results of the selected problem "WFG9" and the selected metric "NHV." The is not saved in disk and it is just displayed because of the "show" flag value used. The boxplot should look something similar to this:
+The above code snippet generates a boxplot for the experimental results of the selected problem "WFG9" and the selected metric "NHV." The plot is not saved in disk and it is just displayed because we are using the `show()` function. The boxplot should look something similar to this:
 
 .. image:: WFG9.png
    :alt: NHV boxplot

@@ -25,6 +25,7 @@ The current version of the tool offers the following capabilities:
 4. **Visualization**  
    - **Boxplot graphs** for algorithm comparison.  
    - **Critical distance plots** for statistical significance.  
+   - **Multiobjetive Pareto Front plots** in the [Multiobjective](https://jMetal.github.io/SAES/configure/multiobjective.html) module.
 
 5. **CL Interface**
    - Command Line feature to access the different `SAES` functions 
@@ -67,26 +68,7 @@ You will also need a second file to store the information of the different metri
 
 ## SAES API
 
-The SAES library offers a range of functions categorized into three groups, corresponding to its three main features. The following links provide the SAES [Tutorial](https://github.com/jMetal/SAES/tree/main/notebooks) and the SAES [API](https://jMetal.github.io/SAES/API/api.html) documentation that includes a detailed list of these functions:
-1. **Boxplot Generation**
-   - `boxplots_all_metrics_instances()`
-   - `boxplot_all_instances()`
-   - `boxplot()`
-   - `boxplot_all_instances_grid()`
-2. **LaTeX Report Generation**
-   - `latex_all_metrics()`
-   - `latex()`
-   - `latex_table()`
-3. **Critical Distance Graph Generation**
-   - `CDplot_all_metrics()`
-   - `CDplot()`
-4. **CSV Dataset Manipulation**
-   - `process_dataframe_extended()`
-   - `process_dataframe_basic()`
-   - `process_csv_metrics()`
-   - `process_csv()`
-   - `obtain_list_instances()`
-   - `obtain_list_metrics()`
+The SAES library offers a range of functions categorized into three groups, corresponding to its three main features. The following links provide the SAES [Tutorial](https://github.com/jMetal/SAES/tree/main/notebooks) and the SAES [API](https://jMetal.github.io/SAES/API/api.html) documentation that includes a detailed list of features.
 
 ## 🛠 Requirements
 
