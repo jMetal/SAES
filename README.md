@@ -25,6 +25,7 @@ The current version of the tool offers the following capabilities:
 4. **Visualization**  
    - **Boxplot graphs** for algorithm comparison.  
    - **Critical distance plots** for statistical significance.  
+   - **Multiobjetive Pareto Front plots** in the `multiobjective` module (more info at [MULTIOBJECTIVE](https://jMetal.github.io/SAES/configure/multiobjective.html))
 
 5. **CL Interface**
    - Command Line feature to access the different `SAES` functions 
