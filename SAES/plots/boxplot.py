@@ -72,19 +72,22 @@ class Boxplot:
         self.instances = self.data['Instance'].unique()
         self.logger = get_logger(__name__)
 
-    def save_instance(self, instance: str, output_path: str) -> None:
+    def save_instance(self, instance: str, output_path: str, file_name: str = None, width: int = 8) -> None:
         """
         Generates a boxplot for the specified instance and saves it to the specified output path.
 
         Args:
-            self.metric (str):
-                The metric to be used for comparison.
-
             instance (str):
                 The name of the instance for which the boxplot is to be generated.
             
             output_path (str):
                 The path where the boxplot image will be saved.
+
+            file_name (str):
+                The name of the file to be saved. If None, a default name will be used.
+
+            width (int):
+                The width of the boxplot image.
         
         returns:
             None
@@ -100,22 +103,26 @@ class Boxplot:
             >>> boxplot.save_instance("ZDT1", os.getcwd())
         """
 
-        self._plot_instance(instance)
+        self._plot_instance(instance, width=width)
         os.makedirs(output_path, exist_ok=True)
-        plt.savefig(f"{output_path}/boxplot_{self.metric}_{instance}.png")
+        file_name = file_name if file_name else f"boxplot_{self.metric}_{instance}.png"
+        plt.savefig(f"{output_path}/{file_name}")
         plt.close()
-        self.logger.info(f"Boxplot {self.metric}_{instance} saved to {output_path}")
+        self.logger.info(f"Boxplot {file_name} saved to {output_path}")
     
-    def save_all_instances(self, output_path: str) -> None:
+    def save_all_instances(self, output_path: str, file_name: str = None, width: int = 30) -> None:
         """
         Generates a boxplot for all instances and saves it to the specified output path.
 
         Args:
-            self.metric (str):
-                The metric to be used for comparison.
-        
             output_path (str):
                 The path where the boxplot image will be saved.
+
+            file_name (str):
+                The name of the file to be saved. If None, a default name will be used.
+
+            width (int):
+                The width of the boxplot image.
 
         Returns:
             None
@@ -131,19 +138,23 @@ class Boxplot:
             >>> boxplot.save_all_instances(os.getcwd())
         """
 
-        self._plot_all_instances()
+        self._plot_all_instances(width=width)
         os.makedirs(output_path, exist_ok=True)
-        plt.savefig(f"{output_path}/boxplot_{self.metric}_all.png")
+        file_name = file_name if file_name else f"boxplot_{self.metric}_all.png"
+        plt.savefig(f"{output_path}/{file_name}")
         plt.close()
-        self.logger.info(f"Boxplot {self.metric}_all saved to {output_path}")
+        self.logger.info(f"Boxplot {file_name} saved to {output_path}")
 
-    def show_instance(self, instance: str) -> None:
+    def show_instance(self, instance: str, width: int = 8) -> None:
         """
         Generates a boxplot for the specified instance and displays it.
 
         Args:
             instance (str):
                 The name of the instance for which the boxplot is to be generated.
+            
+            width (int):   
+                The width of the boxplot image.
         
         returns:
             None
@@ -159,15 +170,16 @@ class Boxplot:
             >>> boxplot.show_instance("ZDT1")
         """
                 
-        self._plot_instance(instance)
+        self._plot_instance(instance, width=width)
         plt.show()
 
-    def show_all_instances(self) -> None:
+    def show_all_instances(self, width: int = 30) -> None:
         """
         Generates a boxplot for all instances and displays it.
 
         Args:
-            None
+            width (int):
+                The width of the boxplot image.
 
         Returns:
             None
@@ -183,15 +195,15 @@ class Boxplot:
             >>> boxplot.show_all_instances()
         """
 
-        self._plot_all_instances()
+        self._plot_all_instances(width=width)
         plt.show()
 
-    def _plot_instance(self, instance: str) -> None:
+    def _plot_instance(self, instance: str, width: int) -> None:
         """Generates a boxplot for the specified instance."""
 
         dataframe_instance = self.data[self.data["Instance"] == instance]
 
-        plt.figure(figsize=(8, 4.5))  
+        plt.figure(figsize=(width, width * (4.5 / 8)))  
         sns.boxplot(
             x='Algorithm', y='MetricValue', data=dataframe_instance, 
             boxprops=dict(facecolor=(0, 0, 1, 0.3), edgecolor="darkblue", linewidth=1.5),  
@@ -216,12 +228,12 @@ class Boxplot:
         plt.gca().set_xlabel('')
         plt.tight_layout()
 
-    def _plot_all_instances(self) -> None:
+    def _plot_all_instances(self, width: int) -> None:
         instances = self.data["Instance"].unique()
         n_cols = 3 
         n_rows = int(np.ceil(len(instances) / n_cols))  
 
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(30, 7.5 * n_rows))
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(width, width * (n_rows / 4)))
         axes = axes.flatten()
 
         for i, instance in enumerate(instances):

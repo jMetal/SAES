@@ -1,10 +1,7 @@
-import unittest
-from unittest.mock import patch, MagicMock
+from SAES.latex_generation.stats_table import MeanMedian, Friedman, WilcoxonPivot, Wilcoxon  
+import pandas.testing as pdt
+import unittest, os
 import pandas as pd
-from SAES.utils.dataframe_processor import process_dataframe_metric, check_normality
-from SAES.statistical_tests.non_parametrical import friedman, wilcoxon
-from SAES.logger import get_logger
-from SAES.latex_generation.stats_table import MeanMedian, Friedman, WilcoxonPivot, Wilcoxon  # Replace 'your_module' with the actual module name
 
 class TestTableClasses(unittest.TestCase):
     
@@ -31,6 +28,9 @@ class TestTableClasses(unittest.TestCase):
         })
 
         self.metric = 'Accuracy'
+
+        self.swarmIntelligence = "tests/test_data/swarmIntelligence.csv"
+        self.multiobjectiveMetrics = "tests/test_data/multiobjectiveMetrics.csv"
    
     def test_mean_median(self):
         median = MeanMedian(self.data_no_diff, self.metrics, self.metric)
@@ -83,5 +83,90 @@ class TestTableClasses(unittest.TestCase):
         self.assertEqual(wilcoxon.table.loc["A2", "A3"], "==")
         self.assertEqual(wilcoxon.table.loc["A2", "A2"], "")
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_mean_median_table(self):
+        mean_median = MeanMedian(self.swarmIntelligence, self.multiobjectiveMetrics, "HV")
+        mean_median.compute_table()
+
+        # Check if the table is correct
+        self.assertAlmostEqual(mean_median.table.loc["ZDT6", "AutoMOPSOZ"], 0.401480, places=2)
+        pdt.assert_frame_equal(mean_median.table, mean_median.mean_median)
+
+        mean_median.create_latex_table()
+        latex_doc = mean_median.latex_doc
+        mean_median.save("tests/latex_generation", file_name="MeanMedian_HV.tex")
+        
+        with open("tests/latex_generation/MeanMedian_HV.tex", "r") as file:
+            contenido = file.read()
+
+        # Check if the latex table is correct
+        self.assertEqual(latex_doc, contenido)
+        os.remove("tests/latex_generation/MeanMedian_HV.tex")
+        
+        mean_median.show()
+        self.assertTrue(True)
+
+    def test_mean_friedman_table(self):
+        friedman = Friedman(self.swarmIntelligence, self.multiobjectiveMetrics, "HV")
+        friedman.compute_table()
+
+        # Check if the table is correct
+        self.assertAlmostEqual(friedman.table.loc["ZDT6", "AutoMOPSOZ"], 0.401480, places=2)
+        self.assertEqual(friedman.table.loc["ZDT6", "Friedman"], "+")
+        
+        friedman.create_latex_table()
+        latex_doc = friedman.latex_doc
+        friedman.save("tests/latex_generation", file_name="Friedman_HV.tex")
+        
+        with open("tests/latex_generation/Friedman_HV.tex", "r") as file:
+            contenido = file.read()
+
+        # Check if the latex table is correct
+        self.assertEqual(latex_doc, contenido)
+        os.remove("tests/latex_generation/Friedman_HV.tex")
+
+        friedman.show()
+        self.assertTrue(True)
+
+    def test_mean_wilcoxon_pivot_table(self):
+        wilcoxon_pivot = WilcoxonPivot(self.swarmIntelligence, self.multiobjectiveMetrics, "HV")
+        wilcoxon_pivot.compute_table()
+
+        # Check if the table is correct
+        self.assertAlmostEqual(wilcoxon_pivot.table.loc["ZDT6", "AutoMOPSOZ"][0], 0.401480, places=2)
+        self.assertEqual(wilcoxon_pivot.table.loc["ZDT6", "AutoMOPSOZ"][1], "")
+        self.assertEqual(wilcoxon_pivot.table.loc["ZDT6", "NSGAII"][1], "+")
+
+        wilcoxon_pivot.create_latex_table()
+        latex_doc = wilcoxon_pivot.latex_doc
+        wilcoxon_pivot.save("tests/latex_generation", file_name="WilcoxonPivot_HV.tex")
+
+        with open("tests/latex_generation/WilcoxonPivot_HV.tex", "r") as file:
+            contenido = file.read()
+
+        # Check if the latex table is correct
+        self.assertEqual(latex_doc, contenido)
+        os.remove("tests/latex_generation/WilcoxonPivot_HV.tex")
+
+        wilcoxon_pivot.show()
+        self.assertTrue(True)
+
+    def test_mean_wilcoxon_table(self):
+        wilcoxon = Wilcoxon(self.swarmIntelligence, self.multiobjectiveMetrics, "HV")
+        wilcoxon.compute_table()
+
+        # Check if the table is correct
+        self.assertEqual(wilcoxon.table.loc["NSGAII", "AutoMOPSOZ"], "---+--+=+=--")
+        
+        wilcoxon.create_latex_table()
+        latex_doc = wilcoxon.latex_doc
+        wilcoxon.save("tests/latex_generation", file_name="Wilcoxon_HV.tex")
+        
+        with open("tests/latex_generation/Wilcoxon_HV.tex", "r") as file:
+            contenido = file.read()
+
+        # Check if the latex table is correct
+        self.assertEqual(latex_doc, contenido)
+        os.remove("tests/latex_generation/Wilcoxon_HV.tex")
+
+        wilcoxon.show()
+        self.assertTrue(True)

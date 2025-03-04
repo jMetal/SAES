@@ -1,7 +1,6 @@
-
-import unittest
+from SAES.statistical_tests.non_parametrical import friedman, wilcoxon, NemenyiCD
 import pandas as pd
-from SAES.statistical_tests.non_parametrical import friedman, wilcoxon
+import unittest
 
 class TestStatisticalTests(unittest.TestCase):
     
@@ -49,3 +48,8 @@ class TestStatisticalTests(unittest.TestCase):
        
         with self.assertRaises(KeyError):
             wilcoxon(pd.DataFrame({"InvalidA": [1, 2], "InvalidB": [2, 3]}), maximize=True)  # Invalid columns
+
+    def test_NemenyiCD(self):
+        result = NemenyiCD(0.05, 5, 2)
+        self.assertAlmostEqual(result, 6.3450557468934115)
+        
