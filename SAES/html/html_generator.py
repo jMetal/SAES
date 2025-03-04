@@ -1,6 +1,9 @@
 import papermill as pm
 import subprocess, os
+<<<<<<< HEAD
 import pandas as pd
+=======
+>>>>>>> 5db0dfb4391c71341046e0201ea6e7e18f83b582
 
 notebooks = f"{os.path.dirname(os.path.abspath(__file__))}/notebooks"
 

@@ -22,7 +22,8 @@ dependencies = [
     "sphinx_rtd_theme==3.0.2",
     "ipython==8.30.0",
     "nbconvert==7.16.6",
-    "papermill==2.6.0"
+    "papermill==2.6.0",
+    "ipykernel==6.29.5"
 ]
 
 requires-python = ">=3.10"
