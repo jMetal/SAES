@@ -66,16 +66,19 @@ class CDplot:
         self.metric = metric
         self.logger = get_logger(__name__)
 
-    def save(self, output_path: str):
+    def save(self, output_path: str, file_name: str = None, width: int = 9) -> None:
         """
         Generates a critical difference plot and saves it to the specified output path.
 
-        Args:
-            self.metric (str):
-                The metric to be used for comparison.
-        
+        Args: 
             output_path (str):
                 The path where the CDplot image will be saved.
+            
+            file_name (str):
+                The name of the file to be saved. If not provided, the file will be saved as "cdplot_{metric}.png".
+
+            width (int):
+                The width of the CDplot image.
 
         Returns:
             None
@@ -91,18 +94,20 @@ class CDplot:
             >>> cd_plot.save(os.getcwd())
         """
 
-        self._plot()
+        self._plot(width=width)
         os.makedirs(output_path, exist_ok=True)
-        plt.savefig(f"{output_path}/cdplot_{self.metric}.png")
+        file_name = file_name if file_name else f"cdplot_{self.metric}.png"
+        plt.savefig(f"{output_path}/{file_name}")
         plt.close()
-        self.logger.info(f"CDplot {self.metric} saved to {output_path}")
+        self.logger.info(f"CDplot {file_name} saved to {output_path}")
 
-    def show(self):
+    def show(self, width: int = 9) -> None:
         """
         Generates a critical difference plot and displays it.
 
         Args:
-            None
+            width (int):
+                The width of the CDplot image.
 
         Returns:
             None
@@ -118,10 +123,10 @@ class CDplot:
             >>> cd_plot.show()
         """
 
-        self._plot()
+        self._plot(width=width)
         plt.show()
 
-    def _plot(self, alpha: float = 0.05) -> None:
+    def _plot(self, width: int, alpha: float = 0.05) -> None:
         """Creates a critical distance plot to compare the performance of different algorithms on the different instances."""
 
         def _join_alg(avranks, num_alg, cd):
@@ -174,8 +179,9 @@ class CDplot:
         # Figure settings.
         highest = np.ceil(np.max(avranks)).astype(np.uint8)  # highest shown rank
         lowest = np.floor(np.min(avranks)).astype(np.uint8)  # lowest shown rank
-        width = 9  # default figure width (in inches)
-        height = 0.8625 * (rows + 1)  # figure height
+
+        # Compute figure size
+        height = width * (0.8625 * (rows + 1) / 9)
 
         """
                             FIGURE

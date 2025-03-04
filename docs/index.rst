@@ -43,7 +43,8 @@ This is the documentation for the `SAES` python library, which is a Python libra
    - **Boxplot graphs** for algorithm comparison.  
    - **Critical distance plots** for statistical significance.  
    - **Multiobjetive Pareto Front plots** in the `multiobjective` module (more info at `Multiobjective <https://jMetal.github.io/SAES/configure/multiobjective.html>`_). 
-
+   - **HTML generation** for intuitive analysis.
+   
 This tool is aimed at researchers and developers interested in algorithm benchmarking studies for artificial intelligence, optimization, machine learning, and more.
 
 Context

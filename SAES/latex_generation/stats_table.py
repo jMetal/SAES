@@ -153,13 +153,16 @@ class Table(ABC):
         self.mean_median.index.name, self.mean_median.columns.name = None, None
         self.std_iqr.index.name, self.std_iqr.columns.name = None, None
     
-    def save(self, output_path: str, sideways: bool = False) -> None:
+    def save(self, output_path: str, file_name: str = None, sideways: bool = False) -> None:
         """
         Saves the table to a LaTeX file.
         
         Args:
             output_path (str):
                 The path to the directory where the LaTeX file will be saved.
+
+            file_name (str):
+                The name of the LaTeX file. Default is None.
         
             sideways (bool):
                 A boolean value indicating whether the table should be displayed in landscape mode. Default is False.
@@ -182,11 +185,13 @@ class Table(ABC):
         self.create_latex_table(sideways=sideways)
         os.makedirs(output_path, exist_ok=True)
 
+        file_name = file_name if file_name else f"{self.__str__()}_{self.metric}.tex"
+
         # Save the LaTeX table to a file
-        with open(f"{output_path}/{self.__str__()}_{self.metric}.tex", "w") as f:
+        with open(f"{output_path}/{file_name}", "w") as f:
             f.write(self.latex_doc)
 
-        self.logger.info(f"{self.__repr__()} table saved to {output_path}")
+        self.logger.info(f"{file_name} table saved to {output_path}")
 
     def create_latex_table(self, sideways: bool = False) -> None:
         """

@@ -85,7 +85,7 @@ class Front(ABC):
 
         self.logger = get_logger(__name__)
 
-    def save(self, instance: str, output_path: str, median: bool=True) -> None:
+    def save(self, instance: str, output_path: str, file_name: str = None, median: bool = True) -> None:
         """
         Generates a Pareto front for the specified instance and saves it to the specified output path.
 
@@ -114,7 +114,7 @@ class Front(ABC):
 
         median_best = 'MEDIAN' if median else 'BEST'
         fronts_paths = [f"{self.fronts_path}/{algorithm}/{instance}/{median_best}_{self.metric}_FUN.csv" for algorithm in self.algorithms]
-        file_name = f"front_all_{instance}_{self.metric}_{median_best}.png"
+        file_name = file_name if file_name else f"front_all_{instance}_{self.metric}_{median_best}.png"
 
         self._front(fronts_paths, instance)
 
