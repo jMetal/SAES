@@ -51,7 +51,8 @@ def notebook_no_fronts(data: str,
 
 def notebook_fronts2D(data: str, 
                       metrics: str, 
-                      metric: str, fronts: str, 
+                      metric: str, 
+                      fronts: str, 
                       references: str,
                       output_path: str) -> None:
     """
@@ -108,7 +109,8 @@ def notebook_fronts2D(data: str,
 
 def notebook_fronts3D(data: str, 
                       metrics: str, 
-                      metric: str, fronts: str, 
+                      metric: str, 
+                      fronts: str, 
                       references: str,
                       output_path: str) -> None:
     """
@@ -165,7 +167,8 @@ def notebook_fronts3D(data: str,
 
 def notebook_frontsND(data: str, 
                       metrics: str, 
-                      metric: str, fronts: str, 
+                      metric: str, 
+                      fronts: str, 
                       references: str,
                       dimensions: int,
                       output_path: str) -> None:
@@ -225,3 +228,56 @@ def notebook_frontsND(data: str,
     command = ['python', '-m', 'nbconvert', '--to', 'html', '--no-input', f"{output_path}/frontsND.ipynb"]
     subprocess.run(command, check=True)
     os.remove(f"{output_path}/frontsND.ipynb")
+
+def notebook_bayesian(data: str, 
+                      metrics: str, 
+                      metric: str, 
+                      pivot: str,
+                      output_path: str) -> None:
+    """
+    This function creates a notebook that shows the statistical analysis of the data.
+
+    Args:
+        data (str):
+            The path to the data file.
+        
+        metrics (str):
+            The path to the metrics file.
+        
+        metric (str):
+            The metric to analyze.
+        
+        pivot (str):
+            The pivot algorithm to analyze.
+
+        output_path (str):
+            The path to save the html.
+    
+    Returns:
+        None
+
+    Example:
+        >>> from SAES.html.html_generator import notebook_bayesian
+        >>> import os
+        >>> 
+        >>> data = "data.csv"
+        >>> metrics = "metrics.csv"
+        >>> metric = "HV"
+        >>> pivot = "NSGAII"
+        >>> output_path = os.getcwd()
+        >>> notebook_bayesian(data, metrics, metric, pivot, output_path)
+    """
+
+    # Execute the notebook
+    pm.execute_notebook(f"{notebooks}/bayesian_posterior.ipynb", f"{output_path}/bayesian.ipynb", 
+                        parameters=dict(data=data, 
+                                        metrics=metrics, 
+                                        metric=metric, 
+                                        pivot=pivot)
+    )
+
+    # Define and execute the command 
+    command = ['python', '-m', 'nbconvert', '--to', 'html', '--no-input', f"{output_path}/bayesian.ipynb"]
+    subprocess.run(command, check=True)
+    os.remove(f"{output_path}/bayesian.ipynb")
+    
