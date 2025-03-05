@@ -12,3 +12,4 @@ This section provides a brief overview of the three different features that this
    cd
    multiobjective
    html
+   bayesian

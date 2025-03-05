@@ -2,7 +2,7 @@ from SAES.multiobjective.pareto_front import Front2D, Front3D, FrontND
 from PIL import Image
 import unittest, os
 
-class TestBoxplot(unittest.TestCase):
+class TestParetoFront(unittest.TestCase):
     
     def setUp(self):
         fronts = "tests/test_data/fronts"

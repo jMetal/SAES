@@ -419,6 +419,7 @@ class Friedman(Table):
             std_dev = self.std_iqr.loc[instance]
             
             # Compute df_global and find the max and second idx
+            # TODO: MAYBE this is not optimal, but it is a simple way to get the max and second max
             df_global = median / std_dev
             max_idx = df_global.idxmax()
             second_idx = df_global.drop(max_idx).idxmax()
