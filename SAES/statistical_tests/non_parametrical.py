@@ -86,6 +86,7 @@ def wilcoxon(data: pd.DataFrame, maximize: bool):
             +-------+-------------+-------------+
             |  30   | 0.871175    | 0.3505      |
             +-------+-------------+-------------+
+            
         maximize (bool):
             A boolean indicating whether to rank the data in descending order. If True, the algorithm with the highest performance will receive the lowest rank (i.e., rank 1). If False, the algorithm with the lowest performance will receive the lowest rank. Default is True.
 
