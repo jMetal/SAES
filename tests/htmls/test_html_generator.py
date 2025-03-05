@@ -1,7 +1,7 @@
 from SAES.html.html_generator import notebook_no_fronts, notebook_fronts2D, notebook_fronts3D, notebook_frontsND, notebook_bayesian
 import unittest, os
 
-class TestBoxplot(unittest.TestCase):
+class TestHTMLs(unittest.TestCase):
     
     def setUp(self):
         self.swarmIntelligence = "tests/test_data/swarmIntelligence.csv"

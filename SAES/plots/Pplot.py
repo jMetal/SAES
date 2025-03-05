@@ -109,8 +109,8 @@ class Pplot:
         """
 
         posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2)
-        self._plot(posterior_probabilities, width)
-        file_name = file_name if file_name else f"{alg1}_vs_{alg2}.png"
+        self._plot(posterior_probabilities, width, alg_names=[alg1, alg2])
+        file_name = file_name if file_name else f"{self.metric}_{alg1}_vs_{alg2}.png"
         plt.savefig(f"{output_path}/{file_name}", bbox_inches="tight")
         self.logger.info(f"Boxplot {file_name} saved to {output_path}")
         plt.close()
@@ -140,7 +140,7 @@ class Pplot:
         """
 
         posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2)
-        self._plot(posterior_probabilities, width)
+        self._plot(posterior_probabilities, width, alg_names=[alg1, alg2])
         plt.show()
 
     def save_pivot(self, algorithm: str, output_path: str, file_name: str = None):
@@ -172,7 +172,7 @@ class Pplot:
         """
 
         self._plot_pivot(algorithm)
-        file_name = file_name if file_name else f"pivot_{algorithm}.png"
+        file_name = file_name if file_name else f"{self.metric}_pivot_{algorithm}.png"
         plt.savefig(f"{output_path}/{file_name}", bbox_inches="tight") 
         self.logger.info(f"Pplot {file_name} saved to {output_path}")
         plt.close()
@@ -210,12 +210,15 @@ class Pplot:
         num_plots = len(column_combinations)
         
         # Define the number of columns and calculate the required number of rows for the grid
-        ncols = 3 if num_plots > 3 else num_plots-1
+        ncols = 3 if num_plots >= 3 else num_plots
         nrows = (num_plots + ncols - 1) // ncols 
         
         # Create subplots with the specified grid size
         fig, axes = plt.subplots(nrows, ncols, figsize=(18, 5 * nrows))
-        axes = axes.flatten()  
+        if isinstance(axes, np.ndarray):
+            axes = axes.flatten()
+        else:
+            axes = [axes]
         
         # Loop through the algorithm combinations and plot the posterior probabilities
         for idx, (alg1, alg2) in enumerate(column_combinations):
@@ -276,24 +279,14 @@ class Pplot:
         ax.set_axis_off()
 
         # Plot text
-        if not self.maximize:
-            if not alg_names:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(alg1<alg2)", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(alg1>alg2)", ha="left", va="top")
-            else:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + ")", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + ")", ha="left", va="top")
+        if self.maximize:
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top")
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top")
         else:
-            if not alg_names:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(alg2<alg1)", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(alg2>alg1)", ha="left", va="top")
-            else:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + ")", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + ")", ha="left", va="top")
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top")
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top")
 
         # Conversion between barycentric and Cartesian coordinates
         sample2d = np.zeros((data.shape[0], 2))
@@ -339,24 +332,14 @@ class Pplot:
         ax.set_axis_off()
 
         # Plot text
-        if not self.maximize:
-            if not alg_names:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(alg1<alg2)", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(alg1>alg2)", ha="left", va="top")
-            else:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + ")", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + ")", ha="left", va="top")
+        if self.maximize:
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top")
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top")
         else:
-            if not alg_names:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(alg2<alg1)", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(alg2>alg1)", ha="left", va="top")
-            else:
-                ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-                ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + ")", ha="right", va="top")
-                ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + ")", ha="left", va="top")
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top")
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top")
 
         # Conversion between barycentric and Cartesian coordinates
         sample2d = np.zeros((data.shape[0], 2))
@@ -381,14 +364,16 @@ class Pplot:
 
         # Filter data to include only the specified algorithms
         data = self.data[self.data['Algorithm'].isin([alg1, alg2])]
-        executions = data['ExecutionId'].max() + 1
+        execution_min = data['ExecutionId'].min()
+        execution_max = data['ExecutionId'].max() + 1
 
         # Initialize an empty list to store posterior probabilities
         posterior_probabilities = []
-        for i in range(0, executions):
+        for i in range(execution_min, execution_max):
             # Filter data for the current execution
             data_i = data[data['ExecutionId'] == i]
             data_i = data_i.pivot(index='Instance', columns='Algorithm', values='MetricValue')
+            data_i = data_i[[alg1, alg2]]
 
             # If it's the first iteration, initialize the posterior probabilities list
             if self.bayesian_test == "sign":

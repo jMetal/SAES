@@ -2,7 +2,7 @@ from SAES.plots.CDplot import CDplot
 from PIL import Image
 import unittest, os
 
-class TestBoxplot(unittest.TestCase):
+class TestCDplot(unittest.TestCase):
     
     def setUp(self):
         swarmIntelligence = "tests/test_data/swarmIntelligence.csv"
