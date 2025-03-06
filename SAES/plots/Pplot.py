@@ -27,16 +27,16 @@ class Pplot:
             A logger object to record and display log messages.
     
     Methods:
-        plot(alg1: str, alg2: str) -> None:
+        plot(alg1: str, alg2: str, width: int = 5) -> None:
             Plots the posterior distribution of the Bayesian statistical test between two algorithms.
         
-        save(alg1: str, alg2: str, output_path: str, file_name: str = None) -> None:
+        save(alg1: str, alg2: str, output_path: str, file_name: str = None, width: int = 5) -> None:
             Saves the posterior distribution of the Bayesian statistical test between two algorithms to a file.
 
-        plot_pivot(algorithm: str) -> None:
+        plot_pivot(algorithm: str, width: int = 30) -> None:
             Plots the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms.
 
-        save_pivot(algorithm: str, output_path: str, file_name: str = None) -> None:
+        save_pivot(algorithm: str, output_path: str, file_name: str = None, width: int = 30) -> None:
             Saves the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms to a file.
     """
 
@@ -71,13 +71,16 @@ class Pplot:
             >>> pplot = Pplot(data, metrics, metric)
         """
 
+        if bayesian_test not in ["sign", "rank"]:
+            raise ValueError("Invalid Bayesian test type. Please choose between 'sign' and 'rank'.")
+        
         self.data, self.maximize = process_dataframe_metric(data, metrics, metric)
         self.algorithms = self.data['Algorithm'].unique()
         self.metric = metric
         self.bayesian_test = bayesian_test
         self.logger = get_logger(__name__)
 
-    def save(self, alg1, alg2, output_path: str, file_name: str = None, width: int = 5):
+    def save(self, alg1, alg2, output_path: str, file_name: str = None, width: int = 5) -> None:
         """
         Saves the posterior distribution of the Bayesian statistical test between two algorithms to a file.
 
@@ -93,6 +96,9 @@ class Pplot:
             
             file_name (str):
                 The name of the file. Default is None.
+
+            width (int):
+                The width of the figure. Default is 5.
 
         Returns:
             None
@@ -126,6 +132,9 @@ class Pplot:
             alg2 (str):
                 The name of the second algorithm.
 
+            width (int):
+                The width of the figure. Default is 5.
+
         Returns:
             None
 
@@ -143,7 +152,7 @@ class Pplot:
         self._plot(posterior_probabilities, width, alg_names=[alg1, alg2])
         plt.show()
 
-    def save_pivot(self, algorithm: str, output_path: str, file_name: str = None):
+    def save_pivot(self, algorithm: str, output_path: str, file_name: str = None, width: int = 30, heigth: int = 15) -> None:
         """
         Saves the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms to a file.
 
@@ -156,6 +165,12 @@ class Pplot:
             
             file_name (str):
                 The name of the file. Default is None.
+
+            width (int):
+                The width of the figure. Default is 30.
+
+            heigth (int):
+                The heigth of the figure. Default is 15.
 
         Returns:
             None
@@ -171,19 +186,25 @@ class Pplot:
             >>> pplot.save_pivot("NSGAII", os.getcwd())
         """
 
-        self._plot_pivot(algorithm)
+        self._plot_pivot(algorithm, width, heigth)
         file_name = file_name if file_name else f"{self.metric}_pivot_{algorithm}.png"
         plt.savefig(f"{output_path}/{file_name}", bbox_inches="tight") 
         self.logger.info(f"Pplot {file_name} saved to {output_path}")
         plt.close()
 
-    def show_pivot(self, algorithm: str):
+    def show_pivot(self, algorithm: str, width: int = 30, heigth: int = 15) -> None:
         """
         Plots the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms.
 
         Args:
             algorithm (str):
                 The name of the algorithm.
+
+            width (int):
+                The width of the figure. Default is 30.
+
+            heigth (int):
+                The heigth of the figure. Default is 15.
 
         Returns:
             None
@@ -198,10 +219,10 @@ class Pplot:
             >>> pplot.plot_pivot("NSGAII")
         """
 
-        self._plot_pivot(algorithm)
+        self._plot_pivot(algorithm, width, heigth)
         plt.show()
 
-    def _plot_pivot(self, algorithm: str):
+    def _plot_pivot(self, algorithm: str, width: int, heigth: int) -> None:
         """Plots the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms."""
 
         # Filter out the specified algorithm from the list of algorithms
@@ -214,7 +235,8 @@ class Pplot:
         nrows = (num_plots + ncols - 1) // ncols 
         
         # Create subplots with the specified grid size
-        fig, axes = plt.subplots(nrows, ncols, figsize=(18, 5 * nrows))
+        fig, axes = plt.subplots(nrows, ncols, figsize=(width, heigth))
+        
         if isinstance(axes, np.ndarray):
             axes = axes.flatten()
         else:
@@ -280,13 +302,13 @@ class Pplot:
 
         # Plot text
         if self.maximize:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top")
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top")
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top", weight='bold')
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top", weight='bold')
         else:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top")
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top")
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top", weight='bold')
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top", weight='bold')
 
         # Conversion between barycentric and Cartesian coordinates
         sample2d = np.zeros((data.shape[0], 2))
@@ -333,13 +355,13 @@ class Pplot:
 
         # Plot text
         if self.maximize:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top")
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top")
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top", weight='bold')
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top", weight='bold')
         else:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom")
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top")
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top")
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top", weight='bold')
+            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top", weight='bold')
 
         # Conversion between barycentric and Cartesian coordinates
         sample2d = np.zeros((data.shape[0], 2))
@@ -359,7 +381,7 @@ class Pplot:
         ax.plot([0.5, 0.9], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="black")
         ax.plot([0.1, 0.9], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="black")
 
-    def _obtain_posterior_probabilities(self, alg1: str, alg2: str):
+    def _obtain_posterior_probabilities(self, alg1: str, alg2: str) -> np.array:
         """Obtains the posterior probabilities of the Bayesian statistical test between two algorithms."""
 
         # Filter data to include only the specified algorithms
@@ -389,3 +411,4 @@ class Pplot:
 
         # Return the posterior probabilities as a NumPy array
         return np.array(posterior_probabilities)
+    
