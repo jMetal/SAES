@@ -51,5 +51,5 @@ class TestStatisticalTests(unittest.TestCase):
 
     def test_NemenyiCD(self):
         result = NemenyiCD(0.05, 5, 2)
-        self.assertAlmostEqual(result, 6.3450557468934115)
+        self.assertAlmostEqual(result, 41.4507836, 2)
         

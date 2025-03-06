@@ -6,7 +6,11 @@ from SAES.logger import get_logger
 
 from abc import ABC, abstractmethod
 import pandas as pd
+import numpy as np
 import os
+
+# Article reference: https://www.statology.org/friedman-test-python/
+# Wikipedia reference: https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test
 
 def _highlight_max(table: pd.DataFrame):
     """Highlight the maximum value in each row."""
@@ -259,7 +263,6 @@ class Table(ABC):
         """Creates the LaTeX footer for the table."""
 
         self.latex_doc += """
-        \\hline
         \\end{tabular}
         \\end{scriptsize}
         """ 
@@ -468,9 +471,17 @@ class Friedman(Table):
 
 class WilcoxonPivot(Table):
     """Class for generating the Wilcoxon Pivot table."""
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False) -> None:
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False, pivot: str = None) -> None:
         """Initializes the WilcoxonPivot object with the given data, metrics, metric, and normality."""
         super().__init__(data, metrics, metric, normal=normal)
+
+        # Move the pivot algorithm to the last position
+        if pivot is not None:
+            if pivot not in self.algorithms:
+                raise ValueError(f"Algorithm {pivot} not found in the data.")
+            
+            self.algorithms = self.algorithms[self.algorithms != pivot]
+            self.algorithms = np.append(self.algorithms, pivot)
 
     def compute_table(self) -> None:
         """Computes the Wilcoxon Pivot table."""

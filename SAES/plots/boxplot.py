@@ -230,11 +230,15 @@ class Boxplot:
 
     def _plot_all_instances(self, width: int) -> None:
         instances = self.data["Instance"].unique()
-        n_cols = 3 
+        n_cols = 3 if len(instances) >= 3 else len(instances)
         n_rows = int(np.ceil(len(instances) / n_cols))  
 
         fig, axes = plt.subplots(n_rows, n_cols, figsize=(width, width * (n_rows / 4)))
-        axes = axes.flatten()
+
+        if isinstance(axes, np.ndarray):
+            axes = axes.flatten()
+        else:
+            axes = [axes]
 
         for i, instance in enumerate(instances):
             df_instance = self.data[self.data["Instance"] == instance]
