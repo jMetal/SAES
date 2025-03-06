@@ -676,12 +676,3 @@ class Wilcoxon(Table):
     def __repr__(self) -> str:
         """Returns the description of the table."""
         return "Wilcoxon Test 1vs1 Table"
-    
-if __name__ == "__main__":
-    from SAES.plots.CDplot import CDplot
-    data = "data.csv"
-    metrics = "metrics.csv"
-    metric = "DSC"
-
-    wilcoxon_table = CDplot(data, metrics, metric)
-    wilcoxon_table.save(os.getcwd())

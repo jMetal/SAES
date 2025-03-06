@@ -17,9 +17,9 @@ This module provides the functionality to generate a posterior plot for the Baye
 
     # Show the boxplot instead of saving it on disk
     pplot = Pplot(experimentData, metrics, "NHV")
-    boxplot.show("NSGAII", "AutoMOPSORE")
+    pplot.show_pivot("NSGAII", width=30, heigth=15)
 
-The above code snippet generates a bayesian Pplot comparing experimental results of the `NSGAII` and `AutoMOPSORE` algorithms for the metric `NHV`. The following image shows the generated Pplot:
+The above code snippet generates a bayesian Pplot comparing experimental results of the `NSGAII` algorithm with the rest of the algorithms in the data using `NHV` as the metric. The `width` and `heigth` parameters are optional and can be used to adjust the size of the plot. The following image shows an example of a Bayesian Pplot generated using the above code snippet:
 
 .. image:: bayesian.png
    :alt: NHV boxplot
