@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 import os
 
+# Scientific article reference: https://www.jmlr.org/papers/volume7/demsar06a/demsar06a.pdf
+
 class CDplot:
     """
     Class to generate a critical difference plot to compare the performance of different algorithms on multiple instances.

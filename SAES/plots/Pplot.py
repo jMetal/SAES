@@ -6,6 +6,8 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 
+# Scientific article reference: https://arxiv.org/pdf/1606.04316
+
 class Pplot:
     """
     Class to generate plots for the posterior distribution of a Bayesian statistical test.
@@ -241,12 +243,10 @@ class Pplot:
             axes = axes.flatten()
         else:
             axes = [axes]
-        
+
         # Loop through the algorithm combinations and plot the posterior probabilities
         for idx, (alg1, alg2) in enumerate(column_combinations):
             posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2)
-
-            # Assign the appropriate subplot for the pair of algorithms
             self._plot_grid(posterior_probabilities, ax=axes[idx], alg_names=[alg1, alg2])
         
         # Remove any empty subplots if the number of combinations is less than the number of available axes
@@ -302,13 +302,13 @@ class Pplot:
 
         # Plot text
         if self.maximize:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top", weight='bold')
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top", weight='bold')
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="no-diff", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.35, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[1] + " +", ha="right", va="top", weight='bold')
+            ax.text(x=0.75, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[0] + " +", ha="left", va="top", weight='bold')
         else:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top", weight='bold')
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top", weight='bold')
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="no-diff", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.35, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[0] + " +", ha="right", va="top", weight='bold')
+            ax.text(x=0.75, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[1] + " +", ha="left", va="top", weight='bold')
 
         # Conversion between barycentric and Cartesian coordinates
         sample2d = np.zeros((data.shape[0], 2))
@@ -316,17 +316,21 @@ class Pplot:
             sample2d[p, :] = transform(data[p, :])
 
         # Plot projected points
-        ax.hexbin(sample2d[:, 0], sample2d[:, 1], mincnt=min_points_per_hexbin, cmap=plt.cm.plasma)
+        hb = ax.hexbin(sample2d[:, 0], sample2d[:, 1], mincnt=min_points_per_hexbin, cmap=plt.cm.plasma)
+
+        # Add colorbar to the plot for better visualization
+        cb = fig.colorbar(hb, ax=ax, orientation="vertical", fraction=0.05, pad=0.0, shrink=0.6)
+        cb.set_label("Count")
 
         ax.plot([0.095, 0.505], [0.2 / np.sqrt(3), 1.4 / np.sqrt(3)], linewidth=3.0, color="white")
         ax.plot([0.505, 0.905], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="white")
         ax.plot([0.09, 0.905], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="white")
-        ax.plot([0.5, 0.5], [0.2 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="blue")
-        ax.plot([0.3, 0.5], [0.8 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="red")
-        ax.plot([0.5, 0.7], [0.6 / np.sqrt(3), 0.8 / np.sqrt(3)], linewidth=3.0, color="green")
-        ax.plot([0.1, 0.5], [0.2 / np.sqrt(3), 1.4 / np.sqrt(3)], linewidth=3.0, color="black")
-        ax.plot([0.5, 0.9], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="black")
-        ax.plot([0.1, 0.9], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="black")
+        ax.plot([0.5, 0.5], [0.2 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.3, 0.5], [0.8 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.5, 0.7], [0.6 / np.sqrt(3), 0.8 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.1, 0.5], [0.2 / np.sqrt(3), 1.4 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.5, 0.9], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.1, 0.9], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="orange")
 
     def _plot_grid(self,
                    data: np.array,
@@ -355,13 +359,13 @@ class Pplot:
 
         # Plot text
         if self.maximize:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="right", va="top", weight='bold')
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="left", va="top", weight='bold')
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="no-diff", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.35, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[1] + " +", ha="right", va="top", weight='bold')
+            ax.text(x=0.75, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[0] + " +", ha="left", va="top", weight='bold')
         else:
-            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="P(no-diff)", ha="center", va="bottom", weight='bold')
-            ax.text(x=0.15, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[1] + "<" + alg_names[0] + ")", ha="right", va="top", weight='bold')
-            ax.text(x=0.85, y=0.175 / np.sqrt(3) - 0.005, s="P(" + alg_names[0] + "<" + alg_names[1] + ")", ha="left", va="top", weight='bold')
+            ax.text(x=0.5, y=1.4 / np.sqrt(3) + 0.005, s="no-diff", ha="center", va="bottom", weight='bold')
+            ax.text(x=0.35, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[0] + " +", ha="right", va="top", weight='bold')
+            ax.text(x=0.75, y=0.175 / np.sqrt(3) - 0.005, s=alg_names[1] + " +", ha="left", va="top", weight='bold')
 
         # Conversion between barycentric and Cartesian coordinates
         sample2d = np.zeros((data.shape[0], 2))
@@ -369,17 +373,21 @@ class Pplot:
             sample2d[p, :] = transform(data[p, :])
 
         # Plot projected points
-        ax.hexbin(sample2d[:, 0], sample2d[:, 1], mincnt=min_points_per_hexbin, cmap=plt.cm.plasma)
+        hb = ax.hexbin(sample2d[:, 0], sample2d[:, 1], mincnt=min_points_per_hexbin, cmap=plt.cm.plasma)
+
+        # Add colorbar to the plot for better visualization
+        cb = plt.colorbar(hb, ax=ax, orientation="vertical", fraction=0.05, pad=0.0, shrink=0.6)
+        cb.set_label("Count")
 
         ax.plot([0.095, 0.505], [0.2 / np.sqrt(3), 1.4 / np.sqrt(3)], linewidth=3.0, color="white")
         ax.plot([0.505, 0.905], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="white")
         ax.plot([0.09, 0.905], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="white")
-        ax.plot([0.5, 0.5], [0.2 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="blue")
-        ax.plot([0.3, 0.5], [0.8 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="red")
-        ax.plot([0.5, 0.7], [0.6 / np.sqrt(3), 0.8 / np.sqrt(3)], linewidth=3.0, color="green")
-        ax.plot([0.1, 0.5], [0.2 / np.sqrt(3), 1.4 / np.sqrt(3)], linewidth=3.0, color="black")
-        ax.plot([0.5, 0.9], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="black")
-        ax.plot([0.1, 0.9], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="black")
+        ax.plot([0.5, 0.5], [0.2 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.3, 0.5], [0.8 / np.sqrt(3), 0.6 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.5, 0.7], [0.6 / np.sqrt(3), 0.8 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.1, 0.5], [0.2 / np.sqrt(3), 1.4 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.5, 0.9], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="orange")
+        ax.plot([0.1, 0.9], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="orange")
 
     def _obtain_posterior_probabilities(self, alg1: str, alg2: str) -> np.array:
         """Obtains the posterior probabilities of the Bayesian statistical test between two algorithms."""

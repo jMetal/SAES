@@ -9,6 +9,9 @@ import pandas as pd
 import numpy as np
 import os
 
+# Article reference: https://www.statology.org/friedman-test-python/
+# Wikipedia reference: https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test
+
 def _highlight_max(table: pd.DataFrame):
     """Highlight the maximum value in each row."""
     is_max = table[:-1] == table[:-1].max() 
@@ -480,7 +483,7 @@ class WilcoxonPivot(Table):
             self.algorithms = self.algorithms[self.algorithms != pivot]
             self.algorithms = np.append(self.algorithms, pivot)
 
-    def compute_table(self, pivot: str = None) -> None:
+    def compute_table(self) -> None:
         """Computes the Wilcoxon Pivot table."""
 
         if self.normal:

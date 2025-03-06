@@ -1,8 +1,12 @@
 from statsmodels.stats.libqsturng import qsturng
 from scipy.stats import rankdata, chi2
 from scipy.stats import mannwhitneyu
+
 import pandas as pd
 import numpy as np
+
+# Article reference: https://www.statology.org/friedman-test-python/
+# Wikipedia reference: https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test
 
 def friedman(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
     """
@@ -53,7 +57,9 @@ def friedman(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
     average_ranks = np.mean(ranks, axis=0)
 
     # Compute the Friedman statistic
-    rank_sum_squared = np.sum(average_ranks**2)
+    # rank_sum_squared = np.sum(average_ranks**2)
+    rank_sum_squared = np.sum(n_samples * (average_ranks**2))
+
     friedman_stat = (12 * n_samples) / (k * (k + 1)) * (rank_sum_squared - (k * (k + 1)**2) / 4)
 
     # Calculate the p-value using the chi-squared distribution
@@ -110,8 +116,8 @@ def wilcoxon(data: pd.DataFrame, maximize: bool):
             return "+" if median_a > median_b else "-"
         else:
             return "+" if median_a < median_b else "-"
-    else:
-        return "="
+    
+    return "="
 
 def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
     """
@@ -134,7 +140,9 @@ def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
     """
 
     # get critical value
-    q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_alg * (num_dataset - 1)) / np.sqrt(2)
+    # q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_alg * (num_dataset - 1)) / np.sqrt(2)
+    q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_dataset - 1) / np.sqrt(2)
+
 
     # compute the critical difference
     return q_alpha * np.sqrt(num_alg * (num_alg + 1) / (6.0 * num_dataset))
