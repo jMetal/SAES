@@ -51,8 +51,8 @@ class TestTableClasses(unittest.TestCase):
     def test_friedman_no_difference(self):
         friedman = Friedman(self.data_no_diff, self.metrics, self.metric)
         friedman.compute_table()
-        self.assertEqual(friedman.table.loc["I1", "Friedman"], "=")
-        self.assertEqual(friedman.table.loc["I2", "Friedman"], "=")
+        self.assertEqual(friedman.table.loc["I1", "Friedman"], "+")
+        self.assertEqual(friedman.table.loc["I2", "Friedman"], "+")
 
     def test_wilcoxon_pivot_difference(self):
         wilcoxon_pivot = WilcoxonPivot(self.data_diff, self.metrics, self.metric)

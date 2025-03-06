@@ -483,7 +483,7 @@ class WilcoxonPivot(Table):
             self.algorithms = self.algorithms[self.algorithms != pivot]
             self.algorithms = np.append(self.algorithms, pivot)
 
-    def compute_table(self, pivot: str = None) -> None:
+    def compute_table(self) -> None:
         """Computes the Wilcoxon Pivot table."""
 
         if self.normal:
@@ -676,3 +676,12 @@ class Wilcoxon(Table):
     def __repr__(self) -> str:
         """Returns the description of the table."""
         return "Wilcoxon Test 1vs1 Table"
+    
+if __name__ == "__main__":
+    from SAES.plots.CDplot import CDplot
+    data = "data.csv"
+    metrics = "metrics.csv"
+    metric = "DSC"
+
+    wilcoxon_table = CDplot(data, metrics, metric)
+    wilcoxon_table.save(os.getcwd())
