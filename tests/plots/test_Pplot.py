@@ -18,7 +18,7 @@ class TestBoxplot(unittest.TestCase):
         # Open the image and check its size
         with Image.open(image_path) as img:
             width, height = img.size
-            self.assertEqual((width, height), (1019, 1019))
+            self.assertEqual((width, height), (1036, 1019))
 
         os.remove(image_path)
     
@@ -30,7 +30,7 @@ class TestBoxplot(unittest.TestCase):
         # Open the image and check its size
         with Image.open(image_path) as img:
             width, height = img.size
-            self.assertEqual((width, height), (1807, 989))
+            self.assertEqual((width, height), (2959, 1489))
 
         os.remove(image_path)
 

@@ -234,7 +234,11 @@ class Boxplot:
         n_rows = int(np.ceil(len(instances) / n_cols))  
 
         fig, axes = plt.subplots(n_rows, n_cols, figsize=(width, width * (n_rows / 4)))
-        axes = axes.flatten()
+
+        if isinstance(axes, np.ndarray):
+            axes = axes.flatten()
+        else:
+            axes = [axes]
 
         for i, instance in enumerate(instances):
             df_instance = self.data[self.data["Instance"] == instance]
