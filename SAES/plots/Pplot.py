@@ -6,6 +6,8 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 
+# Scientific article reference: https://arxiv.org/pdf/1606.04316
+
 class Pplot:
     """
     Class to generate plots for the posterior distribution of a Bayesian statistical test.

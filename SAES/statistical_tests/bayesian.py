@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+# Scientific article reference: https://arxiv.org/pdf/1606.04316
+
 def bayesian_sign_test(data: pd.DataFrame, 
                        rope_limits=[-0.01, 0.01], 
                        prior_strength=0.5, 
@@ -179,4 +181,3 @@ def bayesian_signed_rank_test(data,
 
     # Return the posterior probabilities
     return np.array([win_left, win_rope, win_rifht]) / float(sample_size), Dprocess
-    

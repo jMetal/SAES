@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
+# Wikipedia reference: https://en.wikipedia.org/wiki/Parallel_coordinates
+
 class Front(ABC):
     """
     Abstract class to generate Pareto fronts for different algorithms and instances.
