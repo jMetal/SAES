@@ -82,7 +82,7 @@ class Pplot:
         self.bayesian_test = bayesian_test
         self.logger = get_logger(__name__)
 
-    def save(self, alg1, alg2, output_path: str, file_name: str = None, width: int = 5) -> None:
+    def save(self, alg1, alg2, output_path: str, file_name: str = None, width: int = 5, sample_size: int = 2500) -> None:
         """
         Saves the posterior distribution of the Bayesian statistical test between two algorithms to a file.
 
@@ -102,6 +102,9 @@ class Pplot:
             width (int):
                 The width of the figure. Default is 5.
 
+            sample_size (int):
+                Total number of random_search samples generated. Default is 2500.
+
         Returns:
             None
 
@@ -116,14 +119,14 @@ class Pplot:
             >>> pplot.save("NSGAII", "OMOPSO", os.getcwd())
         """
 
-        posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2)
+        posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2, sample_size)
         self._plot(posterior_probabilities, width, alg_names=[alg1, alg2])
         file_name = file_name if file_name else f"{self.metric}_{alg1}_vs_{alg2}.png"
         plt.savefig(f"{output_path}/{file_name}", bbox_inches="tight")
-        self.logger.info(f"Boxplot {file_name} saved to {output_path}")
+        self.logger.info(f"Pplot {file_name} saved to {output_path}")
         plt.close()
 
-    def show(self, alg1: str, alg2: str, width: int = 5) -> None:
+    def show(self, alg1: str, alg2: str, width: int = 5, sample_size: int = 2500) -> None:
         """
         Plots the posterior distribution of the Bayesian statistical test between two algorithms.
 
@@ -136,6 +139,9 @@ class Pplot:
 
             width (int):
                 The width of the figure. Default is 5.
+
+            sample_size (int):
+                Total number of random_search samples generated. Default is 2500.
 
         Returns:
             None
@@ -150,11 +156,14 @@ class Pplot:
             >>> pplot.plot("NSGAII", "OMOPSO")
         """
 
-        posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2)
+        posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2, sample_size)
         self._plot(posterior_probabilities, width, alg_names=[alg1, alg2])
         plt.show()
 
-    def save_pivot(self, algorithm: str, output_path: str, file_name: str = None, width: int = 30, heigth: int = 15) -> None:
+    def save_pivot(self, algorithm: str, output_path: str, file_name: str = None, 
+                   width: int = 30, 
+                   heigth: int = 15, 
+                   sample_size: int = 2500) -> None:
         """
         Saves the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms to a file.
 
@@ -174,6 +183,9 @@ class Pplot:
             heigth (int):
                 The heigth of the figure. Default is 15.
 
+            sample_size (int):
+                Total number of random_search samples generated. Default is 2500.
+
         Returns:
             None
 
@@ -188,13 +200,13 @@ class Pplot:
             >>> pplot.save_pivot("NSGAII", os.getcwd())
         """
 
-        self._plot_pivot(algorithm, width, heigth)
+        self._plot_pivot(algorithm, width, heigth, sample_size)
         file_name = file_name if file_name else f"{self.metric}_pivot_{algorithm}.png"
         plt.savefig(f"{output_path}/{file_name}", bbox_inches="tight") 
         self.logger.info(f"Pplot {file_name} saved to {output_path}")
         plt.close()
 
-    def show_pivot(self, algorithm: str, width: int = 30, heigth: int = 15) -> None:
+    def show_pivot(self, algorithm: str, width: int = 30, heigth: int = 15, sample_size: int = 2500) -> None:
         """
         Plots the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms.
 
@@ -207,6 +219,9 @@ class Pplot:
 
             heigth (int):
                 The heigth of the figure. Default is 15.
+
+            sample_size (int):
+                Total number of random_search samples generated. Default is 2500.
 
         Returns:
             None
@@ -221,10 +236,10 @@ class Pplot:
             >>> pplot.plot_pivot("NSGAII")
         """
 
-        self._plot_pivot(algorithm, width, heigth)
+        self._plot_pivot(algorithm, width, heigth, sample_size)
         plt.show()
 
-    def _plot_pivot(self, algorithm: str, width: int, heigth: int) -> None:
+    def _plot_pivot(self, algorithm: str, width: int, heigth: int, sample_size: int) -> None:
         """Plots the posterior distribution of the Bayesian statistical test between an algorithm and all other algorithms."""
 
         # Filter out the specified algorithm from the list of algorithms
@@ -246,7 +261,7 @@ class Pplot:
 
         # Loop through the algorithm combinations and plot the posterior probabilities
         for idx, (alg1, alg2) in enumerate(column_combinations):
-            posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2)
+            posterior_probabilities = self._obtain_posterior_probabilities(alg1, alg2, sample_size=sample_size)
             self._plot_grid(posterior_probabilities, ax=axes[idx], alg_names=[alg1, alg2])
         
         # Remove any empty subplots if the number of combinations is less than the number of available axes
@@ -389,7 +404,7 @@ class Pplot:
         ax.plot([0.5, 0.9], [1.4 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="orange")
         ax.plot([0.1, 0.9], [0.2 / np.sqrt(3), 0.2 / np.sqrt(3)], linewidth=3.0, color="orange")
 
-    def _obtain_posterior_probabilities(self, alg1: str, alg2: str) -> np.array:
+    def _obtain_posterior_probabilities(self, alg1: str, alg2: str, sample_size: int) -> np.array:
         """Obtains the posterior probabilities of the Bayesian statistical test between two algorithms."""
 
         # Filter data to include only the specified algorithms
@@ -407,9 +422,9 @@ class Pplot:
 
             # If it's the first iteration, initialize the posterior probabilities list
             if self.bayesian_test == "sign":
-                test_results = bayesian_sign_test(data_i.values)[1]
+                test_results = bayesian_sign_test(data_i.values, sample_size=sample_size)[1]
             else:
-                test_results = bayesian_signed_rank_test(data_i.values)[1]
+                test_results = bayesian_signed_rank_test(data_i.values, sample_size=sample_size)[1]
             
             if len(posterior_probabilities) == 0:
                 posterior_probabilities = test_results
