@@ -316,7 +316,14 @@ class MeanMedian(Table):
 
     def show(self) -> None:
         """Displays the table in a Jupyter notebook."""
-        pass
+        
+        self.compute_table()
+
+        # We need to create a copy of the table to apply the format
+        styled_df = self.table.copy()
+        styled_df.format({col: "{:.4e}" for col in self.table.select_dtypes(include=["number"]).columns})
+
+        return styled_df
     
     def _create_latex_table(self) -> None:
         """Creates the LaTeX table content."""

@@ -106,10 +106,10 @@ def wilcoxon(data: pd.DataFrame, maximize: bool):
     median_a = data["Algorithm A"].median()
     median_b = data["Algorithm B"].median()
 
-    # Realizar el test de Wilcoxon
+    # Perform the Wilcoxon signed-rank test
     _, p_value = mannwhitneyu(data["Algorithm A"], data["Algorithm B"])
 
-    # Interpretar el resultado
+    # Determine the result based on the p-value
     alpha = 0.05
     if p_value <= alpha:
         if maximize:
@@ -139,10 +139,10 @@ def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
             The critical difference value for Nemenyi's
     """
 
-    # get critical value
+    # Get critical value
     # q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_alg * (num_dataset - 1)) / np.sqrt(2)
     q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_dataset - 1) / np.sqrt(2)
 
 
-    # compute the critical difference
+    # Compute the critical difference
     return q_alpha * np.sqrt(num_alg * (num_alg + 1) / (6.0 * num_dataset))
