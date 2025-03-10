@@ -316,11 +316,13 @@ class MeanMedian(Table):
 
     def show(self) -> None:
         """Displays the table in a Jupyter notebook."""
-        
+    
         self.compute_table()
+        if self.maximize:
+            styled_df = self.table.style.apply(_highlight_max, axis=1)
+        else:
+            styled_df = self.table.style.apply(_highlight_min, axis=1)
 
-        # We need to create a copy of the table to apply the format
-        styled_df = self.table.copy()
         styled_df.format({col: "{:.4e}" for col in self.table.select_dtypes(include=["number"]).columns})
 
         return styled_df
