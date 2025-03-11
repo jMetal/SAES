@@ -1,18 +1,15 @@
-Fronts File
+Front Files
 ===========
 
-The `Saes` library provides a multiobjective module designed for data from multiobjective optimization studies. If you need to generate Pareto front plots from your data, you must configure two data sources:
-
-Configuring Algorithm Fronts
-----------------------------
-
-Each algorithm's front data should be organized in the following folder structure:
+The `Saes` library provides a multiobjective module designed for data from multiobjective optimization studies. The data
+are composed of the best and median Pareto front approximations found by a set of algorithms when solving a set of problems.
+The files containing these data must be stored in a folder tree following this structura:
 
 .. code-block::
 
     📂 fronts_folder  
     ├── 📂 algorithm-1/            
-    │   ├── 📂 instance-1  
+    │   ├── 📂 instance-1
     |   |    ├── BEST_metric-1_FUN.csv
     |   |    ├── MEDIAN_metric-1_FUN.csv
     |   |    .
@@ -35,6 +32,5 @@ Structure Details
 - Within each algorithm’s folder, **instances** are stored as subdirectories.  
 - Each instance contains multiple CSV files representing Pareto fronts, following the format:  
   
-  - ``BEST_metric-x_FUN.csv``: The best Pareto front based on metric `x`.  
-  - ``MEDIAN_metric-x_FUN.csv``: The median Pareto front based on metric `x`.  
-
+  - ``BEST_metric-x_FUN.csv``: The file with the best Pareto front approximation based on metric `x`.
+  - ``MEDIAN_metric-x_FUN.csv``: The file with the median Pareto front approximation based on metric `x`.
