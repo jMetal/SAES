@@ -1,0 +1,481 @@
+Algorithm,Instance,MetricName,ExecutionId,MetricValue
+SVM,"Iris (Fisher, 1936)",accuracy,1,0.8806
+SVM,"Iris (Fisher, 1936)",loss,1,0.1296
+SVM,"Iris (Fisher, 1936)",accuracy,2,0.9257
+SVM,"Iris (Fisher, 1936)",loss,2,0.0731
+SVM,"Iris (Fisher, 1936)",accuracy,3,0.9183
+SVM,"Iris (Fisher, 1936)",loss,3,0.1043
+SVM,"Iris (Fisher, 1936)",accuracy,4,0.907
+SVM,"Iris (Fisher, 1936)",loss,4,0.1022
+SVM,"Iris (Fisher, 1936)",accuracy,5,0.9012
+SVM,"Iris (Fisher, 1936)",loss,5,0.1418
+SVM,"Iris (Fisher, 1936)",accuracy,6,0.8976
+SVM,"Iris (Fisher, 1936)",loss,6,0.1095
+SVM,"Iris (Fisher, 1936)",accuracy,7,0.932
+SVM,"Iris (Fisher, 1936)",loss,7,0.0877
+SVM,"Iris (Fisher, 1936)",accuracy,8,0.8873
+SVM,"Iris (Fisher, 1936)",loss,8,0.1474
+SVM,"Iris (Fisher, 1936)",accuracy,9,0.9295
+SVM,"Iris (Fisher, 1936)",loss,9,0.1384
+SVM,"Iris (Fisher, 1936)",accuracy,10,0.9241
+SVM,"Iris (Fisher, 1936)",loss,10,0.1343
+SVM,"Iris (Fisher, 1936)",accuracy,11,0.9204
+SVM,"Iris (Fisher, 1936)",loss,11,0.1053
+SVM,"Iris (Fisher, 1936)",accuracy,12,0.939
+SVM,"Iris (Fisher, 1936)",loss,12,0.1131
+SVM,"Iris (Fisher, 1936)",accuracy,13,0.9054
+SVM,"Iris (Fisher, 1936)",loss,13,0.1256
+SVM,"Iris (Fisher, 1936)",accuracy,14,0.9119
+SVM,"Iris (Fisher, 1936)",loss,14,0.0731
+SVM,"Iris (Fisher, 1936)",accuracy,15,0.889
+SVM,"Iris (Fisher, 1936)",loss,15,0.1022
+SVM,"Iris (Fisher, 1936)",accuracy,16,0.9128
+SVM,"Iris (Fisher, 1936)",loss,16,0.075
+SVM,"Iris (Fisher, 1936)",accuracy,17,0.905
+SVM,"Iris (Fisher, 1936)",loss,17,0.1181
+SVM,"Iris (Fisher, 1936)",accuracy,18,0.8995
+SVM,"Iris (Fisher, 1936)",loss,18,0.0619
+SVM,"Iris (Fisher, 1936)",accuracy,19,0.9127
+SVM,"Iris (Fisher, 1936)",loss,19,0.0856
+SVM,"Iris (Fisher, 1936)",accuracy,20,0.9123
+SVM,"Iris (Fisher, 1936)",loss,20,0.1019
+SVM,Iris Extended,accuracy,1,0.9053
+SVM,Iris Extended,loss,1,0.133
+SVM,Iris Extended,accuracy,2,0.921
+SVM,Iris Extended,loss,2,0.1181
+SVM,Iris Extended,accuracy,3,0.8898
+SVM,Iris Extended,loss,3,0.1077
+SVM,Iris Extended,accuracy,4,0.9154
+SVM,Iris Extended,loss,4,0.0949
+SVM,Iris Extended,accuracy,5,0.8966
+SVM,Iris Extended,loss,5,0.1491
+SVM,Iris Extended,accuracy,6,0.9045
+SVM,Iris Extended,loss,6,0.0868
+SVM,Iris Extended,accuracy,7,0.9355
+SVM,Iris Extended,loss,7,0.0765
+SVM,Iris Extended,accuracy,8,0.9034
+SVM,Iris Extended,loss,8,0.09
+SVM,Iris Extended,accuracy,9,0.9033
+SVM,Iris Extended,loss,9,0.1014
+SVM,Iris Extended,accuracy,10,0.9341
+SVM,Iris Extended,loss,10,0.1295
+SVM,Iris Extended,accuracy,11,0.9356
+SVM,Iris Extended,loss,11,0.1193
+SVM,Iris Extended,accuracy,12,0.9073
+SVM,Iris Extended,loss,12,0.1159
+SVM,Iris Extended,accuracy,13,0.9136
+SVM,Iris Extended,loss,13,0.1034
+SVM,Iris Extended,accuracy,14,0.9194
+SVM,Iris Extended,loss,14,0.1483
+SVM,Iris Extended,accuracy,15,0.929
+SVM,Iris Extended,loss,15,0.1256
+SVM,Iris Extended,accuracy,16,0.9313
+SVM,Iris Extended,loss,16,0.1492
+SVM,Iris Extended,accuracy,17,0.9153
+SVM,Iris Extended,loss,17,0.0957
+SVM,Iris Extended,accuracy,18,0.9005
+SVM,Iris Extended,loss,18,0.108
+SVM,Iris Extended,accuracy,19,0.9186
+SVM,Iris Extended,loss,19,0.1441
+SVM,Iris Extended,accuracy,20,0.9284
+SVM,Iris Extended,loss,20,0.1021
+SVM,Iris Species (UCI o Kaggle),accuracy,1,0.8864
+SVM,Iris Species (UCI o Kaggle),loss,1,0.0749
+SVM,Iris Species (UCI o Kaggle),accuracy,2,0.9393
+SVM,Iris Species (UCI o Kaggle),loss,2,0.0629
+SVM,Iris Species (UCI o Kaggle),accuracy,3,0.931
+SVM,Iris Species (UCI o Kaggle),loss,3,0.0725
+SVM,Iris Species (UCI o Kaggle),accuracy,4,0.8894
+SVM,Iris Species (UCI o Kaggle),loss,4,0.1178
+SVM,Iris Species (UCI o Kaggle),accuracy,5,0.9028
+SVM,Iris Species (UCI o Kaggle),loss,5,0.1293
+SVM,Iris Species (UCI o Kaggle),accuracy,6,0.9044
+SVM,Iris Species (UCI o Kaggle),loss,6,0.1492
+SVM,Iris Species (UCI o Kaggle),accuracy,7,0.921
+SVM,Iris Species (UCI o Kaggle),loss,7,0.0804
+SVM,Iris Species (UCI o Kaggle),accuracy,8,0.9141
+SVM,Iris Species (UCI o Kaggle),loss,8,0.1425
+SVM,Iris Species (UCI o Kaggle),accuracy,9,0.8903
+SVM,Iris Species (UCI o Kaggle),loss,9,0.0652
+SVM,Iris Species (UCI o Kaggle),accuracy,10,0.8963
+SVM,Iris Species (UCI o Kaggle),loss,10,0.0618
+SVM,Iris Species (UCI o Kaggle),accuracy,11,0.9032
+SVM,Iris Species (UCI o Kaggle),loss,11,0.1269
+SVM,Iris Species (UCI o Kaggle),accuracy,12,0.9215
+SVM,Iris Species (UCI o Kaggle),loss,12,0.1201
+SVM,Iris Species (UCI o Kaggle),accuracy,13,0.9168
+SVM,Iris Species (UCI o Kaggle),loss,13,0.1225
+SVM,Iris Species (UCI o Kaggle),accuracy,14,0.8803
+SVM,Iris Species (UCI o Kaggle),loss,14,0.1443
+SVM,Iris Species (UCI o Kaggle),accuracy,15,0.8899
+SVM,Iris Species (UCI o Kaggle),loss,15,0.1061
+SVM,Iris Species (UCI o Kaggle),accuracy,16,0.8996
+SVM,Iris Species (UCI o Kaggle),loss,16,0.0657
+SVM,Iris Species (UCI o Kaggle),accuracy,17,0.8806
+SVM,Iris Species (UCI o Kaggle),loss,17,0.1183
+SVM,Iris Species (UCI o Kaggle),accuracy,18,0.9398
+SVM,Iris Species (UCI o Kaggle),loss,18,0.1085
+SVM,Iris Species (UCI o Kaggle),accuracy,19,0.9304
+SVM,Iris Species (UCI o Kaggle),loss,19,0.07
+SVM,Iris Species (UCI o Kaggle),accuracy,20,0.8942
+SVM,Iris Species (UCI o Kaggle),loss,20,0.1361
+MLP,"Iris (Fisher, 1936)",accuracy,1,0.9791000000000001
+MLP,"Iris (Fisher, 1936)",loss,1,0.15250000000000002
+MLP,"Iris (Fisher, 1936)",accuracy,2,0.9662
+MLP,"Iris (Fisher, 1936)",loss,2,0.1365
+MLP,"Iris (Fisher, 1936)",accuracy,3,1.0033
+MLP,"Iris (Fisher, 1936)",loss,3,0.2038
+MLP,"Iris (Fisher, 1936)",accuracy,4,0.9811000000000001
+MLP,"Iris (Fisher, 1936)",loss,4,0.1563
+MLP,"Iris (Fisher, 1936)",accuracy,5,1.0059
+MLP,"Iris (Fisher, 1936)",loss,5,0.217
+MLP,"Iris (Fisher, 1936)",accuracy,6,0.9845999999999999
+MLP,"Iris (Fisher, 1936)",loss,6,0.13390000000000002
+MLP,"Iris (Fisher, 1936)",accuracy,7,0.95
+MLP,"Iris (Fisher, 1936)",loss,7,0.2188
+MLP,"Iris (Fisher, 1936)",accuracy,8,0.9594
+MLP,"Iris (Fisher, 1936)",loss,8,0.1333
+MLP,"Iris (Fisher, 1936)",accuracy,9,0.9881
+MLP,"Iris (Fisher, 1936)",loss,9,0.16820000000000002
+MLP,"Iris (Fisher, 1936)",accuracy,10,0.9691000000000001
+MLP,"Iris (Fisher, 1936)",loss,10,0.1679
+MLP,"Iris (Fisher, 1936)",accuracy,11,0.9537
+MLP,"Iris (Fisher, 1936)",loss,11,0.1864
+MLP,"Iris (Fisher, 1936)",accuracy,12,0.9536
+MLP,"Iris (Fisher, 1936)",loss,12,0.2175
+MLP,"Iris (Fisher, 1936)",accuracy,13,1.0030000000000001
+MLP,"Iris (Fisher, 1936)",loss,13,0.16570000000000001
+MLP,"Iris (Fisher, 1936)",accuracy,14,0.9759
+MLP,"Iris (Fisher, 1936)",loss,14,0.1323
+MLP,"Iris (Fisher, 1936)",accuracy,15,0.9784999999999999
+MLP,"Iris (Fisher, 1936)",loss,15,0.1685
+MLP,"Iris (Fisher, 1936)",accuracy,16,0.9584999999999999
+MLP,"Iris (Fisher, 1936)",loss,16,0.1353
+MLP,"Iris (Fisher, 1936)",accuracy,17,0.9942
+MLP,"Iris (Fisher, 1936)",loss,17,0.1739
+MLP,"Iris (Fisher, 1936)",accuracy,18,0.9766999999999999
+MLP,"Iris (Fisher, 1936)",loss,18,0.1452
+MLP,"Iris (Fisher, 1936)",accuracy,19,0.9914000000000001
+MLP,"Iris (Fisher, 1936)",loss,19,0.16260000000000002
+MLP,"Iris (Fisher, 1936)",accuracy,20,0.9662999999999999
+MLP,"Iris (Fisher, 1936)",loss,20,0.2122
+MLP,Iris Extended,accuracy,1,0.9950000000000001
+MLP,Iris Extended,loss,1,0.1917
+MLP,Iris Extended,accuracy,2,0.9529000000000001
+MLP,Iris Extended,loss,2,0.218
+MLP,Iris Extended,accuracy,3,0.9968999999999999
+MLP,Iris Extended,loss,3,0.2072
+MLP,Iris Extended,accuracy,4,0.9697
+MLP,Iris Extended,loss,4,0.1991
+MLP,Iris Extended,accuracy,5,0.958
+MLP,Iris Extended,loss,5,0.1678
+MLP,Iris Extended,accuracy,6,0.9696
+MLP,Iris Extended,loss,6,0.17
+MLP,Iris Extended,accuracy,7,0.9544999999999999
+MLP,Iris Extended,loss,7,0.15810000000000002
+MLP,Iris Extended,accuracy,8,0.9903
+MLP,Iris Extended,loss,8,0.19820000000000002
+MLP,Iris Extended,accuracy,9,0.9901
+MLP,Iris Extended,loss,9,0.1553
+MLP,Iris Extended,accuracy,10,0.9852000000000001
+MLP,Iris Extended,loss,10,0.18070000000000003
+MLP,Iris Extended,accuracy,11,0.9806999999999999
+MLP,Iris Extended,loss,11,0.1736
+MLP,Iris Extended,accuracy,12,1.0011
+MLP,Iris Extended,loss,12,0.1607
+MLP,Iris Extended,accuracy,13,0.9554
+MLP,Iris Extended,loss,13,0.1333
+MLP,Iris Extended,accuracy,14,0.9562999999999999
+MLP,Iris Extended,loss,14,0.1417
+MLP,Iris Extended,accuracy,15,1.0027
+MLP,Iris Extended,loss,15,0.1649
+MLP,Iris Extended,accuracy,16,0.9689000000000001
+MLP,Iris Extended,loss,16,0.136
+MLP,Iris Extended,accuracy,17,0.9611000000000001
+MLP,Iris Extended,loss,17,0.1607
+MLP,Iris Extended,accuracy,18,1.0019
+MLP,Iris Extended,loss,18,0.133
+MLP,Iris Extended,accuracy,19,0.9504999999999999
+MLP,Iris Extended,loss,19,0.1617
+MLP,Iris Extended,accuracy,20,1.0001
+MLP,Iris Extended,loss,20,0.1882
+MLP,Iris Species (UCI o Kaggle),accuracy,1,0.9966999999999999
+MLP,Iris Species (UCI o Kaggle),loss,1,0.2096
+MLP,Iris Species (UCI o Kaggle),accuracy,2,0.9516
+MLP,Iris Species (UCI o Kaggle),loss,2,0.1328
+MLP,Iris Species (UCI o Kaggle),accuracy,3,0.956
+MLP,Iris Species (UCI o Kaggle),loss,3,0.187
+MLP,Iris Species (UCI o Kaggle),accuracy,4,1.0
+MLP,Iris Species (UCI o Kaggle),loss,4,0.1345
+MLP,Iris Species (UCI o Kaggle),accuracy,5,0.9902
+MLP,Iris Species (UCI o Kaggle),loss,5,0.15300000000000002
+MLP,Iris Species (UCI o Kaggle),accuracy,6,0.9654
+MLP,Iris Species (UCI o Kaggle),loss,6,0.1829
+MLP,Iris Species (UCI o Kaggle),accuracy,7,0.9617
+MLP,Iris Species (UCI o Kaggle),loss,7,0.20850000000000002
+MLP,Iris Species (UCI o Kaggle),accuracy,8,0.9671000000000001
+MLP,Iris Species (UCI o Kaggle),loss,8,0.1715
+MLP,Iris Species (UCI o Kaggle),accuracy,9,0.9588000000000001
+MLP,Iris Species (UCI o Kaggle),loss,9,0.1516
+MLP,Iris Species (UCI o Kaggle),accuracy,10,0.9695
+MLP,Iris Species (UCI o Kaggle),loss,10,0.1543
+MLP,Iris Species (UCI o Kaggle),accuracy,11,0.9974000000000001
+MLP,Iris Species (UCI o Kaggle),loss,11,0.1587
+MLP,Iris Species (UCI o Kaggle),accuracy,12,0.9691000000000001
+MLP,Iris Species (UCI o Kaggle),loss,12,0.2062
+MLP,Iris Species (UCI o Kaggle),accuracy,13,1.0058
+MLP,Iris Species (UCI o Kaggle),loss,13,0.1406
+MLP,Iris Species (UCI o Kaggle),accuracy,14,0.9632000000000001
+MLP,Iris Species (UCI o Kaggle),loss,14,0.2003
+MLP,Iris Species (UCI o Kaggle),accuracy,15,0.9701
+MLP,Iris Species (UCI o Kaggle),loss,15,0.2001
+MLP,Iris Species (UCI o Kaggle),accuracy,16,0.9755
+MLP,Iris Species (UCI o Kaggle),loss,16,0.17970000000000003
+MLP,Iris Species (UCI o Kaggle),accuracy,17,0.9546000000000001
+MLP,Iris Species (UCI o Kaggle),loss,17,0.1659
+MLP,Iris Species (UCI o Kaggle),accuracy,18,1.0087
+MLP,Iris Species (UCI o Kaggle),loss,18,0.15910000000000002
+MLP,Iris Species (UCI o Kaggle),accuracy,19,0.9659
+MLP,Iris Species (UCI o Kaggle),loss,19,0.1573
+MLP,Iris Species (UCI o Kaggle),accuracy,20,0.9930000000000001
+MLP,Iris Species (UCI o Kaggle),loss,20,0.1608
+KNN,"Iris (Fisher, 1936)",accuracy,1,0.8164
+KNN,"Iris (Fisher, 1936)",loss,1,0.2373
+KNN,"Iris (Fisher, 1936)",accuracy,2,0.8612
+KNN,"Iris (Fisher, 1936)",loss,2,0.2841
+KNN,"Iris (Fisher, 1936)",accuracy,3,0.837
+KNN,"Iris (Fisher, 1936)",loss,3,0.2689
+KNN,"Iris (Fisher, 1936)",accuracy,4,0.8661
+KNN,"Iris (Fisher, 1936)",loss,4,0.2389
+KNN,"Iris (Fisher, 1936)",accuracy,5,0.861
+KNN,"Iris (Fisher, 1936)",loss,5,0.2712
+KNN,"Iris (Fisher, 1936)",accuracy,6,0.8356
+KNN,"Iris (Fisher, 1936)",loss,6,0.1845
+KNN,"Iris (Fisher, 1936)",accuracy,7,0.8339
+KNN,"Iris (Fisher, 1936)",loss,7,0.265
+KNN,"Iris (Fisher, 1936)",accuracy,8,0.8477
+KNN,"Iris (Fisher, 1936)",loss,8,0.1739
+KNN,"Iris (Fisher, 1936)",accuracy,9,0.811
+KNN,"Iris (Fisher, 1936)",loss,9,0.2512
+KNN,"Iris (Fisher, 1936)",accuracy,10,0.8142
+KNN,"Iris (Fisher, 1936)",loss,10,0.2127
+KNN,"Iris (Fisher, 1936)",accuracy,11,0.831
+KNN,"Iris (Fisher, 1936)",loss,11,0.2423
+KNN,"Iris (Fisher, 1936)",accuracy,12,0.8156
+KNN,"Iris (Fisher, 1936)",loss,12,0.2625
+KNN,"Iris (Fisher, 1936)",accuracy,13,0.8531
+KNN,"Iris (Fisher, 1936)",loss,13,0.1687
+KNN,"Iris (Fisher, 1936)",accuracy,14,0.8377
+KNN,"Iris (Fisher, 1936)",loss,14,0.1724
+KNN,"Iris (Fisher, 1936)",accuracy,15,0.8678
+KNN,"Iris (Fisher, 1936)",loss,15,0.1721
+KNN,"Iris (Fisher, 1936)",accuracy,16,0.8166
+KNN,"Iris (Fisher, 1936)",loss,16,0.2539
+KNN,"Iris (Fisher, 1936)",accuracy,17,0.8346
+KNN,"Iris (Fisher, 1936)",loss,17,0.1897
+KNN,"Iris (Fisher, 1936)",accuracy,18,0.8462
+KNN,"Iris (Fisher, 1936)",loss,18,0.2604
+KNN,"Iris (Fisher, 1936)",accuracy,19,0.8598
+KNN,"Iris (Fisher, 1936)",loss,19,0.2967
+KNN,"Iris (Fisher, 1936)",accuracy,20,0.8648
+KNN,"Iris (Fisher, 1936)",loss,20,0.2238
+KNN,Iris Extended,accuracy,1,0.8663
+KNN,Iris Extended,loss,1,0.1628
+KNN,Iris Extended,accuracy,2,0.8466
+KNN,Iris Extended,loss,2,0.2621
+KNN,Iris Extended,accuracy,3,0.8378
+KNN,Iris Extended,loss,3,0.2142
+KNN,Iris Extended,accuracy,4,0.8462
+KNN,Iris Extended,loss,4,0.2908
+KNN,Iris Extended,accuracy,5,0.8638
+KNN,Iris Extended,loss,5,0.2294
+KNN,Iris Extended,accuracy,6,0.8087
+KNN,Iris Extended,loss,6,0.1708
+KNN,Iris Extended,accuracy,7,0.8227
+KNN,Iris Extended,loss,7,0.1906
+KNN,Iris Extended,accuracy,8,0.8177
+KNN,Iris Extended,loss,8,0.2759
+KNN,Iris Extended,accuracy,9,0.8377
+KNN,Iris Extended,loss,9,0.2496
+KNN,Iris Extended,accuracy,10,0.8291
+KNN,Iris Extended,loss,10,0.266
+KNN,Iris Extended,accuracy,11,0.862
+KNN,Iris Extended,loss,11,0.2846
+KNN,Iris Extended,accuracy,12,0.8663
+KNN,Iris Extended,loss,12,0.2558
+KNN,Iris Extended,accuracy,13,0.8372
+KNN,Iris Extended,loss,13,0.2868
+KNN,Iris Extended,accuracy,14,0.8348
+KNN,Iris Extended,loss,14,0.2366
+KNN,Iris Extended,accuracy,15,0.8518
+KNN,Iris Extended,loss,15,0.1999
+KNN,Iris Extended,accuracy,16,0.8333
+KNN,Iris Extended,loss,16,0.2733
+KNN,Iris Extended,accuracy,17,0.8321
+KNN,Iris Extended,loss,17,0.2641
+KNN,Iris Extended,accuracy,18,0.8245
+KNN,Iris Extended,loss,18,0.1957
+KNN,Iris Extended,accuracy,19,0.8481
+KNN,Iris Extended,loss,19,0.2512
+KNN,Iris Extended,accuracy,20,0.8024
+KNN,Iris Extended,loss,20,0.2895
+KNN,Iris Species (UCI o Kaggle),accuracy,1,0.8452
+KNN,Iris Species (UCI o Kaggle),loss,1,0.2718
+KNN,Iris Species (UCI o Kaggle),accuracy,2,0.8366
+KNN,Iris Species (UCI o Kaggle),loss,2,0.2537
+KNN,Iris Species (UCI o Kaggle),accuracy,3,0.8642
+KNN,Iris Species (UCI o Kaggle),loss,3,0.2901
+KNN,Iris Species (UCI o Kaggle),accuracy,4,0.843
+KNN,Iris Species (UCI o Kaggle),loss,4,0.1847
+KNN,Iris Species (UCI o Kaggle),accuracy,5,0.8055
+KNN,Iris Species (UCI o Kaggle),loss,5,0.2544
+KNN,Iris Species (UCI o Kaggle),accuracy,6,0.8161
+KNN,Iris Species (UCI o Kaggle),loss,6,0.2049
+KNN,Iris Species (UCI o Kaggle),accuracy,7,0.814
+KNN,Iris Species (UCI o Kaggle),loss,7,0.2258
+KNN,Iris Species (UCI o Kaggle),accuracy,8,0.8208
+KNN,Iris Species (UCI o Kaggle),loss,8,0.2
+KNN,Iris Species (UCI o Kaggle),accuracy,9,0.8658
+KNN,Iris Species (UCI o Kaggle),loss,9,0.2321
+KNN,Iris Species (UCI o Kaggle),accuracy,10,0.8298
+KNN,Iris Species (UCI o Kaggle),loss,10,0.2984
+KNN,Iris Species (UCI o Kaggle),accuracy,11,0.8663
+KNN,Iris Species (UCI o Kaggle),loss,11,0.2051
+KNN,Iris Species (UCI o Kaggle),accuracy,12,0.8403
+KNN,Iris Species (UCI o Kaggle),loss,12,0.1781
+KNN,Iris Species (UCI o Kaggle),accuracy,13,0.8555
+KNN,Iris Species (UCI o Kaggle),loss,13,0.2013
+KNN,Iris Species (UCI o Kaggle),accuracy,14,0.835
+KNN,Iris Species (UCI o Kaggle),loss,14,0.2285
+KNN,Iris Species (UCI o Kaggle),accuracy,15,0.822
+KNN,Iris Species (UCI o Kaggle),loss,15,0.2867
+KNN,Iris Species (UCI o Kaggle),accuracy,16,0.8013
+KNN,Iris Species (UCI o Kaggle),loss,16,0.2752
+KNN,Iris Species (UCI o Kaggle),accuracy,17,0.8131
+KNN,Iris Species (UCI o Kaggle),loss,17,0.2311
+KNN,Iris Species (UCI o Kaggle),accuracy,18,0.8186
+KNN,Iris Species (UCI o Kaggle),loss,18,0.2326
+KNN,Iris Species (UCI o Kaggle),accuracy,19,0.8011
+KNN,Iris Species (UCI o Kaggle),loss,19,0.2493
+KNN,Iris Species (UCI o Kaggle),accuracy,20,0.8072
+KNN,Iris Species (UCI o Kaggle),loss,20,0.1687
+RandomForest,"Iris (Fisher, 1936)",accuracy,1,0.9755
+RandomForest,"Iris (Fisher, 1936)",loss,1,0.0335
+RandomForest,"Iris (Fisher, 1936)",accuracy,2,0.9627
+RandomForest,"Iris (Fisher, 1936)",loss,2,0.0493
+RandomForest,"Iris (Fisher, 1936)",accuracy,3,0.9746
+RandomForest,"Iris (Fisher, 1936)",loss,3,0.0269
+RandomForest,"Iris (Fisher, 1936)",accuracy,4,0.9815
+RandomForest,"Iris (Fisher, 1936)",loss,4,0.0366
+RandomForest,"Iris (Fisher, 1936)",accuracy,5,0.9741
+RandomForest,"Iris (Fisher, 1936)",loss,5,0.0163
+RandomForest,"Iris (Fisher, 1936)",accuracy,6,0.9728
+RandomForest,"Iris (Fisher, 1936)",loss,6,0.0282
+RandomForest,"Iris (Fisher, 1936)",accuracy,7,0.973
+RandomForest,"Iris (Fisher, 1936)",loss,7,0.0141
+RandomForest,"Iris (Fisher, 1936)",accuracy,8,0.9637
+RandomForest,"Iris (Fisher, 1936)",loss,8,0.0344
+RandomForest,"Iris (Fisher, 1936)",accuracy,9,0.9544
+RandomForest,"Iris (Fisher, 1936)",loss,9,0.0116
+RandomForest,"Iris (Fisher, 1936)",accuracy,10,0.9895
+RandomForest,"Iris (Fisher, 1936)",loss,10,0.0302
+RandomForest,"Iris (Fisher, 1936)",accuracy,11,0.9631
+RandomForest,"Iris (Fisher, 1936)",loss,11,0.0134
+RandomForest,"Iris (Fisher, 1936)",accuracy,12,0.9836
+RandomForest,"Iris (Fisher, 1936)",loss,12,0.04
+RandomForest,"Iris (Fisher, 1936)",accuracy,13,0.9725
+RandomForest,"Iris (Fisher, 1936)",loss,13,0.0401
+RandomForest,"Iris (Fisher, 1936)",accuracy,14,0.9527
+RandomForest,"Iris (Fisher, 1936)",loss,14,0.0497
+RandomForest,"Iris (Fisher, 1936)",accuracy,15,0.9706
+RandomForest,"Iris (Fisher, 1936)",loss,15,0.0125
+RandomForest,"Iris (Fisher, 1936)",accuracy,16,0.9684
+RandomForest,"Iris (Fisher, 1936)",loss,16,0.0388
+RandomForest,"Iris (Fisher, 1936)",accuracy,17,0.9802
+RandomForest,"Iris (Fisher, 1936)",loss,17,0.0299
+RandomForest,"Iris (Fisher, 1936)",accuracy,18,0.9806
+RandomForest,"Iris (Fisher, 1936)",loss,18,0.0465
+RandomForest,"Iris (Fisher, 1936)",accuracy,19,0.9877
+RandomForest,"Iris (Fisher, 1936)",loss,19,0.0412
+RandomForest,"Iris (Fisher, 1936)",accuracy,20,0.9562
+RandomForest,"Iris (Fisher, 1936)",loss,20,0.0217
+RandomForest,Iris Extended,accuracy,1,0.9847
+RandomForest,Iris Extended,loss,1,0.0188
+RandomForest,Iris Extended,accuracy,2,0.9665
+RandomForest,Iris Extended,loss,2,0.0145
+RandomForest,Iris Extended,accuracy,3,0.9741
+RandomForest,Iris Extended,loss,3,0.0468
+RandomForest,Iris Extended,accuracy,4,0.9844
+RandomForest,Iris Extended,loss,4,0.024
+RandomForest,Iris Extended,accuracy,5,0.9506
+RandomForest,Iris Extended,loss,5,0.0162
+RandomForest,Iris Extended,accuracy,6,0.9791
+RandomForest,Iris Extended,loss,6,0.0138
+RandomForest,Iris Extended,accuracy,7,0.9878
+RandomForest,Iris Extended,loss,7,0.0258
+RandomForest,Iris Extended,accuracy,8,0.9728
+RandomForest,Iris Extended,loss,8,0.0116
+RandomForest,Iris Extended,accuracy,9,0.9708
+RandomForest,Iris Extended,loss,9,0.0487
+RandomForest,Iris Extended,accuracy,10,0.97
+RandomForest,Iris Extended,loss,10,0.0314
+RandomForest,Iris Extended,accuracy,11,0.9753
+RandomForest,Iris Extended,loss,11,0.0403
+RandomForest,Iris Extended,accuracy,12,0.9895
+RandomForest,Iris Extended,loss,12,0.0175
+RandomForest,Iris Extended,accuracy,13,0.9807
+RandomForest,Iris Extended,loss,13,0.0405
+RandomForest,Iris Extended,accuracy,14,0.9665
+RandomForest,Iris Extended,loss,14,0.0106
+RandomForest,Iris Extended,accuracy,15,0.974
+RandomForest,Iris Extended,loss,15,0.0103
+RandomForest,Iris Extended,accuracy,16,0.9759
+RandomForest,Iris Extended,loss,16,0.025
+RandomForest,Iris Extended,accuracy,17,0.9639
+RandomForest,Iris Extended,loss,17,0.0497
+RandomForest,Iris Extended,accuracy,18,0.9612
+RandomForest,Iris Extended,loss,18,0.0259
+RandomForest,Iris Extended,accuracy,19,0.9504
+RandomForest,Iris Extended,loss,19,0.0453
+RandomForest,Iris Extended,accuracy,20,0.9538
+RandomForest,Iris Extended,loss,20,0.0135
+RandomForest,Iris Species (UCI o Kaggle),accuracy,1,0.9715
+RandomForest,Iris Species (UCI o Kaggle),loss,1,0.0437
+RandomForest,Iris Species (UCI o Kaggle),accuracy,2,0.9501
+RandomForest,Iris Species (UCI o Kaggle),loss,2,0.012
+RandomForest,Iris Species (UCI o Kaggle),accuracy,3,0.9804
+RandomForest,Iris Species (UCI o Kaggle),loss,3,0.0191
+RandomForest,Iris Species (UCI o Kaggle),accuracy,4,0.9789
+RandomForest,Iris Species (UCI o Kaggle),loss,4,0.0138
+RandomForest,Iris Species (UCI o Kaggle),accuracy,5,0.9501
+RandomForest,Iris Species (UCI o Kaggle),loss,5,0.0198
+RandomForest,Iris Species (UCI o Kaggle),accuracy,6,0.964
+RandomForest,Iris Species (UCI o Kaggle),loss,6,0.0473
+RandomForest,Iris Species (UCI o Kaggle),accuracy,7,0.9506
+RandomForest,Iris Species (UCI o Kaggle),loss,7,0.0448
+RandomForest,Iris Species (UCI o Kaggle),accuracy,8,0.988
+RandomForest,Iris Species (UCI o Kaggle),loss,8,0.0216
+RandomForest,Iris Species (UCI o Kaggle),accuracy,9,0.9895
+RandomForest,Iris Species (UCI o Kaggle),loss,9,0.0358
+RandomForest,Iris Species (UCI o Kaggle),accuracy,10,0.978
+RandomForest,Iris Species (UCI o Kaggle),loss,10,0.0178
+RandomForest,Iris Species (UCI o Kaggle),accuracy,11,0.9891
+RandomForest,Iris Species (UCI o Kaggle),loss,11,0.0309
+RandomForest,Iris Species (UCI o Kaggle),accuracy,12,0.9892
+RandomForest,Iris Species (UCI o Kaggle),loss,12,0.0234
+RandomForest,Iris Species (UCI o Kaggle),accuracy,13,0.9731
+RandomForest,Iris Species (UCI o Kaggle),loss,13,0.0185
+RandomForest,Iris Species (UCI o Kaggle),accuracy,14,0.9517
+RandomForest,Iris Species (UCI o Kaggle),loss,14,0.0496
+RandomForest,Iris Species (UCI o Kaggle),accuracy,15,0.9718
+RandomForest,Iris Species (UCI o Kaggle),loss,15,0.0393
+RandomForest,Iris Species (UCI o Kaggle),accuracy,16,0.9516
+RandomForest,Iris Species (UCI o Kaggle),loss,16,0.0425
+RandomForest,Iris Species (UCI o Kaggle),accuracy,17,0.9594
+RandomForest,Iris Species (UCI o Kaggle),loss,17,0.0486
+RandomForest,Iris Species (UCI o Kaggle),accuracy,18,0.9632
+RandomForest,Iris Species (UCI o Kaggle),loss,18,0.0355
+RandomForest,Iris Species (UCI o Kaggle),accuracy,19,0.9742
+RandomForest,Iris Species (UCI o Kaggle),loss,19,0.0448
+RandomForest,Iris Species (UCI o Kaggle),accuracy,20,0.9631
+RandomForest,Iris Species (UCI o Kaggle),loss,20,0.0381
