@@ -57,7 +57,6 @@ def friedman(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
     average_ranks = np.mean(ranks, axis=0)
 
     # Compute the Friedman statistic
-    # rank_sum_squared = np.sum(average_ranks**2)
     rank_sum_squared = np.sum(n_samples * (average_ranks**2))
 
     friedman_stat = (12 * n_samples) / (k * (k + 1)) * (rank_sum_squared - (k * (k + 1)**2) / 4)
@@ -140,9 +139,7 @@ def NemenyiCD(alpha: float, num_alg: int, num_dataset: int) -> float:
     """
 
     # Get critical value
-    # q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_alg * (num_dataset - 1)) / np.sqrt(2)
     q_alpha = qsturng(p=1 - alpha, r=num_alg, v=num_dataset - 1) / np.sqrt(2)
-
 
     # Compute the critical difference
     return q_alpha * np.sqrt(num_alg * (num_alg + 1) / (6.0 * num_dataset))

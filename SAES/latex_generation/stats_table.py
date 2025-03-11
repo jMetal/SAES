@@ -399,10 +399,10 @@ class Friedman(Table):
         for instance in self.instances:
             data = self.data[self.data['Instance'] == instance]
             friedman_table = data.pivot(index='ExecutionId', 
-            columns='Algorithm', values='MetricValue').reset_index().drop(columns='ExecutionId')
+                                        columns='Algorithm', 
+                                        values='MetricValue').reset_index().drop(columns='ExecutionId')
 
             friedman_results = friedman(friedman_table, self.maximize)
-            self.table.loc[instance, 'Friedman'] = "+"
             if friedman_results["Results"]["p-value"] < 0.05:
                 self.table.loc[instance, 'Friedman'] = "+"
             else:
@@ -572,8 +572,8 @@ class WilcoxonPivot(Table):
 
         self.latex_doc += """
         \\caption{""" + self.metric + """.  """ + str(self.__repr__()) + (
-            f" (+/- implies that the pivot algorithm (last column) is statistically "
-            f"worse/better, = indicates that the differences are not significant.)\n") + """}
+            f" (- implies that the pivot algorithm (last column) is statistically "
+            f"worse, = indicates that the differences are not significant.)\n") + """}
         \\vspace{1mm}
         \\centering
         \\begin{scriptsize}
@@ -665,8 +665,8 @@ class Wilcoxon(Table):
     def _latex_header(self) -> None:
         """Creates the LaTeX header for the table."""
 
-        header_explanation = (". Each symbol in the cells represents a problem. Symbol +/- indicates that the row/column "
-                          "algorithm performs better with statistical confidence;  symbol = implies that "
+        header_explanation = (". Each symbol in the cells represents a problem. Symbol - indicates that the row "
+                          "algorithm performs worse with statistical confidence;  symbol = implies that "
                           "the differences are not significant.")
         
         self.latex_doc += """
