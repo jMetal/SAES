@@ -17,4 +17,4 @@ Structure Details
 
 - Each **instance** has a corresponding reference front file.  
 
-By correctly setting up these data sources, you can ensure accurate Pareto front visualizations using the `Saes` multiobjective module.
+By correctly setting up these data sources, you can ensure accurate Pareto front visualizations using the `SAES` multiobjective module.
