@@ -25,7 +25,7 @@ class TestStatisticalTests(unittest.TestCase):
         
         result = friedman(self.friedman_data, maximize=True)
         self.assertIn("Results", result.columns)
-        self.assertGreater(result.loc["Friedman-statistic", "Results"], 0)
+        self.assertGreater(result.loc["Friedman-stat", "Results"], 0)
         self.assertGreaterEqual(result.loc["p-value", "Results"], 0)
         self.assertLessEqual(result.loc["p-value", "Results"], 1)
 

@@ -110,7 +110,7 @@ def friedman(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
     # Return the result as a DataFrame
     return pd.DataFrame(
         data=np.array([friedman_stat, p_value]),
-        index=["Friedman-statistic", "p-value"],
+        index=["Friedman-stat", "p-value"],
         columns=["Results"]
     )
 
@@ -268,7 +268,7 @@ def quade(data: pd.DataFrame, maximize: bool) -> pd.DataFrame:
 
     # Return the result as a DataFrame
     return pd.DataFrame(data=np.array([Fq, p_value]), 
-                        index=["Quade Test statistic", "p-value"], 
+                        index=["Quade Test stat", "p-value"], 
                         columns=["Results"])
 
 def wilcoxon(data: pd.DataFrame, maximize: bool):
