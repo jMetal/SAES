@@ -1,5 +1,5 @@
 from SAES.utils.dataframe_processor import process_dataframe_metric
-from SAES.statistical_tests.non_parametrical import friedman
+from SAES.statistical_tests.non_parametrical import friedman, friedman_aligned_rank, quade
 from SAES.statistical_tests.non_parametrical import wilcoxon
 from SAES.utils.dataframe_processor import check_normality
 from SAES.logger import get_logger
@@ -11,6 +11,12 @@ import os
 
 # Article reference: https://www.statology.org/friedman-test-python/
 # Wikipedia reference: https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test
+
+friedman_tests = { 
+    "base": friedman,
+    "aligned": friedman_aligned_rank,
+    "quade": quade
+}
 
 def _highlight_max(table: pd.DataFrame):
     """Highlight the maximum value in each row."""
@@ -382,9 +388,21 @@ class MeanMedian(Table):
 
 class Friedman(Table):
     """Class for generating the Friedman table."""
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False) -> None:
-        """Initializes the MeanMedian object with the given data, metrics, metric, and normality."""
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False, 
+                 friedman_test: str = "base") -> None:
+        """
+        Initializes the MeanMedian object with the given data, metrics, metric, and normality.
+        
+        Args: 
+            friedman_test (str):
+                The type of Friedman test to be performed. Default is "base". List of available tests:
+                    - "base": Friedman's rank sum test.
+                    - "aligned": Friedman aligned rank test.
+                    - "quade": Quade test
+        """
+
         super().__init__(data, metrics, metric, normal=normal)
+        self.friedman_test = friedman_test
 
     def compute_table(self) -> None:
         """Computes the Friedman table."""
@@ -402,7 +420,8 @@ class Friedman(Table):
                                         columns='Algorithm', 
                                         values='MetricValue').reset_index().drop(columns='ExecutionId')
 
-            friedman_results = friedman(friedman_table, self.maximize)
+            friedman_results = friedman_tests[self.friedman_test](friedman_table, self.maximize)
+            
             if friedman_results["Results"]["p-value"] < 0.05:
                 self.table.loc[instance, 'Friedman'] = "+"
             else:
@@ -685,3 +704,94 @@ class Wilcoxon(Table):
     def __repr__(self) -> str:
         """Returns the description of the table."""
         return "Wilcoxon Test 1vs1 Table"
+    
+class FriedmanPValues(Table):
+    """Class for generating the Friedman table."""
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False) -> None:
+        """Initializes the MeanMedian object with the given data, metrics, metric, and normality."""
+        super().__init__(data, metrics, metric, normal=normal)
+
+    def compute_table(self) -> None:
+        """Computes the Friedman table."""
+
+        if self.normal:
+            self.logger.warning('Friedman test is only applicable for non normal data. The test will be skipped.')
+            return
+
+        self.compute_base_table()
+        self.table = pd.DataFrame(0.0, 
+                                  index=self.instances, 
+                                  columns=["Friedman p-value", "Friedman Aligned p-value", "Quade p-value", "Friedman"])
+        
+        self.table["Friedman"] = "="
+
+        # Loop over instances and format the row data
+        for instance in self.instances:
+            # Get the data for the instance
+            data = self.data[self.data['Instance'] == instance]
+            friedman_table = data.pivot(index='ExecutionId', 
+                                        columns='Algorithm', 
+                                        values='MetricValue').reset_index().drop(columns='ExecutionId')
+            
+            # Compute the Friedman test results
+            friedman_results = friedman(friedman_table, self.maximize)
+            friedman_aligned_results = friedman_aligned_rank(friedman_table, self.maximize)
+            quade_results = quade(friedman_table, self.maximize)
+
+            # Update the table with the p-values
+            self.table.loc[instance, 'Friedman p-value'] = friedman_results["Results"]["p-value"]
+            self.table.loc[instance, 'Friedman Aligned p-value'] = friedman_aligned_results["Results"]["p-value"]
+            self.table.loc[instance, 'Quade p-value'] = quade_results["Results"]["p-value"]
+
+            # Update the table with the Friedman result
+            if friedman_results["Results"]["p-value"] < 0.05 and friedman_aligned_results["Results"]["p-value"] < 0.05 and quade_results["Results"]["p-value"] < 0.05:
+                self.table.loc[instance, 'Friedman'] = "+"
+
+    def show(self)  -> None:
+        """Displays the table in a Jupyter notebook."""
+
+        self.compute_table()
+        styled_df = self.table.style
+        styled_df.format({col: "{:.4e}" for col in self.table.select_dtypes(include=["number"]).columns})
+
+        return styled_df
+    
+    def _create_latex_table(self) -> None:
+        """Creates the LaTeX table content."""
+
+        # Loop over instances and format the row data
+        for instance in self.instances:
+            row_data = f"{instance} & "
+            # Loop over algorithms and format the row data
+            for name in self.table.columns:
+                # Get the value for the instance and name
+                value = self.table.loc[instance, name]
+
+                # Create the formatted string based on conditions
+                if type(value) == str:
+                    row_data += f"$\\text{{{value}}}$ & "
+                else:
+                    row_data += f"$\\SI{{{value:.2e}}}{{}}$ & "
+
+            # Add the row data to the LaTeX document
+            self.latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
+
+    def _latex_header(self) -> None:
+        """Creates the LaTeX header for the table."""
+
+        self.latex_doc += """
+        \\caption{""" + self.metric + """.  """ + str(self.__repr__()) + f" (+ implies that the difference between the algorithms for the instance in the select row is significant)\n" + """}
+        \\vspace{1mm}
+        \\centering
+        \\begin{scriptsize}
+        \\begin{tabular}{l|""" + """c|""" * (len(friedman_tests)) + """c}
+        \\hline
+        & """ + " & ".join([f"friedman {name} test" for name in friedman_tests.keys()]) + " & FT \\\\ \\hline\n"
+
+    def __str__(self) -> str:
+        """Returns the name of the table."""
+        return "p-values"
+        
+    def __repr__(self) -> str:
+        """Returns the description of the table."""
+        return "Friedman p-values Table"
