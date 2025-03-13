@@ -1,5 +1,5 @@
-from SAES.utils.dataframe_processor import process_dataframe_metric
 from SAES.statistical_tests.non_parametrical import friedman, friedman_aligned_rank, quade, wilcoxon
+from SAES.utils.dataframe_processor import process_dataframe_metric
 from SAES.statistical_tests.parametrical import t_test, anova
 from SAES.utils.dataframe_processor import check_normality
 from SAES.logger import get_logger
@@ -488,14 +488,14 @@ class Friedman(Table):
 
     def __str__(self) -> str:
         """Returns the name of the table."""
-        return "Friedman"
+        return f"Friedman {self.friedman_test}"
         
     def __repr__(self) -> str:
         """Returns the description of the table."""
         if self.normal:
-            return "Mean and Standard Deviation Friedman Table"
+            return f"Mean and Standard Deviation Friedman {self.friedman_test} Table"
         else:
-            return "Median and Interquartile Range Friedman Table"
+            return f"Median and Interquartile Range Friedman {self.friedman_test} Table"
 
 class WilcoxonPivot(Table):
     """Class for generating the Wilcoxon Pivot table."""
@@ -1122,12 +1122,3 @@ class TTest(Table):
         """Returns the description of the table."""
         return "T-Test 1vs1 Table"
     
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/SAES/notebooks/multiobjective/swarmIntelligence.csv"
-    metrics = "/home/khaosdev/SAES/notebooks/multiobjective/multiobjectiveMetrics.csv"
-    metric = "HV"
-
-    wilcoxon_table = Wilcoxon(data, metrics, metric)
-    wilcoxon_table.compute_table()
-    print(wilcoxon_table.table)

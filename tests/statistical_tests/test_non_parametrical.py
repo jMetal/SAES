@@ -1,4 +1,4 @@
-from SAES.statistical_tests.non_parametrical import friedman, wilcoxon, NemenyiCD
+from SAES.statistical_tests.non_parametrical import friedman, wilcoxon, NemenyiCD, friedman_aligned_rank, quade
 import pandas as pd
 import unittest
 
@@ -53,3 +53,28 @@ class TestStatisticalTests(unittest.TestCase):
         result = NemenyiCD(0.05, 5, 2)
         self.assertAlmostEqual(result, 41.4507836, 2)
         
+    def test_friedman_align_test(self):
+        
+        result = friedman_aligned_rank(self.friedman_data, maximize=True)
+        self.assertIn("Results", result.columns)
+        self.assertGreater(result.loc["Aligned Rank stat", "Results"], 0)
+        self.assertGreaterEqual(result.loc["p-value", "Results"], 0)
+        self.assertLessEqual(result.loc["p-value", "Results"], 1)
+
+    def test_friedman_align_test_raises(self):
+        
+        with self.assertRaises(ValueError):
+            friedman_aligned_rank(pd.DataFrame(), maximize=True)  # No data
+
+    def test_quade_test(self):
+        
+        result = quade(self.friedman_data, maximize=True)
+        self.assertIn("Results", result.columns)
+        self.assertGreater(result.loc["Quade Test stat", "Results"], 0)
+        self.assertGreaterEqual(result.loc["p-value", "Results"], 0)
+        self.assertLessEqual(result.loc["p-value", "Results"], 1)
+
+    def test_quade_test_raises(self):
+        
+        with self.assertRaises(ValueError):
+            quade(pd.DataFrame(), maximize=True)  # No data

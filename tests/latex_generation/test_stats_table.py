@@ -1,4 +1,4 @@
-from SAES.latex_generation.stats_table import MeanMedian, Friedman, WilcoxonPivot, Wilcoxon  
+from SAES.latex_generation.stats_table import MeanMedian, Friedman, WilcoxonPivot, Wilcoxon, Anova, TTest, TTestPivot, FriedmanPValues
 import pandas.testing as pdt
 import unittest, os
 import pandas as pd
@@ -170,3 +170,118 @@ class TestTableClasses(unittest.TestCase):
 
         wilcoxon.show()
         self.assertTrue(True)
+
+    def test_anova_difference(self):
+        anova = Anova(self.data_diff, self.metrics, self.metric)
+        anova.compute_table()
+        self.assertAlmostEqual(anova.table.loc["I1", "A1"], 0.169, places=2)
+        self.assertAlmostEqual(anova.table.loc["I1", "A2"], 5.0, places=2)
+        self.assertEqual(anova.table.loc["I1", "Anova"], "=")
+
+    def test_anova_no_difference(self):
+        anova = Anova(self.data_no_diff, self.metrics, self.metric)
+        anova.compute_table()
+        self.assertEqual(anova.table.loc["I1", "Anova"], "=")
+        self.assertEqual(anova.table.loc["I2", "Anova"], "=")
+
+    def test_ttest_pivot_difference(self):
+        ttest_pivot = TTestPivot(self.data_diff, self.metrics, self.metric)
+        ttest_pivot.compute_table()
+        self.assertAlmostEqual(ttest_pivot.table.loc["I1", "A1"][0], 0.169, places=2)
+        self.assertEqual(ttest_pivot.table.loc["I1", "A1"][1], "+")
+        self.assertAlmostEqual(ttest_pivot.table.loc["I1", "A2"][0], 5.0, places=2)
+        self.assertEqual(ttest_pivot.table.loc["I1", "A2"][1], "")
+    
+    def test_ttest_pivot_no_difference(self):
+        ttest_pivot = TTestPivot(self.data_no_diff, self.metrics, self.metric)
+        ttest_pivot.compute_table()
+        self.assertEqual(ttest_pivot.table.loc["I1", "A3"], (12.5, ""))
+        self.assertEqual(ttest_pivot.table.loc["I2", "A3"], (14.5, ""))
+        self.assertAlmostEqual(ttest_pivot.table.loc["I1", "A1"][0], 0.15, places=2)
+        self.assertEqual(ttest_pivot.table.loc["I1", "A1"][1], "+")
+    
+    def test_ttest_difference(self):
+        ttest = TTest(self.data_diff, self.metrics, self.metric)
+        ttest.compute_table()
+        self.assertEqual(ttest.table.loc["A1", "A2"], "-")
+
+    def test_ttest_no_difference(self):
+        ttest = TTest(self.data_no_diff, self.metrics, self.metric)
+        ttest.compute_table()
+        self.assertEqual(ttest.table.loc["A1", "A2"], "--")
+        self.assertEqual(ttest.table.loc["A1", "A3"], "--")
+        self.assertEqual(ttest.table.loc["A2", "A3"], "+-")
+        self.assertEqual(ttest.table.loc["A2", "A2"], "")
+
+    def test_mean_anova_table(self):
+        anova = Anova(self.swarmIntelligence, self.multiobjectiveMetrics, "HV")
+        anova.compute_table()
+
+        # Check if the table is correct
+        self.assertAlmostEqual(anova.table.loc["ZDT6", "AutoMOPSOZ"], 0.401480, places=2)
+        self.assertEqual(anova.table.loc["ZDT6", "Anova"], "=")
+        
+        anova.create_latex_table()
+        latex_doc = anova.latex_doc
+        anova.save("tests/latex_generation", file_name="Anova_HV.tex")
+        
+        with open("tests/latex_generation/Anova_HV.tex", "r") as file:
+            contenido = file.read()
+
+        # Check if the latex table is correct
+        self.assertEqual(latex_doc, contenido)
+        os.remove("tests/latex_generation/Anova_HV.tex")
+
+        anova.show()
+        self.assertTrue(True)
+
+    def test_mean_ttest_pivot_table(self):
+        ttest_pivot = TTestPivot(self.swarmIntelligence, self.multiobjectiveMetrics, "HV")
+        ttest_pivot.compute_table()
+
+        # Check if the table is correct
+        self.assertAlmostEqual(ttest_pivot.table.loc["ZDT6", "AutoMOPSOZ"][0], 0.401480, places=2)
+        self.assertEqual(ttest_pivot.table.loc["ZDT6", "AutoMOPSOZ"][1], "")
+        self.assertEqual(ttest_pivot.table.loc["ZDT6", "NSGAII"][1], "+")
+
+        ttest_pivot.create_latex_table()
+        latex_doc = ttest_pivot.latex_doc
+        ttest_pivot.save("tests/latex_generation", file_name="TtestPivot_HV.tex")
+
+        with open("tests/latex_generation/TtestPivot_HV.tex", "r") as file:
+            contenido = file.read()
+
+        # Check if the latex table is correct
+        self.assertEqual(latex_doc, contenido)
+        os.remove("tests/latex_generation/TtestPivot_HV.tex")
+
+        ttest_pivot.show()
+        self.assertTrue(True)
+
+    def test_mean_ttest_table(self):
+        ttest = TTest(self.swarmIntelligence, self.multiobjectiveMetrics, "HV")
+        ttest.compute_table()
+
+        # Check if the table is correct
+        self.assertEqual(ttest.table.loc["NSGAII", "AutoMOPSOZ"], "---+-++==+--")
+        
+        ttest.create_latex_table()
+        latex_doc = ttest.latex_doc
+        ttest.save("tests/latex_generation", file_name="Ttest_HV.tex")
+        
+        with open("tests/latex_generation/Ttest_HV.tex", "r") as file:
+            contenido = file.read()
+
+        # Check if the latex table is correct
+        self.assertEqual(latex_doc, contenido)
+        os.remove("tests/latex_generation/Ttest_HV.tex")
+
+        ttest.show()
+        self.assertTrue(True)
+
+
+
+
+        
+
+        
