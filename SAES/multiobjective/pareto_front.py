@@ -41,7 +41,7 @@ class Front(ABC):
             Generates a Pareto front for the specified instance and displays it.
     """
 
-    def __init__(self, fronts_path: str, references_path: str, metric: str) -> None:
+    def __init__(self, fronts_path: str, references_path: str, metric: str, dimensions: int) -> None:
         """
         Initializes the Front object with the given fronts path, references path, and metric.
 
@@ -54,6 +54,9 @@ class Front(ABC):
 
             metric (str):
                 The metric used to generate the fronts.
+
+            dimensions (int):
+                The number of dimensions of the Pareto front
 
         Returns:
             None
@@ -73,6 +76,7 @@ class Front(ABC):
         self.fronts_path = fronts_path
         self.references_path = references_path
         self.metric = metric
+        self.dimensions = dimensions
     
         self.algorithms = sorted([
             algorithm for algorithm in os.listdir(fronts_path) 
@@ -163,7 +167,7 @@ class Front2D(Front):
     """Class to generate 2D Pareto fronts for different algorithms and instances."""
     def __init__(self, fronts_path: str, references_path: str, metric: str) -> None:
         """Initializes the Front2D object with the given fronts path, references path, and metric."""
-        super().__init__(fronts_path, references_path, metric)
+        super().__init__(fronts_path, references_path, metric, 2)
 
     def _front(self, front_paths: list, instance: str) -> None:
         """Generates a 2D Pareto front for the specified instance."""
@@ -180,7 +184,7 @@ class Front2D(Front):
         _, axes = plt.subplots(rows, cols, figsize=(cols*6, rows*6))
         axes = axes.flatten()  
 
-        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.2D.csv"] + front_paths, ["Reference"] + self.algorithms)):
+        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.{self.dimensions}D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
             
@@ -207,7 +211,7 @@ class Front3D(Front):
     """Class to generate 3D Pareto fronts for different algorithms and instances."""
     def __init__(self, fronts_path: str, references_path: str, metric: str) -> None:
         """Initializes the Front3D object with the given fronts path, references path, and metric."""
-        super().__init__(fronts_path, references_path, metric)
+        super().__init__(fronts_path, references_path, metric, 3)
 
     def _front(self, front_paths: list, instance: str) -> None:
         """Generates a 3D Pareto front for the specified instance."""
@@ -223,7 +227,7 @@ class Front3D(Front):
         
         fig = plt.figure(figsize=(cols * 6, rows * 6))
         
-        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.3D.csv"] + front_paths, ["Reference"] + self.algorithms)):
+        for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.{self.dimensions}D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
             
@@ -252,8 +256,7 @@ class FrontND(Front):
     """Class to generate ND Pareto fronts for different algorithms and instances."""
     def __init__(self, fronts_path: str, references_path: str, metric: str, dimensions: int) -> None:
         """Initializes the FrontND object with the given fronts path, references path, metric, and dimensions."""
-        super().__init__(fronts_path, references_path, metric)
-        self.dimensions = dimensions
+        super().__init__(fronts_path, references_path, metric, dimensions)
 
     def _front(self, front_paths: list, instance: str) -> None:
         """Generates an ND Pareto front for the specified instance."""

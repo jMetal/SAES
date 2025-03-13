@@ -11,7 +11,12 @@ The current version of the tool offers the following capabilities:
 2. **Statistical analysis**  
    - **Non-parametric tests**:  
      - Friedman test  
+     - Friedman aligned-rank test
+     - Quade test
      - Wilcoxon signed-rank test  
+   - **Parametric tests**:
+     - T-Test
+     - Anova
    - **Post hoc analysis**:  
      - Nemenyi test (critical distance)
 
@@ -21,6 +26,10 @@ The current version of the tool offers the following capabilities:
      - Median table with Friedman test  
      - Median table with Wilcoxon pairwise test (pivot-based)  
      - Pairwise Wilcoxon test table (1-to-1 comparison)  
+     - Friedman P-Values table (for multiple friedman test variations)
+     - Mean table with Anova test
+     - Mean table with T-Test pairewise test (pivot-based)
+     - Pairwise T-Test table (1-to-1 comparison)
 
 4. **Visualization**  
    - **Boxplot graphs** for algorithm comparison.  

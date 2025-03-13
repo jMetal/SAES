@@ -20,13 +20,16 @@ This is the documentation for the `SAES` python library, which is a Python libra
 
 2. **Statistical analysis**  
 
-   - **Parametric tests**:
-
-     - Normality test
    - **Non-parametric tests**:  
 
-     - Friedman test  
-     - Wilcoxon signed-rank test  
+     - Friedman test 
+     - Friedman aligned-rank test
+     - Quade test   
+     - Wilcoxon signed-rank test 
+   - **Parametric tests**:
+
+     - T-Test
+     - Anova 
    - **Post hoc analysis**:  
    
      - Nemenyi test (critical distance)
@@ -37,6 +40,10 @@ This is the documentation for the `SAES` python library, which is a Python libra
    - Automated LaTeX **Median table with Friedman test** report
    - Automated LaTeX **Median table with Wilcoxon pairwise test (pivot-based)** report
    - Automated LaTeX **Pairwise Wilcoxon test table (1-to-1 comparison)** report 
+   - Automated LaTeX **Friedman P-Values table (for multiple friedman test variations)** report
+   - Automated LaTeX **Mean table with Anova test** report
+   - Automated LaTeX **Mean table with T-Test pairewise test (pivot-based)** report
+   - Automated LaTeX **Pairwise T-Test table (1-to-1 comparison)** report
 
 4. **Visualization**  
 
@@ -80,4 +87,3 @@ Once you have activated the virtual environment, you can install the project and
    API/api
    command_line/command_line
    usage/usage
-

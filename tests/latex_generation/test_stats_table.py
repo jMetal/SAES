@@ -155,7 +155,7 @@ class TestTableClasses(unittest.TestCase):
         wilcoxon.compute_table()
 
         # Check if the table is correct
-        self.assertEqual(wilcoxon.table.loc["NSGAII", "AutoMOPSOZ"], "---+--+=+=--")
+        self.assertEqual(wilcoxon.table.loc["NSGAII", "AutoMOPSOZ"], "---+--+==+--")
         
         wilcoxon.create_latex_table()
         latex_doc = wilcoxon.latex_doc

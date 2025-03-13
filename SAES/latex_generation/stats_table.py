@@ -1,6 +1,6 @@
 from SAES.utils.dataframe_processor import process_dataframe_metric
-from SAES.statistical_tests.non_parametrical import friedman
-from SAES.statistical_tests.non_parametrical import wilcoxon
+from SAES.statistical_tests.non_parametrical import friedman, friedman_aligned_rank, quade, wilcoxon
+from SAES.statistical_tests.parametrical import t_test, anova
 from SAES.utils.dataframe_processor import check_normality
 from SAES.logger import get_logger
 
@@ -11,6 +11,12 @@ import os
 
 # Article reference: https://www.statology.org/friedman-test-python/
 # Wikipedia reference: https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test
+
+friedman_tests = { 
+    "base": friedman,
+    "aligned": friedman_aligned_rank,
+    "quade": quade
+}
 
 def _highlight_max(table: pd.DataFrame):
     """Highlight the maximum value in each row."""
@@ -382,9 +388,21 @@ class MeanMedian(Table):
 
 class Friedman(Table):
     """Class for generating the Friedman table."""
-    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False) -> None:
-        """Initializes the MeanMedian object with the given data, metrics, metric, and normality."""
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False, 
+                 friedman_test: str = "base") -> None:
+        """
+        Initializes the Friedman object with the given data, metrics, metric, and normality.
+        
+        Args: 
+            friedman_test (str):
+                The type of Friedman test to be performed. Default is "base". List of available tests:
+                    - "base": Friedman's rank sum test.
+                    - "aligned": Friedman aligned rank test.
+                    - "quade": Quade test
+        """
+
         super().__init__(data, metrics, metric, normal=normal)
+        self.friedman_test = friedman_test
 
     def compute_table(self) -> None:
         """Computes the Friedman table."""
@@ -399,10 +417,11 @@ class Friedman(Table):
         for instance in self.instances:
             data = self.data[self.data['Instance'] == instance]
             friedman_table = data.pivot(index='ExecutionId', 
-            columns='Algorithm', values='MetricValue').reset_index().drop(columns='ExecutionId')
+                                        columns='Algorithm', 
+                                        values='MetricValue').reset_index().drop(columns='ExecutionId')
 
-            friedman_results = friedman(friedman_table, self.maximize)
-            self.table.loc[instance, 'Friedman'] = "+"
+            friedman_results = friedman_tests[self.friedman_test](friedman_table, self.maximize)
+            
             if friedman_results["Results"]["p-value"] < 0.05:
                 self.table.loc[instance, 'Friedman'] = "+"
             else:
@@ -572,8 +591,8 @@ class WilcoxonPivot(Table):
 
         self.latex_doc += """
         \\caption{""" + self.metric + """.  """ + str(self.__repr__()) + (
-            f" (+/- implies that the pivot algorithm (last column) is statistically "
-            f"worse/better, = indicates that the differences are not significant.)\n") + """}
+            f" (- implies that the pivot algorithm (last column) is statistically "
+            f"worse, = indicates that the differences are not significant.)\n") + """}
         \\vspace{1mm}
         \\centering
         \\begin{scriptsize}
@@ -665,8 +684,8 @@ class Wilcoxon(Table):
     def _latex_header(self) -> None:
         """Creates the LaTeX header for the table."""
 
-        header_explanation = (". Each symbol in the cells represents a problem. Symbol +/- indicates that the row/column "
-                          "algorithm performs better with statistical confidence;  symbol = implies that "
+        header_explanation = (". Each symbol in the cells represents a problem. Symbol - indicates that the row "
+                          "algorithm performs worse with statistical confidence;  symbol = implies that "
                           "the differences are not significant.")
         
         self.latex_doc += """
@@ -685,3 +704,430 @@ class Wilcoxon(Table):
     def __repr__(self) -> str:
         """Returns the description of the table."""
         return "Wilcoxon Test 1vs1 Table"
+    
+class FriedmanPValues(Table):
+    """Class for generating the Friedman table."""
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = False) -> None:
+        """Initializes the MeanMedian object with the given data, metrics, metric, and normality."""
+        super().__init__(data, metrics, metric, normal=normal)
+
+    def compute_table(self) -> None:
+        """Computes the Friedman table."""
+
+        if self.normal:
+            self.logger.warning('Friedman test is only applicable for non normal data. The test will be skipped.')
+            return
+
+        self.compute_base_table()
+        self.table = pd.DataFrame(0.0, 
+                                  index=self.instances, 
+                                  columns=["Friedman p-value", "Friedman Aligned p-value", "Quade p-value", "Friedman"])
+        
+        self.table["Friedman"] = "="
+
+        # Loop over instances and format the row data
+        for instance in self.instances:
+            # Get the data for the instance
+            data = self.data[self.data['Instance'] == instance]
+            friedman_table = data.pivot(index='ExecutionId', 
+                                        columns='Algorithm', 
+                                        values='MetricValue').reset_index().drop(columns='ExecutionId')
+            
+            # Compute the Friedman test results
+            friedman_results = friedman(friedman_table, self.maximize)
+            friedman_aligned_results = friedman_aligned_rank(friedman_table, self.maximize)
+            quade_results = quade(friedman_table, self.maximize)
+
+            # Update the table with the p-values
+            self.table.loc[instance, 'Friedman p-value'] = friedman_results["Results"]["p-value"]
+            self.table.loc[instance, 'Friedman Aligned p-value'] = friedman_aligned_results["Results"]["p-value"]
+            self.table.loc[instance, 'Quade p-value'] = quade_results["Results"]["p-value"]
+
+            # Update the table with the Friedman result
+            if friedman_results["Results"]["p-value"] < 0.05 and friedman_aligned_results["Results"]["p-value"] < 0.05 and quade_results["Results"]["p-value"] < 0.05:
+                self.table.loc[instance, 'Friedman'] = "+"
+
+    def show(self)  -> None:
+        """Displays the table in a Jupyter notebook."""
+
+        self.compute_table()
+        styled_df = self.table.style
+        styled_df.format({col: "{:.4e}" for col in self.table.select_dtypes(include=["number"]).columns})
+
+        return styled_df
+    
+    def _create_latex_table(self) -> None:
+        """Creates the LaTeX table content."""
+
+        # Loop over instances and format the row data
+        for instance in self.instances:
+            row_data = f"{instance} & "
+            # Loop over algorithms and format the row data
+            for name in self.table.columns:
+                # Get the value for the instance and name
+                value = self.table.loc[instance, name]
+
+                # Create the formatted string based on conditions
+                if type(value) == str:
+                    row_data += f"$\\text{{{value}}}$ & "
+                else:
+                    row_data += f"$\\SI{{{value:.2e}}}{{}}$ & "
+
+            # Add the row data to the LaTeX document
+            self.latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
+
+    def _latex_header(self) -> None:
+        """Creates the LaTeX header for the table."""
+
+        self.latex_doc += """
+        \\caption{""" + self.metric + """.  """ + str(self.__repr__()) + f" (+ implies that the difference between the algorithms for the instance in the select row is significant)\n" + """}
+        \\vspace{1mm}
+        \\centering
+        \\begin{scriptsize}
+        \\begin{tabular}{l|""" + """c|""" * (len(friedman_tests)) + """c}
+        \\hline
+        & """ + " & ".join([f"friedman {name} test" for name in friedman_tests.keys()]) + " & FT \\\\ \\hline\n"
+
+    def __str__(self) -> str:
+        """Returns the name of the table."""
+        return "p-values"
+        
+    def __repr__(self) -> str:
+        """Returns the description of the table."""
+        return "Friedman p-values Table"
+
+class Anova(Table):
+    """Class for generating the Anova table."""
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = True) -> None:
+        """
+        Initializes the Anova object with the given data, metrics, metric, and normality.
+        
+        Args: 
+            friedman_test (str):
+                The type of Friedman test to be performed. Default is "base". List of available tests:
+                    - "base": Friedman's rank sum test.
+                    - "aligned": Friedman aligned rank test.
+                    - "quade": Quade test
+        """
+
+        super().__init__(data, metrics, metric, normal=normal)
+
+    def compute_table(self) -> None:
+        """Computes the Anova table."""
+
+        if not self.normal:
+            self.logger.warning('Anova test is only applicable for non normal data. The test will be skipped.')
+            return
+        
+        if not self.normality:
+            self.logger.warning('Anova test is only applicable for normal data. The test will not be skipped.')
+
+        self.compute_base_table()
+
+        self.table = self.mean_median.copy()
+        for instance in self.instances:
+            data = self.data[self.data['Instance'] == instance]
+            anova_table = data.pivot(index='ExecutionId', 
+                                        columns='Algorithm', 
+                                        values='MetricValue').reset_index().drop(columns='ExecutionId')
+
+            anova_results = anova(anova_table)
+            
+            if anova_results["Results"]["p-value"] < 0.05:
+                self.table.loc[instance, 'Anova'] = "+"
+            else:
+                self.table.loc[instance, 'Anova'] = "="
+
+    def show(self)  -> None:
+        """Displays the table in a Jupyter notebook."""
+
+        self.compute_table()
+        if self.maximize:
+            styled_df = self.table.style.apply(_highlight_max, axis=1)
+        else:
+            styled_df = self.table.style.apply(_highlight_min, axis=1)
+
+        styled_df.format({col: "{:.4e}" for col in self.table.select_dtypes(include=["number"]).columns})
+
+        return styled_df
+    
+    def _create_latex_table(self) -> None:
+        """Creates the LaTeX table content."""
+
+        # Loop over instances and format the row data
+        for instance in self.instances:
+            row_data = f"{instance} & "
+            median = self.mean_median.loc[instance]
+            std_dev = self.std_iqr.loc[instance]
+            
+            # Compute df_global and find the max and second idx
+            # TODO: MAYBE this is not optimal, but it is a simple way to get the max and second max
+            df_global = median / std_dev
+            max_idx = df_global.idxmax()
+            second_idx = df_global.drop(max_idx).idxmax()
+
+            # Loop over algorithms and format the row data
+            for algorithm in self.algorithms:
+                score1 = median[algorithm]
+                score2 = std_dev[algorithm]
+
+                # Create the formatted string based on conditions
+                if algorithm == max_idx:
+                    row_data += f"\\cellcolor{{gray95}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }}$ & "
+                elif algorithm == second_idx:
+                    row_data += f"\\cellcolor{{gray25}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }}$ & "
+                else:
+                    row_data += f"$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }}$ & "
+
+                # Add the Anova result to the last column
+                if algorithm == self.algorithms[-1]:
+                    row_data += f"{self.table.loc[instance, 'Anova']} & "
+
+            self.latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
+
+    def _latex_header(self) -> None:
+        """Creates the LaTeX header for the table."""
+
+        self.latex_doc += """
+        \\caption{""" + self.metric + """.  """ + str(self.__repr__()) + f" (+ implies that the difference between the algorithms for the instance in the select row is significant)\n" + """}
+        \\vspace{1mm}
+        \\centering
+        \\begin{scriptsize}
+        \\begin{tabular}{l|""" + """c|""" * (len(self.algorithms)) + """c}
+        \\hline
+        & """ + " & ".join(self.algorithms) + " & FT \\\\ \\hline\n"
+
+    def __str__(self) -> str:
+        """Returns the name of the table."""
+        return "Anova"
+        
+    def __repr__(self) -> str:
+        """Returns the description of the table."""
+        if self.normal:
+            return "Mean and Standard Deviation Anova Table"
+        else:
+            return "Median and Interquartile Range Anova Table"
+
+class TTestPivot(Table):
+    """Class for generating the T-Test Pivot table."""
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = True, pivot: str = None) -> None:
+        """Initializes the T-Test Pivot object with the given data, metrics, metric, and normality."""
+        super().__init__(data, metrics, metric, normal=normal)
+
+        # Move the pivot algorithm to the last position
+        if pivot is not None:
+            if pivot not in self.algorithms:
+                raise ValueError(f"Algorithm {pivot} not found in the data.")
+            
+            self.algorithms = self.algorithms[self.algorithms != pivot]
+            self.algorithms = np.append(self.algorithms, pivot)
+
+    def compute_table(self) -> None:
+        """Computes the T-Test Pivot table."""
+
+        if not self.normal:
+            self.logger.warning('T-Test Pivot is only applicable for normal data. The test will be skipped.')
+            return
+        
+        if not self.normality:
+            self.logger.warning('T-Test Pivot test is only applicable for normal data. The test will not be skipped.')
+        
+        self.compute_base_table()
+
+        self.table = self.mean_median.copy().map(lambda x: (x, ''))
+        pivot_algorithm = self.algorithms[-1]
+        for instance in self.instances:
+            data = self.data[self.data['Instance'] == instance]
+            data = data.pivot(index='ExecutionId', columns='Algorithm', values='MetricValue').reset_index().drop(columns='ExecutionId')
+            
+            for algorithm in self.algorithms:
+                if algorithm == pivot_algorithm:
+                    continue
+                
+                ttest_table = data[[pivot_algorithm, algorithm]]
+                ttest_table.index.name, ttest_table.columns.name = None, None
+                ttest_table.columns = ["Algorithm A", "Algorithm B"]
+                wilcoxon_result = t_test(ttest_table, self.maximize)
+                self.table.loc[instance, algorithm] = (self.table.loc[instance, algorithm][0], wilcoxon_result)
+    
+    def show(self) -> None:
+        """Displays the table in a Jupyter notebook."""
+        pass
+
+    def _create_latex_table(self) -> None:
+        """Creates the LaTeX table content."""
+
+        ranks = {algorithm: [0, 0, 0] for algorithm in self.algorithms[:-1]}
+        # Loop over instances and format the row data
+        for instance in self.instances:
+            row_data = f"{instance} & "
+            median = self.mean_median.loc[instance]
+            std_dev = self.std_iqr.loc[instance]
+            
+            # Compute df_global and find the max and second idx
+            df_global = median / std_dev
+            max_idx = df_global.idxmax()
+            second_idx = df_global.drop(max_idx).idxmax()
+
+            # Loop over algorithms and format the row data
+            for algorithm in self.algorithms:
+                ttest_result = self.table.loc[instance, algorithm][1]
+
+                # Update the ranks for the T-Test test results
+                if algorithm != self.algorithms[-1]:
+                    if ttest_result == "+":
+                        ranks[algorithm][0] += 1
+                    elif ttest_result == "-":
+                        ranks[algorithm][1] += 1
+                    else:
+                        ranks[algorithm][2] += 1
+
+                score1 = median[algorithm]
+                score2 = std_dev[algorithm]
+
+                # Create the formatted string based on conditions
+                if algorithm == max_idx:
+                    row_data += f"\\cellcolor{{gray95}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {ttest_result}$ & "
+                elif algorithm == second_idx:
+                    row_data += f"\\cellcolor{{gray25}}$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {ttest_result}$ & "
+                else:
+                    row_data += f"$\\SI{{{score1:.2e}}}{{}}_{{ \\SI{{{score2:.2e}}}{{}} }} {ttest_result}$ & "
+
+            self.latex_doc += row_data.rstrip(" & ") + " \\\\ \n"
+
+        # Add the last row with the ranks
+        self.latex_doc += """\\hline + / - / ="""
+        for _, rank in ranks.items():
+            self.latex_doc += f" & \\textbf{rank[0]} / \\textbf{rank[1]} / \\textbf{rank[2]}"
+
+    def _latex_header(self) -> None:
+        """Creates the LaTeX header for the table."""
+
+        self.latex_doc += """
+        \\caption{""" + self.metric + """.  """ + str(self.__repr__()) + (
+            f" (- implies that the pivot algorithm (last column) is statistically "
+            f"worse, = indicates that the differences are not significant.)\n") + """}
+        \\vspace{1mm}
+        \\centering
+        \\begin{scriptsize}
+        \\begin{tabular}{l|""" + """c|""" * (len(self.algorithms) - 1) + """c}
+        \\hline
+        & """ + " & ".join(self.algorithms) + " \\\\ \\hline\n"
+
+    def __str__(self) -> str:
+        """Returns the name of the table."""
+        return "T-TestPivot"
+        
+    def __repr__(self) -> str:
+        """Returns the description of the table."""
+        if self.normal:
+            return "Mean and Standard Deviation T-Test Pivot Table"
+        else:
+            return "Median and Interquartile Range T-Test Pivot Table"
+
+class TTest(Table):
+    """Class for generating the T-Test table."""
+    def __init__(self, data: str | pd.DataFrame, metrics: str | pd.DataFrame, metric: str, normal: bool = True) -> None:
+        """Initializes the T-Test object with the given data, metrics, metric, and normality."""
+        super().__init__(data, metrics, metric, normal=normal)
+
+    def compute_table(self) -> None:
+        """Computes the T-Test table."""
+
+        if not self.normal:
+            self.logger.warning('T-Test test is only applicable for non normal data. The test will be skipped.')
+            return
+        
+        if not self.normality:
+            self.logger.warning('T-Test test is only applicable for normal data. The test will not be skipped.')
+
+        self.compute_base_table()
+
+        self.table = pd.DataFrame("", index=self.algorithms[:-1], columns=self.algorithms[1:])
+
+        for i, fila in enumerate(self.algorithms[:-1]):
+            for _, columna in enumerate(self.algorithms[i+1:]):
+                ttest_result = ""
+                for instance in self.instances:
+                    data = self.data[self.data['Instance'] == instance]
+                    data = data.pivot(index='ExecutionId', columns='Algorithm', values='MetricValue').reset_index().drop(columns='ExecutionId')
+                    ttest_table = data[[fila, columna]]
+                    ttest_table.index.name, ttest_table.columns.name = None, None
+                    ttest_table.columns = ["Algorithm A", "Algorithm B"]
+                    ttest_result += t_test(ttest_table, self.maximize)
+                
+                self.table.at[fila, columna] = ttest_result
+    
+    def show(self) -> None:
+        """Displays the table in a Jupyter notebook."""
+        self.compute_table()
+        return self.table.style.set_properties(**{'font-size': '12px', 'font-family': 'monospace'})
+
+    def _create_latex_table(self) -> None:
+        """Creates the LaTeX table content."""
+
+        # Generate comparisons and populate table
+        compared_pairs = set()
+
+        # Loop over algorithms and format the row data
+        for algorithm1 in self.algorithms:
+            if algorithm1 == self.algorithms[-1]:
+                continue
+            self.latex_doc += algorithm1 + " & "
+
+            # Loop over algorithms and format the row data
+            for algorithm2 in self.algorithms:
+                if algorithm2 == self.algorithms[0]:
+                    continue
+                if algorithm1 == algorithm2:
+                    self.latex_doc += " & "
+                    continue
+
+                # Create a pair of algorithms
+                pair = tuple(sorted([algorithm1, algorithm2]))
+                self.latex_doc += "\\texttt{"
+                
+                # Check if the pair has already been processed
+                if pair not in compared_pairs:
+                    # Mark the pair as processed
+                    compared_pairs.add(pair)
+                    for index, _ in enumerate(self.instances):
+                        ttest_results = self.table.loc[algorithm1, algorithm2][index]
+                        self.latex_doc += ttest_results
+                        
+                self.latex_doc += "} & "
+            self.latex_doc = self.latex_doc.rstrip(" & ") + " \\\\\n"
+
+    def _latex_header(self) -> None:
+        """Creates the LaTeX header for the table."""
+
+        header_explanation = (". Each symbol in the cells represents a problem. Symbol - indicates that the row "
+                          "algorithm performs worse with statistical confidence;  symbol = implies that "
+                          "the differences are not significant.")
+        
+        self.latex_doc += """
+        \\caption{""" + self.metric + """.  """ + str(self.__repr__()) + header_explanation + f" Instances (in order) : {self.instances}\n" + """}
+        \\vspace{1mm}
+        \\centering
+        \\begin{scriptsize}
+        \\begin{tabular}{l|""" + """c|""" * (len(self.algorithms) - 2) + """c}
+        \\hline
+        & """ + " & ".join(self.algorithms[1:]) + " \\\\ \\hline\n"
+
+    def __str__(self) -> str:
+        """Returns the name of the table."""
+        return "T-Test"
+    
+    def __repr__(self) -> str:
+        """Returns the description of the table."""
+        return "T-Test 1vs1 Table"
+    
+
+if __name__ == "__main__":
+    data = "/home/khaosdev/SAES/notebooks/multiobjective/swarmIntelligence.csv"
+    metrics = "/home/khaosdev/SAES/notebooks/multiobjective/multiobjectiveMetrics.csv"
+    metric = "HV"
+
+    wilcoxon_table = Wilcoxon(data, metrics, metric)
+    wilcoxon_table.compute_table()
+    print(wilcoxon_table.table)
