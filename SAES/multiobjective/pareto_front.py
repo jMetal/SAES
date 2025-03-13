@@ -190,8 +190,7 @@ class Front2D(Front):
             
             # Read the front
             df = pd.read_csv(front_path, header=None)
-            x = df[0]
-            y = df[1]
+            x, y = df[0], df[1]
             
             # Create the plot
             ax = axes[i]

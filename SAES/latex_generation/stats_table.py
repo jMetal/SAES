@@ -1,5 +1,5 @@
-from SAES.utils.dataframe_processor import process_dataframe_metric
 from SAES.statistical_tests.non_parametrical import friedman, friedman_aligned_rank, quade, wilcoxon
+from SAES.utils.dataframe_processor import process_dataframe_metric
 from SAES.statistical_tests.parametrical import t_test, anova
 from SAES.utils.dataframe_processor import check_normality
 from SAES.logger import get_logger
@@ -307,6 +307,32 @@ class Table(ABC):
         """Returns the description of the table."""
         pass
 
+    def rank_top_two(self, instance: str) -> tuple:
+        """Returns the first and second best algorithms based on the data."""
+
+        # Retrieve mean/median and std/iqr values for the given instance
+        mean_median  = self.mean_median.loc[instance]
+        std_iqr = self.std_iqr.loc[instance]
+        
+        # Default to mean/median for ranking
+        df_global = mean_median.copy()
+        if self.maximize:
+            # Find the best and second-best algorithms based on highest values
+            max_idx = df_global.idxmax()
+            second_idx = df_global.drop(max_idx).idxmax()
+        else:
+            # Find the best and second-best algorithms based on lowest values
+            max_idx = df_global.idxmin()
+            second_idx = df_global.drop(max_idx).idxmin()
+
+        if df_global[max_idx] == df_global[second_idx]:
+            # If there's a tie, use std/iqr to decide
+            df_global = std_iqr.copy()
+            max_idx = df_global.idxmin()
+            second_idx = df_global.drop(max_idx).idxmin()
+
+        return mean_median, std_iqr, max_idx, second_idx
+
 class MeanMedian(Table):
     """Class for generating the Mean and Standard Deviation or Median and Interquartile Range table."""
 
@@ -339,18 +365,12 @@ class MeanMedian(Table):
         # Loop over instances and format the row data
         for instance in self.instances:
             row_data = f"{instance} & "
-            median = self.mean_median.loc[instance]
-            std_dev = self.std_iqr.loc[instance]
-            
-            # Compute df_global and find the max and second idx
-            df_global = median / std_dev
-            max_idx = df_global.idxmax()
-            second_idx = df_global.drop(max_idx).idxmax()
+            mean_median, std_iqr, max_idx, second_idx = self.rank_top_two(instance)
 
             # Loop over algorithms and format the row data
             for algorithm in self.algorithms:
-                score1 = median[algorithm]
-                score2 = std_dev[algorithm]
+                score1 = mean_median[algorithm]
+                score2 = std_iqr[algorithm]
 
                 # Create the formatted string based on conditions
                 if algorithm == max_idx:
@@ -446,19 +466,12 @@ class Friedman(Table):
         # Loop over instances and format the row data
         for instance in self.instances:
             row_data = f"{instance} & "
-            median = self.mean_median.loc[instance]
-            std_dev = self.std_iqr.loc[instance]
-            
-            # Compute df_global and find the max and second idx
-            # TODO: MAYBE this is not optimal, but it is a simple way to get the max and second max
-            df_global = median / std_dev
-            max_idx = df_global.idxmax()
-            second_idx = df_global.drop(max_idx).idxmax()
+            mean_median, std_iqr, max_idx, second_idx = self.rank_top_two(instance)
 
             # Loop over algorithms and format the row data
             for algorithm in self.algorithms:
-                score1 = median[algorithm]
-                score2 = std_dev[algorithm]
+                score1 = mean_median[algorithm]
+                score2 = std_iqr[algorithm]
 
                 # Create the formatted string based on conditions
                 if algorithm == max_idx:
@@ -488,14 +501,14 @@ class Friedman(Table):
 
     def __str__(self) -> str:
         """Returns the name of the table."""
-        return "Friedman"
+        return f"Friedman {self.friedman_test}"
         
     def __repr__(self) -> str:
         """Returns the description of the table."""
         if self.normal:
-            return "Mean and Standard Deviation Friedman Table"
+            return f"Mean and Standard Deviation Friedman {self.friedman_test} Table"
         else:
-            return "Median and Interquartile Range Friedman Table"
+            return f"Median and Interquartile Range Friedman {self.friedman_test} Table"
 
 class WilcoxonPivot(Table):
     """Class for generating the Wilcoxon Pivot table."""
@@ -547,13 +560,7 @@ class WilcoxonPivot(Table):
         # Loop over instances and format the row data
         for instance in self.instances:
             row_data = f"{instance} & "
-            median = self.mean_median.loc[instance]
-            std_dev = self.std_iqr.loc[instance]
-            
-            # Compute df_global and find the max and second idx
-            df_global = median / std_dev
-            max_idx = df_global.idxmax()
-            second_idx = df_global.drop(max_idx).idxmax()
+            mean_median, std_iqr, max_idx, second_idx = self.rank_top_two(instance)
 
             # Loop over algorithms and format the row data
             for algorithm in self.algorithms:
@@ -568,8 +575,8 @@ class WilcoxonPivot(Table):
                     else:
                         ranks[algorithm][2] += 1
 
-                score1 = median[algorithm]
-                score2 = std_dev[algorithm]
+                score1 = mean_median[algorithm]
+                score2 = std_iqr[algorithm]
 
                 # Create the formatted string based on conditions
                 if algorithm == max_idx:
@@ -857,19 +864,12 @@ class Anova(Table):
         # Loop over instances and format the row data
         for instance in self.instances:
             row_data = f"{instance} & "
-            median = self.mean_median.loc[instance]
-            std_dev = self.std_iqr.loc[instance]
-            
-            # Compute df_global and find the max and second idx
-            # TODO: MAYBE this is not optimal, but it is a simple way to get the max and second max
-            df_global = median / std_dev
-            max_idx = df_global.idxmax()
-            second_idx = df_global.drop(max_idx).idxmax()
+            mean_median, std_iqr, max_idx, second_idx = self.rank_top_two(instance)
 
             # Loop over algorithms and format the row data
             for algorithm in self.algorithms:
-                score1 = median[algorithm]
-                score2 = std_dev[algorithm]
+                score1 = mean_median[algorithm]
+                score2 = std_iqr[algorithm]
 
                 # Create the formatted string based on conditions
                 if algorithm == max_idx:
@@ -961,13 +961,7 @@ class TTestPivot(Table):
         # Loop over instances and format the row data
         for instance in self.instances:
             row_data = f"{instance} & "
-            median = self.mean_median.loc[instance]
-            std_dev = self.std_iqr.loc[instance]
-            
-            # Compute df_global and find the max and second idx
-            df_global = median / std_dev
-            max_idx = df_global.idxmax()
-            second_idx = df_global.drop(max_idx).idxmax()
+            mean_median, std_iqr, max_idx, second_idx = self.rank_top_two(instance)
 
             # Loop over algorithms and format the row data
             for algorithm in self.algorithms:
@@ -982,8 +976,8 @@ class TTestPivot(Table):
                     else:
                         ranks[algorithm][2] += 1
 
-                score1 = median[algorithm]
-                score2 = std_dev[algorithm]
+                score1 = mean_median[algorithm]
+                score2 = std_iqr[algorithm]
 
                 # Create the formatted string based on conditions
                 if algorithm == max_idx:
@@ -1122,12 +1116,3 @@ class TTest(Table):
         """Returns the description of the table."""
         return "T-Test 1vs1 Table"
     
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/SAES/notebooks/multiobjective/swarmIntelligence.csv"
-    metrics = "/home/khaosdev/SAES/notebooks/multiobjective/multiobjectiveMetrics.csv"
-    metric = "HV"
-
-    wilcoxon_table = Wilcoxon(data, metrics, metric)
-    wilcoxon_table.compute_table()
-    print(wilcoxon_table.table)
