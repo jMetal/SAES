@@ -1,6 +1,12 @@
 # SAES: Stochastic Algorithm Evaluation Suite
 ![SAES](https://raw.githubusercontent.com/jMetal/SAES/main/docs/SAES.png)
 
+[![CI](https://github.com/jMetal/SAES/actions/workflows/test.yml/badge.svg)](https://github.com/jMetal/SAES/actions/workflows/test.yml)
+[![PyPI Version](https://img.shields.io/pypi/v/SAES.svg)](https://pypi.org/project/SAES/)
+[![PyPI Python version](https://img.shields.io/pypi/pyversions/SAES.svg)](https://pypi.org/project/SAES/)
+[![PyPI License](https://img.shields.io/pypi/l/SAES.svg)](https://pypi.org/project/SAES/)
+[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-red)](https://jMetal.github.io/SAES/)
+
 `SAES` is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and some machine learning techniques) on multiple problems. 
 
 The current version of the tool offers the following capabilities:  
