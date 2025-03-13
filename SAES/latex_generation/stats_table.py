@@ -1122,3 +1122,12 @@ class TTest(Table):
         """Returns the description of the table."""
         return "T-Test 1vs1 Table"
     
+
+if __name__ == "__main__":
+    data = "/home/khaosdev/SAES/notebooks/multiobjective/swarmIntelligence.csv"
+    metrics = "/home/khaosdev/SAES/notebooks/multiobjective/multiobjectiveMetrics.csv"
+    metric = "HV"
+
+    wilcoxon_table = Wilcoxon(data, metrics, metric)
+    wilcoxon_table.compute_table()
+    print(wilcoxon_table.table)

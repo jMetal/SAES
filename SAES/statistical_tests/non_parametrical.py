@@ -1,7 +1,11 @@
-from scipy.stats import rankdata, mannwhitneyu, chi2, binom, f
 from statsmodels.stats.libqsturng import qsturng
+from scipy.stats import wilcoxon as wx
+from scipy.stats import chi2, f
 import pandas as pd
 import numpy as np
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # Article reference: https://www.statology.org/friedman-test-python/
 # Wikipedia reference: https://en.wikipedia.org/wiki/Mann%E2%80%93Whitney_U_test
@@ -306,7 +310,9 @@ def wilcoxon(data: pd.DataFrame, maximize: bool):
     median_b = data["Algorithm B"].median()
 
     # Perform the Wilcoxon signed-rank test
-    _, p_value = mannwhitneyu(data["Algorithm A"], data["Algorithm B"])
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        _, p_value = wx(data["Algorithm A"], data["Algorithm B"])
 
     # Determine the result based on the p-value
     alpha = 0.05
@@ -314,7 +320,7 @@ def wilcoxon(data: pd.DataFrame, maximize: bool):
         if maximize:
             return "+" if median_a > median_b else "-"
         else:
-            return "+" if median_a < median_b else "-"
+            return "+" if median_a <= median_b else "-"
     
     return "="
 

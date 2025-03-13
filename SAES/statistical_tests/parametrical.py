@@ -44,7 +44,7 @@ def t_test(data: pd.DataFrame, maximize: bool):
         if maximize:
             return "+" if mean_a > mean_b else "-"
         else:
-            return "+" if mean_a < mean_b else "-"
+            return "+" if mean_a <= mean_b else "-"
     
     return "="
 
