@@ -52,6 +52,7 @@ This is the documentation for the `SAES` python library, which is a Python libra
    - **Multiobjetive Pareto Front plots** in the `multiobjective` module (more info at `Multiobjective <https://jMetal.github.io/SAES/configure/multiobjective.html>`_). 
    - **HTML generation** for intuitive analysis.
    - **Bayesian Posterior Plot** for probabilistic comparison of algorithm performance.
+   - **Violin Plot** for algorithm performance distribution.
    
 This tool is aimed at researchers and developers interested in algorithm benchmarking studies for artificial intelligence, optimization, machine learning, and more.
 
