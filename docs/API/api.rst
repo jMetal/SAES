@@ -14,3 +14,4 @@ The following sections document the public API of the `SAES` library.
    html
    bayesian
    violin
+   histoplot

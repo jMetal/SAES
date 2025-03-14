@@ -5,7 +5,7 @@ Violin Plot
    :depth: 2
    :local:
 
-The is another feature of the library is the ability to generate violin plots of the results of the experiments. The following code snippet demonstrates how to generate a violin plot of the results of the experiments:
+Another feature of the library is the ability to generate violin plots of the results of the experiments. The following code snippet demonstrates how to generate a violin plot of the results of the experiments:
 
 .. code-block:: python
     

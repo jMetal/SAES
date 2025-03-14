@@ -227,6 +227,8 @@ class Violin:
         plt.tight_layout()
 
     def _plot_all_instances(self, width: int) -> None:
+        """Generates a violin for all instances."""
+        
         instances = self.data["Instance"].unique()
         n_cols = 3 if len(instances) >= 3 else len(instances)
         n_rows = int(np.ceil(len(instances) / n_cols))  
@@ -262,13 +264,3 @@ class Violin:
             fig.delaxes(axes[j])
 
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9, wspace=0.35, hspace=0.45)
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/SAES/notebooks/swarmIntelligence.csv"
-    metrics = "/home/khaosdev/SAES/notebooks/multiobjectiveMetrics.csv"
-    metric = "HV"
-
-    violin = Violin(data, metrics, metric)
-    violin.save_instance("ZDT1", os.getcwd())
-
-    violin.save_all_instances(os.getcwd())

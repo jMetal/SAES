@@ -53,6 +53,8 @@ This is the documentation for the `SAES` python library, which is a Python libra
    - **HTML generation** for intuitive analysis.
    - **Bayesian Posterior Plot** for probabilistic comparison of algorithm performance.
    - **Violin Plot** for algorithm performance distribution.
+   - **Histogram Plot** for visualizing the distribution of algorithm performance.
+
    
 This tool is aimed at researchers and developers interested in algorithm benchmarking studies for artificial intelligence, optimization, machine learning, and more.
 
