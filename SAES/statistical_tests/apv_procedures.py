@@ -4,6 +4,8 @@ import pandas as pd
 from SAES.statistical_tests.non_parametrical import _ranks
 from scipy.stats import rankdata, mannwhitneyu, chi2, binom, f, norm
 
+## TODO: Integrate the APV procedures into the main functions of the SAES package.
+
 def friedman_ph_test(data: pd.DataFrame, maximize: bool, control=None, apv_procedure=None) -> pd.DataFrame:
     """Friedman post-hoc test.
 

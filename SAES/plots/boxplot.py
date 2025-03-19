@@ -241,10 +241,10 @@ class Boxplot:
             axes = [axes]
 
         for i, instance in enumerate(instances):
-            df_instance = self.data[self.data["Instance"] == instance]
+            dataframe_instance = self.data[self.data["Instance"] == instance]
             
             sns.boxplot(
-                x='Algorithm', y='MetricValue', data=df_instance, ax=axes[i],
+                x='Algorithm', y='MetricValue', data=dataframe_instance, ax=axes[i],
                 boxprops=dict(facecolor=(0, 0, 1, 0.3), edgecolor="darkblue", linewidth=1.5),
                 whiskerprops=dict(color="darkblue", linewidth=1.5),
                 capprops=dict(color="darkblue", linewidth=1.5),
@@ -254,8 +254,8 @@ class Boxplot:
             
             axes[i].set_title(f'Instance: {instance}', fontsize=12, weight='bold')
             axes[i].set_ylabel(f'{self.metric}', fontsize=10, weight='bold')
-            axes[i].set_xticks(range(len(df_instance['Algorithm'].unique())))
-            axes[i].set_xticklabels(df_instance['Algorithm'].unique(), rotation=15, fontsize=9, weight='bold')
+            axes[i].set_xticks(range(len(dataframe_instance['Algorithm'].unique())))
+            axes[i].set_xticklabels(dataframe_instance['Algorithm'].unique(), rotation=15, fontsize=9, weight='bold')
             
             axes[i].grid(axis='y', linestyle='-', alpha=0.7)
             axes[i].spines['top'].set_visible(False)

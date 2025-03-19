@@ -43,6 +43,8 @@ The current version of the tool offers the following capabilities:
    - **Multiobjetive Pareto Front plots** in the [Multiobjective](https://jMetal.github.io/SAES/configure/multiobjective.html) module.
    - **HTML generation** for intuitive analysis.
    - **Bayesian Posterior Plot** for probabilistic comparison of algorithm performance.
+   - **Violin Plot** for algorithm performance distribution.
+   - **Histogram Plot** for visualizing the distribution of algorithm performance.
 
 5. **CL Interface**
    - Command Line feature to access the different `SAES` functions 
