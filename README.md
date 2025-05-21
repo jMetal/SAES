@@ -6,6 +6,7 @@
 [![PyPI Python version](https://img.shields.io/pypi/pyversions/SAES.svg)](https://pypi.org/project/SAES/)
 [![PyPI License](https://img.shields.io/pypi/l/SAES.svg)](https://pypi.org/project/SAES/)
 [![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-red)](https://jMetal.github.io/SAES/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/jMetal/SAES)
 
 `SAES` is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and some machine learning techniques) on multiple problems. 
 
