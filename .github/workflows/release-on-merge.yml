@@ -1,0 +1,84 @@
+name: Release on merge to main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release') || startsWith(github.event.pull_request.head.ref, 'feature') || startsWith(github.event.pull_request.head.ref, 'bug')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Extract prev version
+        id: prev_version
+        run: |
+          echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
+      - name: Determine release type and bump version
+        id: bump
+        run: |
+          BRANCH=${{ github.event.pull_request.head.ref }}
+          VERSION=$(cat version.txt)
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          if [[ $BRANCH == release* ]]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            TYPE=major
+          elif [[ $BRANCH == feature* ]]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            TYPE=minor
+          elif [[ $BRANCH == bug* ]]; then
+            PATCH=$((PATCH + 1))
+            TYPE=patch
+          else
+            echo "Not a release, feature, or bug branch. Exiting."
+            exit 0
+          fi
+          RELEASE_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "$RELEASE_VERSION" > version.txt
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
+          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+      - name: Update changelog (replace version block)
+        id: changelog
+        run: |
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          DATE=$(date +'%Y-%m-%d')
+          VERSION="${{ steps.bump.outputs.release_version }}"
+          TMP=$(mktemp)
+          # Read and find line of '## [Released]'
+          rel_line=$(grep -n '^## \[Released\]' changelog.md | cut -d: -f1)
+          tail_start=$((rel_line + 1))
+          # Look for any existing version block right under Released and skip it
+          sed -n "1,${rel_line}p" changelog.md > "$TMP"
+          # Insert new version block
+          echo -e "\n## [$VERSION] - Released on $DATE by $AUTHOR\n\n### Added\n- ...\n" >> "$TMP"
+          # Skip any old version block immediately after Released, continue until a non-empty, non-version-heading
+          awk -v start=$tail_start 'NR>=start { 
+            if ($0 ~ /^## \[.*\] - Released on .*/) { 
+              skip=1; next 
+            } else if (skip && NF==0) { next } else { skip=0; print $0 } 
+          }' changelog.md >> "$TMP"
+          mv "$TMP" changelog.md
+      - name: Commit and push changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add version.txt changelog.md
+          git commit -m "chore: bump version to ${{ steps.bump.outputs.release_version }} and update changelog"
+          git push
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.bump.outputs.release_version }}
+          name: Release ${{ steps.bump.outputs.release_version }}
+          body: |
+            $(awk '/^## \[${{ steps.bump.outputs.release_version }}\]/{flag=1; next}/^## /{flag=0}flag' changelog.md)
