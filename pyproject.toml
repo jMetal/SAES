@@ -8,6 +8,7 @@ exclude = ["*.pyc", "*.log", ".git", "dist", "venv", "*__pycache__*"]
 [project]
 name = "SAES"
 version = "1.3.6"
+dynamic = []
 
 description = "Python library designed to analyze and compare the performance of different algorithms across multiple problems using non-parametric statistical tests"
 readme = "README.md"
@@ -17,16 +18,13 @@ dependencies = [
     "matplotlib==3.9.2",
     "Jinja2==3.1.6",
     "scikit-posthocs==0.10.0",
-    "coverage==7.6.8",
-    "sphinx==8.1.3",
-    "sphinx_rtd_theme==3.0.2",
-    "ipython<=8.30.0",
-    "nbconvert==7.16.6",
-    "papermill==2.6.0",
-    "ipykernel<=6.29.5"
+    "scipy>=1.7.0",
+    "pandas>=1.3.0",
+    "seaborn>=0.11.0"
 ]
 
 requires-python = ">=3.10"
+
 authors = [
     {name = "Antonio J. Nebro", email = "ajnebro@uma.es"},
     {name = "Emilio Rodrigo Carreira Villalta", email = "emiliorodrigo.ecr@gmail.com"}
@@ -43,4 +41,34 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Programming Language :: Python :: 3.10"
+]
+
+[project.optional-dependencies]
+dev = [
+    "coverage==7.6.8",
+    "sphinx==8.1.3",
+    "sphinx_rtd_theme==3.0.2",
+    "pytest>=7.0.0",
+    "pytest-cov>=3.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+    "mypy>=0.950",
+    "isort>=5.10.0",
+    "pre-commit>=3.0.0"
+]
+html = [
+    "ipython<=8.30.0",
+    "nbconvert==7.16.6",
+    "papermill==2.6.0",
+    "ipykernel<=6.29.5"
+]
+test = [
+    "coverage==7.6.8",
+    "pytest>=7.0.0",
+    "pytest-cov>=3.0.0",
+    "Pillow>=9.0.0"
+]
+docs = [
+    "sphinx==8.1.3",
+    "sphinx_rtd_theme==3.0.2"
 ]
