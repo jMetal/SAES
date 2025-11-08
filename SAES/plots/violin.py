@@ -62,7 +62,7 @@ class Violin:
             None
 
         Example:
-            >>> frtom SAES.plots.violin import Violin
+            >>> from SAES.plots.violin import Violin
             >>> 
             >>> data = pd.read_csv("data.csv")
             >>> metrics = pd.read_csv("metrics.csv")
@@ -97,7 +97,7 @@ class Violin:
             None
         
         Example:
-            >>> frtom SAES.plots.violin import Violin
+            >>> from SAES.plots.violin import Violin
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -132,7 +132,7 @@ class Violin:
             None
 
         Example:
-            >>> frtom SAES.plots.violin import Violin
+            >>> from SAES.plots.violin import Violin
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -164,7 +164,7 @@ class Violin:
             None
         
         Example:
-            >>> frtom SAES.plots.violin import Violin
+            >>> from SAES.plots.violin import Violin
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -189,7 +189,7 @@ class Violin:
             None
 
         Example:
-            >>> frtom SAES.plots.violin import Violin
+            >>> from SAES.plots.violin import Violin
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
