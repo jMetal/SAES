@@ -6,7 +6,7 @@ from SAES.latex_generation.stats_table import WilcoxonPivot
 from SAES.latex_generation.stats_table import Wilcoxon
 
 from SAES.plots.boxplot import Boxplot
-from SAES.plots.CDplot import CDplot
+from SAES.plots.cdplot import CDplot
 
 from SAES.multiobjective.pareto_front import Front2D
 from SAES.multiobjective.pareto_front import Front3D

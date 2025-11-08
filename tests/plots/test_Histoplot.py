@@ -1,4 +1,4 @@
-from SAES.plots.HistoPlot import HistoPlot
+from SAES.plots.histoplot import HistoPlot
 from PIL import Image
 import unittest, os
 

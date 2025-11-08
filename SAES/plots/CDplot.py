@@ -53,7 +53,7 @@ class CDplot:
             None
 
         Example:
-            >>> frtom SAES.plots.CDplot import CDplot
+            >>> from SAES.plots.cdplot import CDplot
             >>> 
             >>> data = pd.read_csv("data.csv")
             >>> metrics = pd.read_csv("metrics.csv")
@@ -86,7 +86,7 @@ class CDplot:
             None
 
         Example:
-            >>> frtom SAES.plots.CDplot import CDplot
+            >>> from SAES.plots.cdplot import CDplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -115,7 +115,7 @@ class CDplot:
             None
 
         Example:
-            >>> frtom SAES.plots.CDplot import CDplot
+            >>> from SAES.plots.cdplot import CDplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")

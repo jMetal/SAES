@@ -1,4 +1,4 @@
-from SAES.plots.Pplot import Pplot
+from SAES.plots.pplot import Pplot
 from PIL import Image
 import unittest, os
 
