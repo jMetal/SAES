@@ -95,15 +95,33 @@ The SAES library offers a range of functions categorized into three groups, corr
 - **Python**: >= 3.10
 
 ## 📦 Installation
-Before installing the project, we recommend creating a virtual environment to avoid conflicts with other Python projects:
-```sh
-python3 -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-```
 
-Once you have activated the virtual environment, you can install the project with its dependencies using the following command:
+### Using pip (Recommended for Users)
 ```sh
 pip install SAES
+```
+
+### For Development
+
+We recommend using [uv](https://docs.astral.sh/uv/) for fast dependency management:
+
+```sh
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and setup
+git clone https://github.com/jMetal/SAES.git
+cd SAES
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+uv pip install -e ".[dev]"
+```
+
+### Traditional venv Setup
+```sh
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e ".[dev]"
 ```
 
 ## 🤝 Contributors

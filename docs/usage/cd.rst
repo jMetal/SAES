@@ -5,7 +5,7 @@ The last feauture of the library is the ability to generate critical distance gr
 
 .. code-block:: python
 
-    from SAES.plots.CDplot import CDplot
+    from SAES.plots.cdplot import CDplot
 
     # Load the data and metrics from the CSV files
     data = "swarmIntelligence.csv"
