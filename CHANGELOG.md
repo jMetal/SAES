@@ -7,10 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [Released]
+
+## [1.4.0] - 2025-11-15
+
+### Added
+- Comprehensive test suite for Bayesian statistical tests (`bayesian_sign_test`, `bayesian_signed_rank_test`)
+- Code of Conduct based on Contributor Covenant v2.1
+- `.editorconfig` file for consistent code style across editors
+- `.pre-commit-config.yaml` for automated code quality checks (black, flake8, isort)
+
+### Changed
+- **BREAKING**: Renamed plot modules to lowercase for Python naming consistency:
+  - `SAES.plots.CDplot` → `SAES.plots.cdplot`
+  - `SAES.plots.HistoPlot` → `SAES.plots.histoplot`
+  - `SAES.plots.Pplot` → `SAES.plots.pplot`
+- Migrated from `pip`/`venv` to `uv` for faster, more reliable dependency management
+- Reorganized dependencies in `pyproject.toml` into logical groups:
+  - Runtime dependencies (core functionality)
+  - `[test]`: Testing dependencies
+  - `[dev]`: Development tools (black, flake8, mypy, isort, pre-commit)
+  - `[docs]`: Documentation generation (Sphinx)
+  - `[html]`: HTML notebook generation (papermill, nbconvert)
+- Expanded `CONTRIBUTING.md` with detailed setup instructions using `uv`
+- Updated `README.md` with `uv` installation instructions
+- Improved documentation in `docs/conf.py` to dynamically read version from `version.txt`
+- Updated GitHub Actions workflows to use `uv` for dependency installation
+- Updated all notebooks to use new lowercase plot module names
+
 ### Fixed
 - Corrected 'frtom' typo to 'from' in all plot module docstrings (23 instances across 5 files)
+- Removed debug code (`if __name__ == "__main__"` block) from `HistoPlot.py`
+- Fixed `pyproject.toml` structure (moved `requires-python` to correct location)
+- Restored corrupted `boxplot.py` and `violin.py` files
 
-## [Released]
+### Documentation
+- Populated `CHANGELOG.md` with complete version history from v0.5.1 to v1.3.6
+- Replaced generic TODO comment in `apv_procedures.py` with comprehensive module docstring
+- Added detailed examples and usage instructions throughout documentation
 
 ## [1.3.6] - 2025-03-18
 

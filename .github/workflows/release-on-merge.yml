@@ -1,13 +1,15 @@
 name: Release on merge to main
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
 
 jobs:
   release:
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release') || startsWith(github.event.pull_request.head.ref, 'feature') || startsWith(github.event.pull_request.head.ref, 'bug')
+    if: github.event.pull_request.merged == true && (startsWith(github.event.pull_request.head.ref, 'release') || startsWith(github.event.pull_request.head.ref, 'feature') || startsWith(github.event.pull_request.head.ref, 'bug'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
