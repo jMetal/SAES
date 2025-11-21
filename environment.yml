@@ -1,0 +1,18 @@
+name: saes
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.10
+  - pip
+  - pip:
+    - python-dotenv==1.0.1
+    - numpy<2
+    - matplotlib==3.9.2
+    - Jinja2==3.1.6
+    - scikit-posthocs==0.10.0
+    - scipy>=1.7.0
+    - pandas>=1.3.0
+    - seaborn>=0.11.0
+    - papermill==2.6.0
+

@@ -124,6 +124,51 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
+### Using Environment Files
+
+For broader compatibility, environment files are provided:
+
+```sh
+# Using pip with requirements.txt
+pip install -r requirements.txt
+
+# Using conda with environment.yml
+conda env create -f environment.yml
+conda activate saes
+```
+
+## 🔄 Reproducibility
+
+SAES supports **deterministic seeds** for reproducible research:
+
+```python
+from SAES.statistical_tests.bayesian import bayesian_sign_test
+from SAES.plots.histoplot import HistoPlot
+
+# Bayesian tests with seed for reproducibility
+result, _ = bayesian_sign_test(data, sample_size=5000, seed=42)
+
+# Histogram plots with consistent jitter
+histoplot = HistoPlot(data, metrics, "Accuracy", seed=42)
+```
+
+See the [reproducibility documentation](https://jMetal.github.io/SAES/usage/reproducibility.html) for details.
+
+## 💻 Headless Mode
+
+SAES can run in headless mode (without display) for automated workflows, CI/CD pipelines, and server environments:
+
+```bash
+# Set matplotlib backend
+export MPLBACKEND=Agg
+
+# Run SAES commands
+python -m SAES -ls -ds data.csv -ms metrics.csv -m HV -s friedman -op results.tex
+python -m SAES -bp -ds data.csv -ms metrics.csv -m HV -i Problem1 -op boxplot.png
+```
+
+See `examples/headless_mode_example.py` for a complete Python example or `examples/headless_cli_example.sh` for CLI usage.
+
 ## 🤝 Contributors
 
 - [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/rorro6787) **Emilio Rodrigo Carreira Villalta**

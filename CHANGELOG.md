@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [1.5.0] - 2025-11-21
+
+### Added
+- **Reproducibility support**: Added `seed` parameter to Bayesian statistical tests (`bayesian_sign_test`, `bayesian_signed_rank_test`) for deterministic results
+- **Reproducibility support**: Added `seed` parameter to `HistoPlot` class for consistent jitter in histogram generation
+- **Multi-platform CI**: Comprehensive GitHub Actions workflow testing on Windows, Linux (Ubuntu), and macOS
+- **Smoke tests**: Added automated smoke tests for CLI and API functionality across all platforms
+- **Environment files**: Added `requirements.txt`, `requirements-dev.txt`, and `environment.yml` for broader compatibility
+- **Headless mode documentation**: Complete documentation and examples for running SAES without display (CI/CD, servers)
+- **Headless mode examples**: Python and shell script examples for automated workflows (`examples/headless_mode_example.py`, `examples/headless_cli_example.sh`, `examples/headless_cli_example.bat`)
+- **New test suite**: Added `test_bayesian_seed.py` specifically for verifying seed reproducibility
+- **Documentation**: New reproducibility documentation page (`docs/usage/reproducibility.rst`) with best practices
+
+### Changed
+- Updated `test_bayesian.py` to demonstrate both seed parameter usage and backward compatibility
+- Enhanced README with sections on reproducibility and headless mode
+- Improved documentation structure to include reproducibility guidance
+
+### Fixed
+- Ensured all random operations can be made deterministic for reproducible research
+
 ## [1.4.0] - 2025-11-15
 
 ### Added

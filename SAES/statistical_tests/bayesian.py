@@ -7,7 +7,8 @@ def bayesian_sign_test(data: pd.DataFrame,
                        rope_limits=[-0.01, 0.01], 
                        prior_strength=0.5, 
                        prior_place="rope", 
-                       sample_size=5000) -> tuple:
+                       sample_size=5000,
+                       seed=None) -> tuple:
     """
     Performs the Bayesian sign test to compare the performance of two algorithms across multiple instances.
     The Bayesian sign test is a non-parametric statistical test used to compare the performance of two algorithms on multiple instances. The null hypothesis is that the algorithms perform equivalently, which implies their average ranks are equal.
@@ -40,6 +41,9 @@ def bayesian_sign_test(data: pd.DataFrame,
         sample_size (int):
             Total number of random_search samples generated. Default is 5000.
         
+        seed (int, optional):
+            Random seed for reproducibility. Default is None (non-deterministic).
+        
     Returns:
         tuple: A tuple containing the posterior probabilities and the samples drawn from the Dirichlet process. List of posterior probabilities:
             - Pr(algorith_1 < algorithm_2)
@@ -61,6 +65,10 @@ def bayesian_sign_test(data: pd.DataFrame,
         n = data.shape[0]
     else:
         raise ValueError("Initialization ERROR. Incorrect number of dimensions for axis 1")
+
+    # Set random seed for reproducibility
+    if seed is not None:
+        np.random.seed(seed)
 
     # Compute the differences
     Z = sample1 - sample2
@@ -93,7 +101,8 @@ def bayesian_signed_rank_test(data,
                               rope_limits=[-0.01, 0.01], 
                               prior_strength=1.0, 
                               prior_place="rope", 
-                              sample_size=1000) -> tuple:
+                              sample_size=1000,
+                              seed=None) -> tuple:
     """
     Performs the Bayesian version of the signed rank test to compare the performance of two algorithms across multiple instances.
     The Bayesian sign test is a non-parametric statistical test used to compare the performance of two algorithms on multiple instances. The null hypothesis is that the algorithms perform equivalently, which implies their average ranks are equal.
@@ -126,6 +135,9 @@ def bayesian_signed_rank_test(data,
         sample_size (int):
             Total number of random_search samples generated. Default is 5000.
         
+        seed (int, optional):
+            Random seed for reproducibility. Default is None (non-deterministic).
+        
     Returns:
         tuple: A tuple containing the posterior probabilities and the samples drawn from the Dirichlet process. List of posterior probabilities:
             - Pr(algorith_1 < algorithm_2)
@@ -152,6 +164,10 @@ def bayesian_signed_rank_test(data,
         n = data.shape[0]
     else:
         raise ValueError("Initialization ERROR. Incorrect number of dimensions for axis 1")
+
+    # Set random seed for reproducibility
+    if seed is not None:
+        np.random.seed(seed)
 
     # Compute the differences
     Z = sample1 - sample2
