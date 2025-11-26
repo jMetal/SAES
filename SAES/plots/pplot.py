@@ -65,7 +65,7 @@ class Pplot:
             None
 
         Example:
-            >>> frtom SAES.plots.Pplot import Pplot
+            >>> from SAES.plots.pplot import Pplot
             >>> 
             >>> data = pd.read_csv("data.csv")
             >>> metrics = pd.read_csv("metrics.csv")
@@ -109,7 +109,7 @@ class Pplot:
             None
 
         Example:
-            >>> frtom SAES.plots.Pplot import Pplot
+            >>> from SAES.plots.pplot import Pplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -147,7 +147,7 @@ class Pplot:
             None
 
         Example:
-            >>> frtom SAES.plots.Pplot import Pplot
+            >>> from SAES.plots.pplot import Pplot
             >>> 
             >>> data = pd.read_csv("data.csv")
             >>> metrics = pd.read_csv("metrics.csv")
@@ -190,7 +190,7 @@ class Pplot:
             None
 
         Example:
-            >>> frtom SAES.plots.Pplot import Pplot
+            >>> from SAES.plots.pplot import Pplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -227,7 +227,7 @@ class Pplot:
             None
 
         Example:
-            >>> frtom SAES.plots.Pplot import Pplot
+            >>> from SAES.plots.pplot import Pplot
             >>> 
             >>> data = pd.read_csv("data.csv")
             >>> metrics = pd.read_csv("metrics.csv")

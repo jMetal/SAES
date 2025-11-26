@@ -59,7 +59,7 @@ class HistoPlot:
             None
 
         Example:
-            >>> frtom SAES.plots.Histoplot import Histoplot
+            >>> from SAES.plots.histoplot import HistoPlot
             >>> 
             >>> data = pd.read_csv("data.csv")
             >>> metrics = pd.read_csv("metrics.csv")
@@ -94,7 +94,7 @@ class HistoPlot:
             None
         
         Example:
-            >>> frtom SAES.plots.Histoplot import Histoplot
+            >>> from SAES.plots.histoplot import HistoPlot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -129,7 +129,7 @@ class HistoPlot:
             None
 
         Example:
-            >>> frtom SAES.plots.Histoplot import Histoplot
+            >>> from SAES.plots.histoplot import HistoPlot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -161,7 +161,7 @@ class HistoPlot:
             None
         
         Example:
-            >>> frtom SAES.plots.Histoplot import Histoplot
+            >>> from SAES.plots.histoplot import HistoPlot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -186,7 +186,7 @@ class HistoPlot:
             None
 
         Example:
-            >>> frtom SAES.plots.Histoplot import Histoplot
+            >>> from SAES.plots.histoplot import HistoPlot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -273,10 +273,3 @@ class HistoPlot:
             fig.delaxes(axes[j])
 
         plt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9, wspace=0.35, hspace=0.45)
-
-if __name__ == "__main__":
-    data = "/home/khaosdev/SAES/notebooks/swarmIntelligence.csv"
-    metrics = "/home/khaosdev/SAES/notebooks/multiobjectiveMetrics.csv"
-    metric = "HV"
-    histoPlot = HistoPlot(data, metrics, metric)
-    histoPlot.save_instance("ZDT1", "/home/khaosdev/SAES/notebooks/plots", width=10)

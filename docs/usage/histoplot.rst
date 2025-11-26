@@ -9,7 +9,7 @@ nother feature of the library is the ability to generate histogram plots of the 
 
 .. code-block:: python
     
-    from SAES.plots.HistoPlot import HistoPlot
+    from SAES.plots.histoplot import HistoPlot
 
     # Load the data and metrics from the CSV files
     data = "swarmIntelligence.csv"

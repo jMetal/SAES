@@ -1,4 +1,4 @@
-from SAES.plots.CDplot import CDplot
+from SAES.plots.cdplot import CDplot
 from PIL import Image
 import unittest, os
 

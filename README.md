@@ -6,6 +6,7 @@
 [![PyPI Python version](https://img.shields.io/pypi/pyversions/SAES.svg)](https://pypi.org/project/SAES/)
 [![PyPI License](https://img.shields.io/pypi/l/SAES.svg)](https://pypi.org/project/SAES/)
 [![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-red)](https://jMetal.github.io/SAES/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/jMetal/SAES)
 
 `SAES` is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and some machine learning techniques) on multiple problems. 
 
@@ -94,16 +95,79 @@ The SAES library offers a range of functions categorized into three groups, corr
 - **Python**: >= 3.10
 
 ## 📦 Installation
-Before installing the project, we recommend creating a virtual environment to avoid conflicts with other Python projects:
-```sh
-python3 -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-```
 
-Once you have activated the virtual environment, you can install the project with its dependencies using the following command:
+### Using pip (Recommended for Users)
 ```sh
 pip install SAES
 ```
+
+### For Development
+
+We recommend using [uv](https://docs.astral.sh/uv/) for fast dependency management:
+
+```sh
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and setup
+git clone https://github.com/jMetal/SAES.git
+cd SAES
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+uv pip install -e ".[dev]"
+```
+
+### Traditional venv Setup
+```sh
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e ".[dev]"
+```
+
+### Using Environment Files
+
+For broader compatibility, environment files are provided:
+
+```sh
+# Using pip with requirements.txt
+pip install -r requirements.txt
+
+# Using conda with environment.yml
+conda env create -f environment.yml
+conda activate saes
+```
+
+## 🔄 Reproducibility
+
+SAES supports **deterministic seeds** for reproducible research:
+
+```python
+from SAES.statistical_tests.bayesian import bayesian_sign_test
+from SAES.plots.histoplot import HistoPlot
+
+# Bayesian tests with seed for reproducibility
+result, _ = bayesian_sign_test(data, sample_size=5000, seed=42)
+
+# Histogram plots with consistent jitter
+histoplot = HistoPlot(data, metrics, "Accuracy", seed=42)
+```
+
+See the [reproducibility documentation](https://jMetal.github.io/SAES/usage/reproducibility.html) for details.
+
+## 💻 Headless Mode
+
+SAES can run in headless mode (without display) for automated workflows, CI/CD pipelines, and server environments:
+
+```bash
+# Set matplotlib backend
+export MPLBACKEND=Agg
+
+# Run SAES commands
+python -m SAES -ls -ds data.csv -ms metrics.csv -m HV -s friedman -op results.tex
+python -m SAES -bp -ds data.csv -ms metrics.csv -m HV -i Problem1 -op boxplot.png
+```
+
+See `examples/headless_mode_example.py` for a complete Python example or `examples/headless_cli_example.sh` for CLI usage.
 
 ## 🤝 Contributors
 

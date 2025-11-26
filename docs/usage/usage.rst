@@ -14,3 +14,4 @@ This section provides a brief overview of the three different features that this
    html
    bayesian
    violin
+   reproducibility

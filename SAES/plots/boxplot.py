@@ -59,7 +59,7 @@ class Boxplot:
             None
 
         Example:
-            >>> frtom SAES.plots.boxplot import Boxplot
+            >>> from SAES.plots.boxplot import Boxplot
             >>> 
             >>> data = pd.read_csv("data.csv")
             >>> metrics = pd.read_csv("metrics.csv")
@@ -93,7 +93,7 @@ class Boxplot:
             None
         
         Example:
-            >>> frtom SAES.plots.boxplot import Boxplot
+            >>> from SAES.plots.boxplot import Boxplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -128,7 +128,7 @@ class Boxplot:
             None
 
         Example:
-            >>> frtom SAES.plots.boxplot import Boxplot
+            >>> from SAES.plots.boxplot import Boxplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -160,7 +160,7 @@ class Boxplot:
             None
         
         Example:
-            >>> frtom SAES.plots.boxplot import Boxplot
+            >>> from SAES.plots.boxplot import Boxplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")
@@ -185,7 +185,7 @@ class Boxplot:
             None
 
         Example:
-            >>> frtom SAES.plots.boxplot import Boxplot
+            >>> from SAES.plots.boxplot import Boxplot
             >>> import os
             >>> 
             >>> data = pd.read_csv("data.csv")

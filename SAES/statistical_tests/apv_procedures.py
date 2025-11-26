@@ -1,10 +1,33 @@
+"""
+Advanced Post-Hoc Analysis with Adjusted P-Values (APV) Procedures.
+
+This module contains implementations of various post-hoc tests with adjusted p-value
+procedures for multiple comparisons. These are advanced statistical methods that extend
+the basic non-parametric tests provided in non_parametrical.py.
+
+Current Status:
+    These procedures are fully implemented but not yet integrated into the main SAES API.
+    They are available for advanced users who need fine-grained control over post-hoc
+    analysis with specific APV correction methods.
+
+Future Integration:
+    A future release will integrate these procedures into the main statistical test
+    functions, providing a unified API with optional parameters for APV procedures.
+    
+Usage:
+    These functions can be imported and used directly for advanced statistical analysis.
+    See individual function docstrings for detailed usage information.
+
+Supported APV Procedures:
+    - One vs. All: Bonferroni, Holm, Hochberg, Holland, Finner, Li
+    - All vs. All: Shaffer, Holm, Nemenyi
+"""
+
 import numpy as np
 import pandas as pd
 
 from SAES.statistical_tests.non_parametrical import _ranks
 from scipy.stats import rankdata, mannwhitneyu, chi2, binom, f, norm
-
-## TODO: Integrate the APV procedures into the main functions of the SAES package.
 
 def friedman_ph_test(data: pd.DataFrame, maximize: bool, control=None, apv_procedure=None) -> pd.DataFrame:
     """Friedman post-hoc test.

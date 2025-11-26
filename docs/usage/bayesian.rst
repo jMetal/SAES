@@ -9,7 +9,7 @@ This module provides the functionality to generate a posterior plot for the Baye
 
 .. code-block:: python
     
-    from SAES.plots.Pplot import Pplot
+    from SAES.plots.pplot import Pplot
 
     # Load the data and metrics from the CSV files
     data = "swarmIntelligence.csv"
