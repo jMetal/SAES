@@ -1,0 +1,92 @@
+name: Release Stamp
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Stamp Changelog & Bump Version
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Determine bump type from branch name
+        id: bump
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          AUTHOR="@${{ github.event.pull_request.user.login }}"
+
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "author=$AUTHOR" >> "$GITHUB_OUTPUT"
+
+          # Branch naming convention:
+          #   major/*  or  major-*       → bump major
+          #   patch/*  or  fix/*  or  hotfix/*  → bump patch
+          #   everything else (default)  → bump minor
+          if [[ "$BRANCH" == major/* || "$BRANCH" == major-* ]]; then
+            echo "bump=major" >> "$GITHUB_OUTPUT"
+          elif [[ "$BRANCH" == patch/* || "$BRANCH" == patch-* || \
+                  "$BRANCH" == fix/* || "$BRANCH" == fix-* || \
+                  "$BRANCH" == hotfix/* || "$BRANCH" == hotfix-* ]]; then
+            echo "bump=patch" >> "$GITHUB_OUTPUT"
+          else
+            echo "bump=minor" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stamp changelog and bump version
+        run: |
+          python3 scripts/release_stamp.py \
+            --bump "${{ steps.bump.outputs.bump }}" \
+            --author "${{ steps.bump.outputs.author }}"
+
+      - name: Commit and push release changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.txt CHANGELOG.md pyproject.toml
+          RELEASE_VERSION=$(cat version.txt)
+          git commit -m "Setting release v${RELEASE_VERSION} from ${{ steps.bump.outputs.branch }} [skip ci]"
+          git push
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: release
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/saes
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build and Publish
+        run: |
+          uv build
+          uv publish
