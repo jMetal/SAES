@@ -40,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Pareto `FRONT_ND` visualization dimensionality handling and output file naming in the demo script.
 - Resolved various linting, formatting, and typing issues across the codebase to ensure 100% CI compliance.
 
+### Security
+- Upgraded `nbconvert` to v7.17.1 to resolve multiple path traversal and unauthorized code execution vulnerabilities (#6, #7, #8).
+- Upgraded `python-dotenv` to v1.2.2 to resolve an arbitrary file overwrite vulnerability (#9, #10).
+
 ## [Released]
 
 ## [1.5.0] - 2025-11-21 (@rorro6787)

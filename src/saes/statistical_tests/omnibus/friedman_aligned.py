@@ -70,7 +70,7 @@ class FriedmanAlignedRankTest(BaseOmnibusTest):
 
         # Rank all aligned differences globally
         aligned_ranks = compute_ranks(np.ravel(diff), maximize=maximize)
-        aligned_ranks = np.reshape(aligned_ranks, newshape=(n_instances, k), order="F")
+        aligned_ranks = np.reshape(aligned_ranks, (n_instances, k), order="F")
 
         # Compute statistics
         r_hat_i = np.sum(aligned_ranks, axis=1)  # sum per instance

@@ -33,7 +33,7 @@ class Holm(BasePostHocTest):
             aux = k - 1 - np.arange(i + 1)
             comparisons.append(f"{algorithms[control]} vs {algorithms[sorted_idx[i]]}")
             v = np.max(aux * values[0, sorted_idx[: (i + 1)]])
-            apvs[i, 0] = min(v, 1.0)
+            apvs[i, 0] = min(float(v), 1.0)
 
         return pd.DataFrame(data=apvs, index=comparisons, columns=["Holm"])
 
@@ -54,6 +54,6 @@ class Holm(BasePostHocTest):
             col = pairs_index[1][pairs_sorted[i]]
             comparisons.append(f"{algorithms[row]} vs {algorithms[col]}")
             v = np.max(aux[: i + 1])
-            apvs[i, 0] = min(v, 1.0)
+            apvs[i, 0] = min(float(v), 1.0)
 
         return pd.DataFrame(data=apvs, index=comparisons, columns=["Holm"])

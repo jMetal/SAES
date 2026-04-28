@@ -29,6 +29,8 @@ dev = [
     "pre-commit>=4.0",
     "pandas-stubs>=2.0",
     "ipykernel>=6.0",
+    "nbconvert>=7.17.1",
+    "python-dotenv>=1.2.2",
 ]
 
 # ── Build System ─────────────────────────────────────────────
@@ -49,6 +51,8 @@ dev = [
     "pre-commit>=4.0",
     "pandas-stubs>=2.0",
     "ipykernel>=6.0",
+    "nbconvert>=7.17.1",
+    "python-dotenv>=1.2.2",
 ]
 
 # ── Ruff ─────────────────────────────────────────────────────
