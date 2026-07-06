@@ -181,21 +181,22 @@ class Front2D(Front):
         rows = int(num_plots**0.5)
         cols = (num_plots + rows - 1) // rows  
 
-        _, axes = plt.subplots(rows, cols, figsize=(cols*6, rows*6))
-        axes = axes.flatten()  
+        fig, axes = plt.subplots(rows, cols, figsize=(cols*6, rows*6))
+        axes = axes.flatten()
+        fig.suptitle(instance, fontsize=16)
 
         for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.{self.dimensions}D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
-            
+
             # Read the front
             df = pd.read_csv(front_path, header=None)
             x, y = df[0], df[1]
-            
+
             # Create the plot
             ax = axes[i]
             ax.scatter(x, y, alpha=0.7, color='red' if algorithm == "Reference" else 'blue')
-            
+
             # Personalize the plot
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
@@ -204,7 +205,7 @@ class Front2D(Front):
             ax.grid(True, alpha=0.3)
 
         # Remove empty plots
-        plt.tight_layout()
+        plt.tight_layout(rect=[0, 0, 1, 0.96])
 
 class Front3D(Front):
     """Class to generate 3D Pareto fronts for different algorithms and instances."""
@@ -225,31 +226,32 @@ class Front3D(Front):
         cols = (num_plots + rows - 1) // rows  
         
         fig = plt.figure(figsize=(cols * 6, rows * 6))
-        
+        fig.suptitle(instance, fontsize=16)
+
         for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.{self.dimensions}D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
-            
+
             # Read the front
             df = pd.read_csv(front_path, header=None)
             x, y, z = df[0], df[1], df[2]
-            
+
             # Create the plot
             ax = fig.add_subplot(rows, cols, i + 1, projection='3d')
             ax.scatter(x, y, z, alpha=0.7, color='red' if algorithm == "Reference" else 'blue')
-            
+
             # Personalize the plot
             ax.set_title(algorithm, pad=20)
             ax.grid(True, alpha=0.3)
-            
+
             ax.set_xlabel("X")
             ax.set_ylabel("Y")
             ax.set_zlabel("Z")
 
             ax.view_init(elev=20, azim=45)
-        
+
         # Remove empty plots
-        plt.tight_layout()
+        plt.tight_layout(rect=[0, 0, 1, 0.96])
 
 class FrontND(Front):
     """Class to generate ND Pareto fronts for different algorithms and instances."""
@@ -269,13 +271,14 @@ class FrontND(Front):
         rows = int(num_plots ** 0.5)
         cols = (num_plots + rows - 1) // rows  
         
-        _, axes = plt.subplots(rows, cols, figsize=(cols * 6, rows * 6))
+        fig, axes = plt.subplots(rows, cols, figsize=(cols * 6, rows * 6))
         axes = axes.flatten()
-        
+        fig.suptitle(instance, fontsize=16)
+
         for i, (front_path, algorithm) in enumerate(zip([f"{self.references_path}/{instance}.{self.dimensions}D.csv"] + front_paths, ["Reference"] + self.algorithms)):
             if not os.path.exists(front_path):
                 raise FileNotFoundError(f"Front {front_path} not found")
-            
+
             # Read the front
             df = pd.read_csv(front_path, header=None, names=[f"f{j}" for j in range(self.dimensions)])
             df["Name"] = "Value"
@@ -286,4 +289,4 @@ class FrontND(Front):
             axes[i].get_legend().remove()
 
         # Remove empty plots
-        plt.tight_layout()
+        plt.tight_layout(rect=[0, 0, 1, 0.96])
