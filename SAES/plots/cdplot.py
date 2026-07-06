@@ -99,7 +99,10 @@ class CDplot:
         self._plot(width=width)
         os.makedirs(output_path, exist_ok=True)
         file_name = file_name if file_name else f"cdplot_{self.metric}.png"
-        plt.savefig(f"{output_path}/{file_name}")
+        # bbox_inches="tight": the plot's axes fill the whole figure with no margin
+        # (add_axes([0, 0, 1, 1]) in _plot), so long algorithm names drawn past the axes'
+        # left/right edges would otherwise be cropped at the figure boundary.
+        plt.savefig(f"{output_path}/{file_name}", bbox_inches="tight")
         plt.close()
         self.logger.info(f"CDplot {file_name} saved to {output_path}")
 
